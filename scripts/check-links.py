@@ -24,6 +24,8 @@ ALLOWED_HOSTS = {
     "github.com",            # corresponding-source links (AGPL)
     "huggingface.co",        # on-demand model info/download (BGMkr)
     "tea.texas.gov",         # TEKS standards references (PlotMkr lesson plans)
+    "commons.wikimedia.org", # optional sample images (PuzzleMkr)
+    "upload.wikimedia.org",
 }
 
 ATTR_RE = re.compile(r'(?:href|src)\s*=\s*["\']([^"\']+)["\']', re.IGNORECASE)

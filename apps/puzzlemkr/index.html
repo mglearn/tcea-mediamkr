@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title data-i18n="doc.title">Meme Puzzle Maker</title>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self'; object-src 'none'; base-uri 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob: https:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self'; object-src 'none'; base-uri 'none'">
   <meta name="referrer" content="no-referrer">
   <meta name="theme-color" content="#0A3476">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -353,7 +353,7 @@
 
         <div class="field">
           <label for="imageUrl" data-i18n="field.imageUrl">Image URL</label>
-          <input id="imageUrl" type="text" value="../../kitty.png">
+          <input id="imageUrl" type="text" value="./kitty.png">
         </div>
 
         <div class="field">
@@ -409,9 +409,9 @@
     const t = (k, vars) => WidgetI18n.t(k, vars);
     const $ = (sel) => document.querySelector(sel);
     // Same-origin on startup, absolute in exported activities so images remain portable.
-    const defaultImage = new URL('../../kitty.png', location.href).href;
-    $('#imageSelect option[value="../../kitty.png"]').value = defaultImage;
-    if ($('#imageUrl').value === '../../kitty.png') $('#imageUrl').value = defaultImage;
+    const defaultImage = new URL('./kitty.png', location.href).href;
+    $('#imageSelect option[value="./kitty.png"]').value = defaultImage;
+    if ($('#imageUrl').value === './kitty.png') $('#imageUrl').value = defaultImage;
     const latestPuzzleKey = "mediamkr.puzzlemkr.latest";
     let uploadedImage = "";
     let tileOrder = [];

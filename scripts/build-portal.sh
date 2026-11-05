@@ -29,7 +29,7 @@ cp -r apps "$OUT"/apps
 # Dev docs (developer-guide, migration-map, source-license-audit, privacy-inventory,
 # DEPLOY-AND-STATUS) are intentionally NOT shipped.
 mkdir -p "$OUT"/docs
-for d in user-guide.md teacher-guide.md pagemkr-comic-studio.md pagemkr-labels.md; do
+for d in user-guide.md teacher-guide.md privacy-inventory.md pagemkr-comic-studio.md pagemkr-labels.md; do
   [ -f "docs/$d" ] && cp "docs/$d" "$OUT"/docs/
 done
 # License/compliance text kept available (also summarized in legal.html):

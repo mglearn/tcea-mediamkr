@@ -13,7 +13,7 @@ import re
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SKIP_DIRS = {".git", "node_modules", "test-results", ".wrangler", ".tmp"}
+SKIP_DIRS = {".git", "node_modules", "test-results", ".wrangler", ".tmp", "_portal"}
 
 # External hosts that are allowed to appear in links.
 ALLOWED_HOSTS = {

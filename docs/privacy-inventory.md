@@ -25,6 +25,7 @@ inventory records what was checked and found.
 | PixelMkr | Model from HF on demand (smart bg removal; pixels local) | none | screen capture + camera (on use) | On-device + local canvas | Yes |
 | BGMkr | Model from Hugging Face on demand (pixels stay local); optional background-image URL fetch | none | — | On-device (Transformers.js/ONNX WASM); white/color fully local | Yes |
 | GIFMkr | None (fonts only) | none | — | Fully local (custom GIF encoder; MP4 via WebCodecs) | Yes |
+| BingoMkr | None (fonts only) | game data in shareable URL (opt-in) | — | Fully local | Yes |
 | DocMkr | None (fonts only) | none | — | Fully local (pdf-lib) | Yes |
 | AudioMkr | Pending | Pending | mic (on record) | Pending | No |
 | FormatMkr | Pending | Pending | — | WASM | No |

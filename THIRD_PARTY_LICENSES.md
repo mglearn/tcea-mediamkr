@@ -81,6 +81,9 @@ _To be recorded on migration (media-conversion WASM toolchain)._
 ### ClipMkr
 _To be recorded on migration (video pipeline, captioning runtime/model)._
 
+### BingoMkr
+No third-party libraries. Original project code. Fonts as noted under Shared.
+
 ### DocMkr
 | Component | Purpose | License | Source |
 |---|---|---|---|

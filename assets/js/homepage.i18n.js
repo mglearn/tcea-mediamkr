@@ -34,6 +34,7 @@
       "app.codemkr.desc": "Generate static QR codes for links and text, with colors and downloadable images.",
       "app.plotmkr.desc": "Create accessible bar, line, pie, and scatter charts with labels and legends.",
       "app.docmkr.desc": "Merge, split, and prepare PDF documents right in your browser.",
+      "app.bingomkr.desc": "Create a virtual classroom bingo game and share one link with your class.",
 
       "quickstart.title": "Quick start",
       "quickstart.s1": "Pick a tool from the grid above.",
@@ -79,6 +80,7 @@
       "app.codemkr.desc": "Genera códigos QR estáticos para enlaces y texto, con colores e imágenes descargables.",
       "app.plotmkr.desc": "Crea gráficos accesibles de barras, líneas, circulares y dispersión con rótulos y leyendas.",
       "app.docmkr.desc": "Combina, divide y prepara documentos PDF directamente en tu navegador.",
+      "app.bingomkr.desc": "Crea un juego de bingo virtual para el aula y comparte un solo enlace con tu clase.",
 
       "quickstart.title": "Inicio rápido",
       "quickstart.s1": "Elige una herramienta del panel de arriba.",

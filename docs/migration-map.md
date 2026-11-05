@@ -16,6 +16,7 @@ final name, purpose, URL path, and migration status.
 | MemeMkr | Meme and captioned-image creation | `apps/mememkr/` | **Done** — local canvas; EN/ES |
 | GIFMkr | Animated GIF creation | `apps/gifmkr/` | **Done** — local GIF/MP4 encoding; EN/ES |
 | PlotMkr | Charts, graphs, and data visualization | `apps/plotmkr/` | **Done** — full parity (6 modes, 7 themes, lesson plans, a11y tables); EN/ES |
+| BingoMkr | Virtual classroom bingo | `apps/bingomkr/` | **Done** — shareable-link bingo; EN/ES |
 | DocMkr | PDF document tools | `apps/docmkr/` | **Done** — core merge/split/rotate (pdf-lib); fully original build; EN/ES |
 
 ## Naming rules

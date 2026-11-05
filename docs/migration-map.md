@@ -14,7 +14,7 @@ final name, purpose, URL path, and migration status.
 | PuzzleMkr | Interactive classroom puzzles | `apps/puzzlemkr/` | Planned |
 | CodeMkr | QR code generation | `apps/codemkr/` | **Done** — static only; tracking-redirect backend removed; EN/ES |
 | MemeMkr | Meme and captioned-image creation | `apps/mememkr/` | Planned |
-| GIFMkr | Animated GIF creation | `apps/gifmkr/` | Planned |
+| GIFMkr | Animated GIF creation | `apps/gifmkr/` | **Done** — local GIF/MP4 encoding; EN/ES |
 | PlotMkr | Charts, graphs, and data visualization | `apps/plotmkr/` | Planned |
 | DocMkr | PDF document tools | `apps/docmkr/` | Planned |
 

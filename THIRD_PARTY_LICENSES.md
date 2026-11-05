@@ -60,7 +60,9 @@ Runtime license texts and SHA-256 checksums are preserved in
 fully offline with no model download.
 
 ### GIFMkr
-_To be recorded on migration (GIF encoder)._
+No third-party libraries. The GIF encoder and MP4 muxer are original
+project code (AGPL-3.0-or-later); MP4 export uses the browser's built-in
+WebCodecs API. Fonts as noted under Shared.
 
 ### AudioMkr
 _To be recorded on migration (audio + captioning runtime/model)._

@@ -96,7 +96,15 @@ Media processing is local (FFmpeg WASM). Google Drive saving is stubbed (needs
 org OAuth); every output offers local Download.
 
 ### ClipMkr
-_To be recorded on migration (video pipeline, captioning runtime/model)._
+Built from source (Vite). Bundled runtime:
+
+| Component | License |
+|---|---|
+| MediaPipe (vision/selfie-seg) | Apache-2.0 |
+| whisper (ggml) + ONNX Runtime Web | MIT |
+| ffmpeg.wasm (subtitle burn-in) | LGPL/GPL (bundled in apps/clipmkr/ffmpeg) |
+
+Video editing/recording is local. Google Drive export stubbed (needs org OAuth).
 
 ### BingoMkr
 No third-party libraries. Original project code. Fonts as noted under Shared.

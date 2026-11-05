@@ -29,7 +29,7 @@ inventory records what was checked and found.
 | DocMkr | None (fonts only) | none | — | Fully local (pdf-lib) | Yes |
 | AudioMkr | On-device model assets (local) | app persistence (local) | mic (on record) | Fully local (Web Audio + WASM) | built-from-source |
 | FormatMkr | Local FFmpeg/transcription WASM | app local | — | Fully local (ffmpeg.wasm) | built-from-source |
-| ClipMkr | Pending | Pending | mic/screen (on use) | WASM | No |
+| ClipMkr | Local WASM assets | app local | mic/screen (on use) | Fully local (WebCodecs/ffmpeg/whisper) | built-from-source |
 
 > Web fonts are loaded from Google Fonts on every page. This is the only
 > expected third-party request in the shared shell; it can be removed by

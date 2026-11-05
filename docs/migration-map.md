@@ -6,7 +6,7 @@ final name, purpose, URL path, and migration status.
 
 | Tool | Purpose | Path | Status |
 |---|---|---|---|
-| ClipMkr | Video creation and editing | `apps/clipmkr/` | Planned |
+| ClipMkr | Video creation and editing | `apps/clipmkr/` | **Done** — rebuilt from source; timeline/recorder/captions; navy/gold; EN/ES; Drive stubbed |
 | AudioMkr | Audio recording and editing | `apps/audiomkr/` | **Done** — rebuilt from source; on-device transcription; bilingual (app i18n) |
 | FormatMkr | Media conversion and preparation | `apps/formatmkr/` | **Done** — rebuilt from source; ffmpeg.wasm + on-device transcription/subtitles; EN/ES (app-language); Drive save stubbed |
 | PixelMkr | Image editing | `apps/pixelmkr/` | **Done** — layers/crop/text/capture, smart+green+color bg removal, photo adjust, blur, GIF export; EN/ES (FontSplat cross-tool button dropped) |

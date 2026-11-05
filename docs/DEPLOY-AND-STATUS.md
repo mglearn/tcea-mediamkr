@@ -66,13 +66,15 @@ AudioMkr, FormatMkr, ClipMkr, DocMkr, WordWebMkr, **MarkMkr**, **CalMkr**, **Fon
 - **ClipMkr / WordWebMkr**: scrubbed `ClipSplat` UI strings and ConceptSplat/MarkdownSplat comments.
 
 ## Known remaining items (next pass)
-1. **PageMkr "suite interchange / export" options** reference sibling tools (GridMkr,
-   ShowMkr, WriteMkr, ListMkr) that **don't exist** in MediaMkr. Branding is clean, but
-   those export/import choices are non-functional — consider removing that UI, or the
-   whole `suite-interchange.mjs` / `suite-data.mjs` path.
-2. **PageMkr sample caption** names those aspirational tools. Fine as editable demo
-   content, but could be reworded to real tools or something generic.
-3. **FontMkr preset "Splat shine"** and the "Make a splash / Find your splash" copy use
+0. **PageMkr sibling-tool export options REMOVED** (GridMkr/ShowMkr/WriteMkr/ListMkr are
+   not planned). All **user-facing** references are gone: export-menu entries, the
+   data-import help, and the sample caption/alt. What remains is **internal dead code**
+   — `suite-interchange.mjs` / `suite-data.mjs` still contain those format identifiers
+   (not user-visible, not splat). Remove those modules + their imports in `exports.mjs`
+   when convenient.
+1. **PageMkr Help links** point to `docs/pagemkr-comic-studio.md` and
+   `docs/pagemkr-labels.md`, which **don't exist** → broken Help. Add the docs or repoint.
+2. **FontMkr preset "Splat shine"** and the "Make a splash / Find your splash" copy use
    the word *splash* (fine) and *Splat* (borderline — not a product name, common
    paint-splat word). Rename if zero tolerance is wanted.
 4. **`data-action="save-drive"` buttons** (e.g. PageMkr) still show though Drive is

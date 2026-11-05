@@ -159,6 +159,32 @@
     $("centerImageControls").hidden = true; $("centerImageHelp").textContent = t("help.center"); render();
   }
 
+  // Default center image: the TCEA logo composited onto a navy tile so it
+  // reads against the QR's light center. Users can replace or remove it.
+  function loadDefaultLogo() {
+    var image = new Image();
+    image.onload = function () {
+      var S = 512, pad = 56, canvas = document.createElement("canvas");
+      canvas.width = canvas.height = S;
+      var ctx = canvas.getContext("2d"), r = 72;
+      ctx.fillStyle = "#0A3476";
+      ctx.beginPath();
+      ctx.moveTo(r, 0); ctx.arcTo(S, 0, S, S, r); ctx.arcTo(S, S, 0, S, r);
+      ctx.arcTo(0, S, 0, 0, r); ctx.arcTo(0, 0, S, 0, r); ctx.closePath(); ctx.fill();
+      var maxW = S - pad * 2, maxH = S - pad * 2;
+      var scale = Math.min(maxW / image.naturalWidth, maxH / image.naturalHeight);
+      var w = image.naturalWidth * scale, h = image.naturalHeight * scale;
+      ctx.drawImage(image, (S - w) / 2, (S - h) / 2, w, h);
+      state.originalLogoData = state.logoData = canvas.toDataURL("image/png");
+      $("cartoonEffect").checked = false; $("errorLevel").value = "H";
+      $("centerImageControls").hidden = false;
+      $("centerImageHelp").textContent = t("help.center");
+      render();
+    };
+    image.onerror = function () { render(); };
+    image.src = "assets/tcea-logo-white.png";
+  }
+
   function cartoonize(dataUrl) {
     return new Promise(function (resolve, reject) {
       var image = new Image();
@@ -237,7 +263,7 @@
     $("centerImage").value = ""; $("centerImageSize").value = "18"; $("cartoonEffect").checked = false;
     $("centerImageControls").hidden = true; $("centerImageHelp").textContent = t("help.center");
     $("designName").value = "My QR code"; $("savedDesigns").value = "";
-    setContentType(); updateQuiet(); updateCenterImageSize(); $("qrContent").focus();
+    setContentType(); updateQuiet(); updateCenterImageSize(); loadDefaultLogo(); $("qrContent").focus();
   }
 
   function fileName(ext) {
@@ -300,7 +326,8 @@
       if (state.svg) canvasBlob().then(function (b) { download(b, fileName("png")); });
     };
 
-    setContentType(); refreshDesigns(); updateQuiet(); updateCenterImageSize(); render();
+    setContentType(); refreshDesigns(); updateQuiet(); updateCenterImageSize();
+    loadDefaultLogo(); render();
 
     // Re-render dynamic strings when the language changes.
     document.addEventListener("mm:langchange", function () {

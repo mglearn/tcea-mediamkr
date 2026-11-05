@@ -15,7 +15,8 @@
       // PDF.js can render using its local main-thread worker implementation.
       // A file-origin Worker cannot load a sibling file in all browsers.
       await load('./vendor/pdf.worker.min.js');
-      document.querySelector('[data-ds-app-launcher]').hidden = true;
+      const launcher = document.querySelector('[data-ds-app-launcher]');
+      if (launcher) launcher.hidden = true;
     } else {
     }
     await load('./app.bundle.js?v=20261030-v3149');

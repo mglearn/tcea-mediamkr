@@ -1,4 +1,4 @@
-// Original FontMkr plain-background cutout. GPL-3.0-only. No network or models.
+// Original WordArtMkr plain-background cutout. GPL-3.0-only. No network or models.
 self.onmessage=({data})=>{
  try{
  const {width:w,height:h,mode='auto',color='#ffffff',tolerance=24}=data,rgba=new Uint8ClampedArray(data.pixels),count=w*h;

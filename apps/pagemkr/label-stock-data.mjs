@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MPL-2.0 OR Apache-2.0
-// Derived geometry facts; see label-stocks.json and docs/pagemkr-labels.md.
+// Derived geometry facts; see label-stocks.json.
 export const LABEL_STOCK_DATA = [
   {
     "id": "L7160",

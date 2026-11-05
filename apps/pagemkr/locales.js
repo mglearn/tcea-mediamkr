@@ -123,7 +123,6 @@ publisherEncoding|Legacy text encoding|Codificación de texto antigua|Mã hóa v
 publisherEncodingHint|Keep Automatic for modern files. If older text is garbled, choose its original encoding and reopen the .pub.|Usa Automático para archivos actuales. Si el texto antiguo es ilegible, elige su codificación y vuelve a abrir.|Giữ Tự động cho tệp mới. Nếu chữ cũ lỗi, chọn mã hóa gốc rồi mở lại .pub.|اترك التلقائي للملفات الحديثة. إذا تشوه النص القديم فاختر الترميز الأصلي وأعد الفتح.|新文件保留自动。旧文件文字乱码时，请选择原始编码并重新打开。|नए फ़ाइल के लिए स्वचालित रखें। पुराने टेक्स्ट में त्रुटि हो तो मूल एन्कोडिंग चुनकर फिर खोलें।
 publisherDecoding|Decoding Publisher locally…|Decodificando Publisher localmente…|Đang giải mã Publisher cục bộ…|فك Publisher محلياً…|正在本地解码 Publisher…|Publisher स्थानीय रूप से खुल रहा है…
 automatic|Automatic|Automático|Tự động|تلقائي|自动|स्वचालित
-importSuite|Import TCEA MediaMkr content|Importar contenido TCEA MediaMkr|Nhập nội dung TCEA MediaMkr|استيراد محتوى TCEA MediaMkr|导入 TCEA MediaMkr 内容|TCEA MediaMkr सामग्री आयात करें
 importText|Import text into this frame|Importar texto en este marco|Nhập văn bản vào khung|استيراد نص إلى الإطار|导入文字到此框|इस फ़्रेम में टेक्स्ट आयात करें
 appendText|Append text from a file|Añadir texto de un archivo|Thêm văn bản từ tệp|إلحاق نص من ملف|追加文件中的文字|फ़ाइल से टेक्स्ट जोड़ें
 pasteText|Paste text into this frame|Pegar texto en este marco|Dán văn bản vào khung|لصق النص في الإطار|粘贴文字到此框|इस फ़्रेम में टेक्स्ट चिपकाएँ
@@ -461,7 +460,6 @@ exportSvg|SVG vectors & text|Vectores y texto SVG|Vector và văn bản SVG|مت
 exportIdml|InDesign IDML package|Paquete InDesign IDML|Gói InDesign IDML|حزمة InDesign IDML|InDesign IDML 包|InDesign IDML पैक
 exportSla|Scribus SLA package|Paquete Scribus SLA|Gói Scribus SLA|حزمة Scribus SLA|Scribus SLA 包|Scribus SLA पैक
 
-importSuiteContent|TCEA MediaMkr content|Contenido TCEA MediaMkr|Nội dung TCEA MediaMkr|محتوى TCEA MediaMkr|TCEA MediaMkr 内容|TCEA MediaMkr सामग्री
 importTextBox|Text into selected text box|Texto en el cuadro seleccionado|Văn bản vào hộp đã chọn|نص في المربع المحدد|文本导入选中文本框|चुने हुए टेक्स्ट बॉक्स में पाठ
 fontCategory|Font category|Categoría de fuente|Loại phông chữ|فئة الخط|字体类别|फ़ॉन्ट श्रेणी
 serif|Serif|Con serifas|Có chân|ذو زوائد|衬线|सेरिफ़

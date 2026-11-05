@@ -1,4 +1,4 @@
-/* FontMkr — English + Spanish (auto-tags matching text nodes). */
+/* WordArtMkr — English + Spanish (auto-tags matching text nodes). */
 (function(){
 "use strict";
 var es={
@@ -15,7 +15,7 @@ var es={
 };
 var en={}; Object.keys(es).forEach(function(k){en[k]=k;});
 if(!window.WidgetI18n)return;
-window.WidgetI18n.register("fontmkr",{en:en,es:es});
+window.WidgetI18n.register("wordartmkr",{en:en,es:es});
 function tag(){
  var w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT),ns=[];while(w.nextNode())ns.push(w.currentNode);
  ns.forEach(function(n){var t=n.textContent.trim(),p=n.parentElement;if(!p||p.closest("script,style,textarea,select")||!Object.prototype.hasOwnProperty.call(en,t))return;if(!p.children.length)p.dataset.i18n=t;else{var sp=document.createElement("span");sp.dataset.i18n=t;sp.textContent=t;n.replaceWith(sp);}});

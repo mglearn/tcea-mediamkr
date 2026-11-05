@@ -45,7 +45,7 @@ python3 scripts/check-licenses.py   # required legal files present
 
 ## Status — verified working (browser, Nov 2026)
 Homepage, CodeMkr, BGMkr, GIFMkr, MemeMkr, PuzzleMkr, PlotMkr, PixelMkr, BingoMkr,
-AudioMkr, FormatMkr, ClipMkr, DocMkr, WordWebMkr, **MarkMkr**, **CalMkr**, **FontMkr**,
+AudioMkr, FormatMkr, ClipMkr, DocMkr, WordWebMkr, **MarkMkr**, **CalMkr**, **WordArtMkr**,
 **PageMkr** — all load and run; whole-collection branding + links clean.
 
 ### Fixed this pass
@@ -54,33 +54,37 @@ AudioMkr, FormatMkr, ClipMkr, DocMkr, WordWebMkr, **MarkMkr**, **CalMkr**, **Fon
   replacing the GenAI example (EN+ES); dropped the non-functional Google Drive button.
 - **CalMkr**: replaced the paint-splat blob icon with a clean navy/gold calendar.
 - **PageMkr & CalMkr**: created `apps/shared/` (photo-blur, file-bridge, office-text,
-  word-legacy runtime, fontmkr-launcher, Drive stubs) — these imports were **missing**,
+  word-legacy runtime, wordartmkr-launcher, Drive stubs) — these imports were **missing**,
   so both tools failed to load. PageMkr now loads.
 - **PageMkr sample**: de-splatted all suite text (→ Mkr names), replaced 3 embedded
   SplatWorks screenshots with clean navy/gold images, added `mediamkr-logo.png`,
-  removed orphan `splatworks-logo.png`, fixed the FontMkr insert button.
-- **FontMkr**: copied the 7 referenced fonts into `apps/fontmkr/fonts/` (were fetched
+  removed orphan `splatworks-logo.png`, fixed the WordArtMkr insert button.
+- **WordArtMkr**: copied the 7 referenced fonts into `apps/wordartmkr/fonts/` (were fetched
   from a broken `../../mediamkr/layoutsplat/fonts/` path — all fonts were failing).
 - **DocMkr**: scrubbed every `.csplat`/CipherSplat/SplatPrivacy reference (Protect
   feature was dropped earlier).
 - **ClipMkr / WordWebMkr**: scrubbed `ClipSplat` UI strings and ConceptSplat/MarkdownSplat comments.
 
+### Also done (cleanup pass)
+- **FontMkr renamed to WordArtMkr** everywhere (it came from FontSplat; the new name is
+  descriptive): folder `apps/wordartmkr/`, launcher, tile image, display name, embed
+  protocol tokens (`wordartmkr-*`), project id, homepage card + i18n.
+- **Removed the dead sibling-suite code** entirely: `suite-interchange.mjs`,
+  `suite-data.mjs`, `suite-data-src.mjs` deleted and unwired from `exports.mjs`,
+  `publishing.mjs`, `text-import.mjs`, `merge-ui.mjs`, `publishing-ui.mjs` + dead i18n
+  keys. Mail-merge (CSV/TSV/Excel) and text import still work; only the GridMkr/ListMkr/
+  WriteMkr/ShowMkr JSON paths are gone.
+- **Removed references to non-existent docs** (`pagemkr-comic-studio.md`, `pagemkr-labels.md`)
+  from code comments.
+
 ## Known remaining items (next pass)
-0. **PageMkr sibling-tool export options REMOVED** (GridMkr/ShowMkr/WriteMkr/ListMkr are
-   not planned). All **user-facing** references are gone: export-menu entries, the
-   data-import help, and the sample caption/alt. What remains is **internal dead code**
-   — `suite-interchange.mjs` / `suite-data.mjs` still contain those format identifiers
-   (not user-visible, not splat). Remove those modules + their imports in `exports.mjs`
-   when convenient.
-1. **PageMkr Help links** point to `docs/pagemkr-comic-studio.md` and
-   `docs/pagemkr-labels.md`, which **don't exist** → broken Help. Add the docs or repoint.
-2. **FontMkr preset "Splat shine"** and the "Make a splash / Find your splash" copy use
+1. **WordArtMkr preset "Splat shine"** and the "Make a splash / Find your splash" copy use
    the word *splash* (fine) and *Splat* (borderline — not a product name, common
    paint-splat word). Rename if zero tolerance is wanted.
-4. **`data-action="save-drive"` buttons** (e.g. PageMkr) still show though Drive is
+2. **`data-action="save-drive"` buttons** (e.g. PageMkr) still show though Drive is
    stubbed (they surface a clear "use Download" error). Consider hiding for polish,
    like MarkMkr's was removed.
-5. **FontMkr bold/italic variants** aren't copied (only Regular weights) — canvas
+3. **WordArtMkr bold/italic variants** aren't copied (only Regular weights) — canvas
    synthesizes bold/italic, so it works, but true cuts could be added.
-6. **localStorage note**: PageMkr autosaves; if you tested the old sample, clear
+4. **localStorage note**: PageMkr autosaves; if you tested the old sample, clear
    `pagemkr.autosave.v1` to see the clean starter (fresh users are unaffected).

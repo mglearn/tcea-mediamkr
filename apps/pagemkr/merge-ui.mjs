@@ -34,10 +34,7 @@ export function setupMerge(api) {
     if (file.size > 20000000) { data = { fields: [], records: [] }; sources = null; workbook = null; update(); return status('mergeDataError'); }
     try {
       sources = null; workbook = null;
-      if (/\.json$/i.test(file.name)) {
-        const { nativeMergeSources } = await import('./suite-data.mjs'); sources = nativeMergeSources(JSON.parse(await file.text()));
-        $('mergeSheet').replaceChildren(...sources.map((source, index) => new Option(source.name, index))); $('sheetLabel').hidden = false; selectSheet();
-      } else if (/\.xlsx$/i.test(file.name)) {
+      if (/\.xlsx$/i.test(file.name)) {
         if (!window.ExcelJS) await new Promise((resolve, reject) => { const script = document.createElement('script'); script.src = 'vendor/exceljs.min.js'; script.onload = resolve; script.onerror = reject; document.head.append(script); });
         workbook = new ExcelJS.Workbook(); await workbook.xlsx.load(await file.arrayBuffer()); $('mergeSheet').replaceChildren(); workbook.worksheets.forEach(sheet => $('mergeSheet').add(new Option(sheet.name, sheet.id))); if (!workbook.worksheets.length) throw Error('No worksheets.'); $('sheetLabel').hidden = false; selectSheet();
       } else { workbook = null; $('sheetLabel').hidden = true; data = parseDelimited(await file.text(), /\.tsv$/i.test(file.name) ? '\t' : ','); update(); }

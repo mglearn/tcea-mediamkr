@@ -3,7 +3,6 @@ import { exportSvg } from './compatibility.mjs';
 import { loadScript } from './media.mjs';
 import { exportDesktop } from './desktop-formats.mjs';
 import { portableHtml } from './fonts.mjs';
-import { exportSuite } from './suite-interchange.mjs';
 import {readingObjects} from './publication-fields.mjs';
 import {appendRich} from './rich.mjs';
 import {applyTextStyle} from './layout.mjs';
@@ -79,7 +78,6 @@ export async function exportPublication(kind, doc, layout, options = {}) {
     const canvas = await pageCanvas({ ...doc, width: object.w, height: object.h }, { objects: [{ ...object, x: 0, y: 0, rotation: 0, opacity: 1 }] }, layout, options.ppi || 300, 0, null);
     try { return { blob: await canvasBlob(canvas), width: canvas.width, height: canvas.height }; } finally { canvas.width = canvas.height = 1; }
   });
-  if (['writemkr', 'showmkr', 'gridmkr', 'listmkr'].includes(kind)) return exportSuite(kind, doc, layout);
   if (kind === 'json') return { blob: new Blob([JSON.stringify(doc, null, 2)], { type: 'application/json' }), extension: '.pagemkr.json' };
   if (kind === 'pdf') return { blob: await pdfProof(doc, layout, options), extension: '.pdf' };
   if (kind === 'reading') return { blob: new Blob([await portableHtml(readingHtml({ ...doc, pages: pages.map(i => doc.pages[i]) }), doc)], { type: 'text/html;charset=utf-8' }), extension: '.reading.html' };

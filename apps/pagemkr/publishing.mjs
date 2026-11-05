@@ -9,7 +9,6 @@ import { setupMerge } from './merge-ui.mjs';
 import { setupExports } from './export-ui.mjs';
 import { setupContextMenu } from './context-menu.mjs';
 import { setupTemplateLibrary } from './template-library.mjs';
-import { setupSuiteImport } from './suite-interchange.mjs';
 import { setupLabelSettings } from './label-settings.mjs';
 import { setupBackgroundLibrary } from './background-library.mjs';
 import { setupFontTools } from './local-fonts.mjs';
@@ -25,7 +24,6 @@ export function setupPublishing(api) {
   const library = setupTemplateLibrary(api);
   const characters = setupCharacterLibrary(api);
   const backgrounds = setupBackgroundLibrary(api);
-  const suite = setupSuiteImport(api);
   const labels = setupLabelSettings(api);
   const fontTools=setupFontTools(api),readingOrder=setupReadingOrder(api);
   const bounds = () => { const list = members(); if (!list.length) return null; const x = Math.min(...list.map(o => o.x)), y = Math.min(...list.map(o => o.y)); return { x, y, w: Math.max(...list.map(o => o.x + o.w)) - x, h: Math.max(...list.map(o => o.y + o.h)) - y }; };
@@ -155,7 +153,6 @@ export function setupPublishing(api) {
     }
     if (name === 'unlinkTextBoxes') { if (o?.type === 'text' && !o.locked) try { mutate(() => unlinkFrame(d, o.id, api.getLayout())); } catch (e) { api.showReport([e.message]); } return true; }
     if (name === 'whiteboardBackgrounds') { await backgrounds.open(); return true; }
-    if (name === 'importSuite') { suite.open(); return true; }
     if(name==='comicCharacters'){characters.open();return true;}
     if (name === 'templateLibrary' || name === 'browseTemplates' || name === 'templates' || ['labelTemplates','cardTemplates','menuTemplates','ebookTemplates','comicTemplates','bookTemplates'].includes(name)) { if ($('templateDialog').open) $('templateDialog').close(); library.open({labelTemplates:'labels',cardTemplates:'business-card',menuTemplates:'menu',ebookTemplates:'ebook',bookTemplates:'book',comicTemplates:'comic'}[name]); return true; }
     if(name==='labelSettings'){labels.open();return true;}

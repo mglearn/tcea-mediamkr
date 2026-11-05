@@ -40,7 +40,7 @@
       "app.markmkr.desc": "Edit, clean, and convert Markdown, and strip common AI writing tells.",
       "app.wordwebmkr.desc": "Build concept maps and word webs with connected nodes and an outline.",
       "app.pagemkr.desc": "Design printable newsletters, flyers, and books with page layout and templates.",
-      "app.fontmkr.desc": "Create word art and text effects — bend, color, outline, and export lettering.",
+      "app.wordartmkr.desc": "Create word art and text effects — bend, color, outline, and export lettering.",
       "cat.writing": "Writing and Planning",
 
       "quickstart.title": "Quick start",
@@ -93,7 +93,7 @@
       "app.markmkr.desc": "Edita, limpia y convierte Markdown, y elimina las marcas típicas de escritura de IA.",
       "app.wordwebmkr.desc": "Crea mapas conceptuales y redes de palabras con nodos conectados y un esquema.",
       "app.pagemkr.desc": "Diseña boletines, folletos y libros imprimibles con diseño de página y plantillas.",
-      "app.fontmkr.desc": "Crea arte con palabras y efectos de texto: curva, colorea, contornea y exporta letras.",
+      "app.wordartmkr.desc": "Crea arte con palabras y efectos de texto: curva, colorea, contornea y exporta letras.",
       "cat.writing": "Escritura y planeación",
 
       "quickstart.title": "Inicio rápido",

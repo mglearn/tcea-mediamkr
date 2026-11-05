@@ -1,6 +1,6 @@
 import {prepareTemplate} from './template-fill.mjs';
 import {openPhotoBlur} from '../shared/photo-blur.js';
-import {openFontMkr} from '../shared/fontmkr-launcher.js';
+import {openWordArtMkr} from '../shared/wordartmkr-launcher.js';
 import {TEMPLATE_ASSETS} from './template-assets.mjs';
 import { loadStarterPublication } from './starter.mjs';
 import { saveToGoogleDrive } from '../shared/google-drive.js?v=20261015-creative-drive';
@@ -347,7 +347,7 @@ async function action(name) {
       }});}catch(error){showImportReport([error.message||'The photo blur editor could not open.']);}break;
     }
     case 'image': $('pictureInput').click(); break;
-    case 'fontmkr': openFontMkr({text:doc.stories[o?.storyId]?.text?.slice(0,220)||'Make some word art',onInsert:async art=>{if(!await importPicture(art.file,null,{alt:art.alt}))throw Error('The artwork could not be placed.');}});break;
+    case 'wordartmkr': openWordArtMkr({text:doc.stories[o?.storyId]?.text?.slice(0,220)||'Make some word art',onInsert:async art=>{if(!await importPicture(art.file,null,{alt:art.alt}))throw Error('The artwork could not be placed.');}});break;
     case 'video': $('videoInput').click(); break;
     case 'audio': $('audioInput').click(); break;
     case 'rect': case 'ellipse': case 'line': addObject(shape(doc.margin + 18, doc.margin + 18, Math.min(150, doc.width - 2 * doc.margin), name === 'line' ? 6 : 100, '#147AD6', name)); break;

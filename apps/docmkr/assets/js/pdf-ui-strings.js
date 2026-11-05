@@ -267,7 +267,7 @@ window.MediaMkrPdfStrings = { "es": {
     "Drop PDF, DOCX, ODT, PPTX, EPUB, Markdown, text, or images here. Conversion happens on this device.": "Suelta PDF, DOCX, ODT, PPTX, EPUB, Markdown, texto o imágenes aquí. La conversión se realiza en este dispositivo.",
     "Images become PDF pages. Animated images use their first frame.": "Las imágenes se convierten en páginas PDF. Las animadas usan su primer fotograma.",
     "Text is laid out for PDF. Linked images are not fetched.": "El texto se adapta al PDF. No se descargan imágenes enlazadas.",
-    "Slides become page images. Complex layouts, themes, charts, and animations may differ.": "Las diapositivas se convierten en imágenes de página. Diseños complejos, temas, gráficos y animaciones pueden variar.",
+    "Slides become page images. Complex layouts, themes, charts, and animations may differ. For the closest match, export your slides to PDF in PowerPoint, Google Slides, or LibreOffice first, then open that PDF here.": "Las diapositivas se convierten en imágenes de página. Diseños complejos, temas, gráficos y animaciones pueden variar. Para el mejor resultado, exporta tus diapositivas a PDF en PowerPoint, Google Slides o LibreOffice primero y luego abre ese PDF aquí.",
     "Document text and embedded images are reflowed. Complex layouts and styling may differ.": "El texto y las imágenes incrustadas se reorganizan. El diseño y los estilos complejos pueden variar.",
     "{file} converted to PDF. {count} pages.": "{file} convertido a PDF. {count} páginas.",
     "Choose a file smaller than 50 MB.": "Elige un archivo de menos de 50 MB.",

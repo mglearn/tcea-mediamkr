@@ -31,7 +31,7 @@ export function openBackgroundStudio({ sources, mode = 'photo', apply, download 
         <p class="bs-local">White and color removal work without model downloads or external connections.</p>
         <label for="bs-background">Layer / export background</label><select id="bs-background"><option value="transparent">Transparent</option><option value="white">White</option><option value="color">Custom color</option><option id="bs-image-option" value="image" disabled>Image background · choose below</option></select>
         <p><a href="#bs-replacement">Choose a new image background</a> below the previews.</p>
-        <label id="bs-fill-label" for="bs-fill" hidden>Background color</label><input id="bs-fill" type="color" value="#7956c9" hidden>
+        <label id="bs-fill-label" for="bs-fill" hidden>Background color</label><input id="bs-fill" type="color" value="#147AD6" hidden>
         <label for="bs-format">Download format</label><select id="bs-format"><option value="png">PNG · keeps transparency</option><option value="jpeg">JPEG · solid background</option></select><p id="bs-format-note">Apply uses your chosen background. Transparent keeps the cutout alone.</p>
       </section>
       <section class="bs-images" aria-label="Before and after">

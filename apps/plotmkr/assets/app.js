@@ -44,12 +44,12 @@ const THEMES = {
     ink: "#172033",
   },
   bright: {
-    colors: ["#ef4444", "#f59e0b", "#22c55e", "#06b6d4", "#147AD6", "#ec4899"],
+    colors: ["#ef4444", "#f59e0b", "#22c55e", "#06b6d4", "#147AD6", "#147AD6"],
     background: "#fffdf4",
     ink: "#172033",
   },
   pastel: {
-    colors: ["#147AD6", "#f9a8d4", "#93c5fd", "#86efac", "#fde68a", "#fdba74"],
+    colors: ["#147AD6", "#9cc4ec", "#93c5fd", "#86efac", "#fde68a", "#fdba74"],
     background: "#ffffff",
     ink: "#3f3f46",
   },
@@ -59,7 +59,7 @@ const THEMES = {
     ink: "#1e3a5f",
   },
   chalkboard: {
-    colors: ["#fef08a", "#86efac", "#93c5fd", "#f9a8d4"],
+    colors: ["#fef08a", "#86efac", "#93c5fd", "#9cc4ec"],
     background: "#18352f",
     ink: "#ffffff",
   },

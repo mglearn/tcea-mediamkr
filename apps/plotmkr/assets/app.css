@@ -121,7 +121,7 @@ body {
 }
 .examples-button {
   width: 100%;
-  border-color: #b7a3f5;
+  border-color: #9cc4ec;
   background: #f1ecff;
   color: #0A3476;
 }
@@ -514,7 +514,7 @@ footer {
   margin-top: 2rem;
   padding: 1.3rem;
   text-align: center;
-  background: #21173c;
+  background: #082759;
   color: #e8e1f5;
 }
 button:focus-visible,

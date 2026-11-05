@@ -45,7 +45,7 @@ main {
 .intro {
   background: linear-gradient(135deg, #eee7ff, #fff);
   padding: clamp(1.5rem, 4vw, 3rem);
-  border: 1px solid #ddd2ff;
+  border: 1px solid #9cc4ec;
   border-radius: 24px;
 }
 h1 {
@@ -112,7 +112,7 @@ h1 {
 }
 .starter-grid article {
   padding: 1rem;
-  border: 1px solid #ddd2ff;
+  border: 1px solid #9cc4ec;
   border-radius: 14px;
   background: var(--soft);
 }

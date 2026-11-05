@@ -1,0 +1,73 @@
+/* CodeMkr — app-specific layout, built on the shared TCEA theme tokens. */
+
+.cm-intro { margin-bottom: 24px; }
+.cm-intro .mm-eyebrow { color: var(--tcea-blue); }
+.cm-intro h1 { font-family: var(--font-serif); font-size: clamp(1.6rem, 3.5vw, 2.3rem); margin: 6px 0 8px; color: var(--tcea-deep-navy); }
+.cm-intro p { max-width: 640px; color: var(--tcea-muted); margin: 0; }
+
+.cm-studio {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: 24px;
+  align-items: start;
+}
+@media (max-width: 860px) { .cm-studio { grid-template-columns: 1fr; } }
+
+.cm-controls {
+  background: var(--tcea-panel);
+  border: 1px solid var(--tcea-line);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.cm-controls label { display: block; font-weight: 600; font-size: 0.9rem; color: var(--tcea-deep-navy); }
+.cm-controls label.check { font-weight: 500; display: flex; align-items: center; gap: 8px; }
+.cm-controls input[type="url"],
+.cm-controls input[type="text"],
+.cm-controls input[type="email"],
+.cm-controls input[type="tel"],
+.cm-controls select,
+.cm-controls input[type="range"] {
+  width: 100%; margin-top: 5px;
+  font: inherit; padding: 9px 11px;
+  border: 1px solid var(--tcea-line); border-radius: var(--radius-sm);
+  background: #fff; color: var(--tcea-text);
+}
+.cm-controls input[type="range"] { padding: 0; }
+.cm-controls input[type="color"] { width: 100%; height: 40px; margin-top: 5px; border: 1px solid var(--tcea-line); border-radius: var(--radius-sm); background: #fff; }
+.cm-controls input[type="file"] { width: 100%; margin-top: 5px; font-size: 0.9rem; }
+.cm-controls fieldset { border: 1px solid var(--tcea-line); border-radius: var(--border-radius); padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+.cm-controls legend { font-weight: 700; color: var(--tcea-navy); padding: 0 6px; }
+.cm-controls .two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.cm-controls output { font-size: 0.85rem; color: var(--tcea-muted); }
+.cm-controls small { color: var(--tcea-muted); font-size: 0.82rem; }
+
+.cm-button-row { display: flex; gap: 10px; flex-wrap: wrap; }
+.cm-controls button,
+.cm-export button {
+  font: inherit; font-weight: 700; font-size: 0.92rem;
+  padding: 9px 16px; border-radius: var(--radius-sm);
+  border: 1px solid var(--tcea-line); background: #fff; color: var(--tcea-navy); cursor: pointer;
+}
+.cm-controls button:hover, .cm-export button:hover { background: var(--tcea-pale-blue); }
+.cm-controls button.primary,
+.cm-export button.primary { background: var(--tcea-gold); color: var(--tcea-deep-navy); border-color: transparent; }
+.cm-controls button.primary:hover, .cm-export button.primary:hover { background: #ffc266; }
+
+.cm-preview { display: flex; flex-direction: column; gap: 14px; position: sticky; top: 16px; }
+.cm-preview-card {
+  background: #fff; border: 1px solid var(--tcea-line); border-radius: var(--radius-lg);
+  padding: 20px; text-align: center;
+}
+.cm-preview-card #qrPreview { display: grid; place-items: center; min-height: 240px; }
+.cm-preview-card #qrPreview svg { max-width: 100%; height: auto; }
+.cm-preview-card #scanMessage { margin: 12px 0 0; color: var(--tcea-muted); font-size: 0.9rem; }
+.cm-export { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.cm-preview details { background: #fff; border: 1px solid var(--tcea-line); border-radius: var(--radius-sm); padding: 10px 14px; }
+.cm-preview summary { cursor: pointer; font-weight: 600; color: var(--tcea-navy); }
+.cm-preview code { display: block; margin-top: 8px; word-break: break-all; color: var(--tcea-text); font-family: var(--font-mono); font-size: 0.82rem; }
+
+.cm-help { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 36px; }
+.cm-help article { background: var(--tcea-pale-blue); border: 1px solid var(--tcea-line); border-radius: var(--border-radius); padding: 16px 18px; }
+.cm-help h2 { margin: 0 0 6px; font-size: 1.05rem; color: var(--tcea-deep-navy); }
+.cm-help p { margin: 0; color: var(--tcea-text); font-size: 0.92rem; }

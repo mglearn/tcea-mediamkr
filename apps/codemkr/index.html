@@ -4,8 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <title>CodeMkr — TCEA MediaMkr</title>
-<meta name="description" content="CodeMkr — QR code generation. Part of TCEA MediaMkr, free creative tools for educators.">
+<meta name="description" content="CodeMkr — create and download static QR codes for links, text, email, phone, and Wi-Fi, entirely in your browser. Part of TCEA MediaMkr.">
 <link rel="icon" type="image/svg+xml" href="../../assets/icons/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,37 +14,116 @@
 <link rel="stylesheet" href="../../assets/css/tcea-theme.css">
 <link rel="stylesheet" href="../../assets/css/layout.css">
 <link rel="stylesheet" href="../../assets/css/components.css">
+<link rel="stylesheet" href="assets/app.css">
 </head>
 <body>
-<a class="skip-link" href="#main">Skip to content</a>
+<a class="skip-link" href="#qrContent" data-i18n="skip">Skip to QR settings</a>
 <div class="mm-shell">
   <header class="mm-header">
     <div class="mm-header-inner">
       <a class="mm-brand" href="../../index.html"><span class="mm-mark" aria-hidden="true">M</span><span>TCEA MediaMkr</span></a>
       <span class="mm-app-title">CodeMkr</span>
       <nav aria-label="Primary">
-        <a href="../../index.html">Home</a>
-        <a href="../../docs/user-guide.md">Help</a>
-        <a class="mm-cta" href="https://tcea.org/" target="_blank" rel="noopener">Visit TCEA.org</a>
+        <a href="../../index.html" data-i18n="nav.home">Home</a>
+        <a href="#help" data-i18n="nav.help">Help</a>
+        <label class="visually-hidden" for="mm-lang">Language</label>
+        <select id="mm-lang" class="mm-lang" data-mm-lang aria-label="Language"></select>
+        <a class="mm-cta" href="https://tcea.org/" target="_blank" rel="noopener" data-i18n="nav.tcea">Visit TCEA.org</a>
       </nav>
     </div>
   </header>
+
   <main id="main" class="mm-main">
-    <section class="mm-hero">
-      <div class="mm-hero-inner">
-        <span class="mm-eyebrow">TCEA MediaMkr</span>
-        <h1>CodeMkr</h1>
-        <p class="mm-tagline">QR code generation</p>
-        <p class="mm-intro">This tool is being prepared for TCEA MediaMkr. Check back soon.</p>
-        <p style="margin-top:20px"><a class="mm-btn mm-btn-primary" href="../../index.html">Back to MediaMkr Home</a></p>
-      </div>
-    </section>
+    <div class="mm-wrap">
+      <section class="cm-intro">
+        <p class="mm-eyebrow" data-i18n="intro.eyebrow">QR codes without the clutter</p>
+        <h1 data-i18n="intro.h1">Create and download QR codes.</h1>
+        <p data-i18n="intro.p">Make polished QR codes right in your browser. Everything is generated and exported on this device — nothing is uploaded.</p>
+      </section>
+
+      <section class="cm-studio" aria-label="QR code studio">
+        <form id="qrForm" class="cm-controls">
+          <div id="standardFields">
+            <label data-i18n="f.contentType">Content type
+              <select id="contentType">
+                <option value="url" data-i18n="ct.url">Website URL</option>
+                <option value="text" data-i18n="ct.text">Plain text</option>
+                <option value="email" data-i18n="ct.email">Email</option>
+                <option value="phone" data-i18n="ct.phone">Phone</option>
+                <option value="wifi" data-i18n="ct.wifi">Wi-Fi</option>
+              </select>
+            </label>
+            <label id="primaryField">Destination URL<input id="qrContent" type="url" value="https://tcea.org/" required spellcheck="false"></label>
+            <div id="wifiFields" hidden>
+              <label data-i18n="f.wifiName">Network name<input id="wifiName" autocomplete="off"></label>
+              <label data-i18n="f.wifiPassword">Password<input id="wifiPassword" autocomplete="off"></label>
+              <label data-i18n="f.wifiSecurity">Security<select id="wifiSecurity"><option>WPA</option><option>WEP</option><option value="nopass" data-i18n="sec.none">None</option></select></label>
+              <label class="check"><input id="wifiHidden" type="checkbox"> <span data-i18n="f.wifiHidden">Hidden network</span></label>
+            </div>
+          </div>
+
+          <fieldset>
+            <legend data-i18n="style.legend">Style</legend>
+            <label data-i18n="f.template">Template
+              <select id="template">
+                <option value="classic" data-i18n="tpl.classic">Classic</option>
+                <option value="custom" data-i18n="tpl.custom">Custom colors</option>
+              </select>
+            </label>
+            <div class="two">
+              <label data-i18n="f.dots">Dots<input id="darkColor" type="color" value="#172033"></label>
+              <label data-i18n="f.background">Background<input id="lightColor" type="color" value="#ffffff"></label>
+            </div>
+            <div class="two">
+              <label data-i18n="f.size">Size<select id="qrSize"><option value="256">256 px</option><option value="512" selected>512 px</option><option value="1024">1024 px</option></select></label>
+              <label data-i18n="f.error">Error correction<select id="errorLevel"><option value="L" data-i18n="err.L">Low</option><option value="M" selected data-i18n="err.M">Medium</option><option value="Q" data-i18n="err.Q">Quartile</option><option value="H" data-i18n="err.H">High</option></select></label>
+            </div>
+            <label data-i18n="f.quiet">Quiet zone<input id="quietZone" type="range" min="2" max="8" value="4"><output id="quietOutput">4 modules</output></label>
+            <label data-i18n="f.centerImage">Custom center image<input id="centerImage" type="file" accept="image/png,image/jpeg,image/webp"></label>
+            <div id="centerImageControls" hidden>
+              <label data-i18n="f.centerImageSize">Center image size<input id="centerImageSize" type="range" min="12" max="24" value="18"><output id="centerImageSizeOutput">18% of QR width</output></label>
+              <label class="check"><input id="cartoonEffect" type="checkbox"> <span data-i18n="f.cartoon">Cartoon effect</span></label>
+              <button id="removeCenterImage" type="button" data-i18n="btn.removeCenter">Remove center image</button>
+            </div>
+            <small id="centerImageHelp" data-i18n="help.center">PNG, JPEG, or WebP, up to 2 MB. The image stays on this device. Test the finished QR before sharing.</small>
+          </fieldset>
+
+          <label data-i18n="f.designName">Design name<input id="designName" value="My QR code" maxlength="80"></label>
+          <div class="cm-button-row">
+            <button id="saveDesign" type="button" data-i18n="btn.save">Save design locally</button>
+            <button id="newDesign" type="button" data-i18n="btn.reset">Reset</button>
+          </div>
+          <label data-i18n="f.saved">Saved designs<select id="savedDesigns"><option value="" data-i18n="opt.chooseSaved">Choose a saved design…</option></select></label>
+        </form>
+
+        <section class="cm-preview" aria-label="QR code preview">
+          <div class="cm-preview-card">
+            <div id="qrPreview" aria-label="Generated QR code"></div>
+            <p id="scanMessage" role="status" aria-live="polite" data-i18n="preview.ready">Ready to scan</p>
+          </div>
+          <div class="cm-export">
+            <button id="copyPng" class="primary" type="button" data-i18n="btn.copyPng">Copy PNG</button>
+            <button id="downloadPng" type="button" data-i18n="btn.downloadPng">Download PNG</button>
+            <button id="copySvg" type="button" data-i18n="btn.copySvg">Copy SVG</button>
+            <button id="downloadSvg" type="button" data-i18n="btn.downloadSvg">Download SVG</button>
+          </div>
+          <details><summary data-i18n="preview.contents">QR contents</summary><code id="payloadPreview"></code></details>
+        </section>
+      </section>
+
+      <section id="help" class="cm-help">
+        <article><h2 data-i18n="help.h1">Standard QR</h2><p data-i18n="help.p1">The destination is stored directly in the QR. Generation and export stay entirely on this device.</p></article>
+        <article><h2 data-i18n="help.h2">Print safely</h2><p data-i18n="help.p2">Keep a clear quiet zone, use strong contrast, and test the final printed code with more than one device before distributing it. Center images cover QR modules, so smaller is safer.</p></article>
+        <article><h2 data-i18n="help.h3">Center images</h2><p data-i18n="help.p3">Adding a logo lowers how much of the code is readable, so high error correction is turned on automatically. Always scan-test before sharing.</p></article>
+      </section>
+    </div>
   </main>
+
   <footer class="mm-footer">
     <div class="mm-footer-inner">
       <span class="mm-footer-brand">TCEA MediaMkr | Creative Tools for Educators</span>
       <nav aria-label="Footer">
-        <a href="../../index.html">MediaMkr Home</a>
+        <a href="../../index.html" data-i18n="nav.home">Home</a>
         <a href="https://tcea.org/" target="_blank" rel="noopener">TCEA.org</a>
         <a href="../../PRIVACY.md">Privacy</a>
         <a href="../../ACCESSIBILITY.md">Accessibility</a>
@@ -52,5 +132,12 @@
     </div>
   </footer>
 </div>
+
+<canvas id="renderCanvas" hidden></canvas>
+<script src="../../assets/js/i18n.js"></script>
+<script src="assets/codemkr.i18n.js"></script>
+<script src="../../assets/js/navigation.js"></script>
+<script src="assets/vendor/qrcode.js"></script>
+<script src="assets/app.js"></script>
 </body>
 </html>

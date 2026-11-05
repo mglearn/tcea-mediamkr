@@ -18,7 +18,7 @@ inventory records what was checked and found.
 
 | Tool | Network requests | Local storage | Camera/mic | Processing | Verified |
 |---|---|---|---|---|---|
-| CodeMkr | Pending | Pending | — | Pending | No |
+| CodeMkr | None (fonts only) | `codemkr.designs.v1` (saved designs, opt-in) | — | Fully local (qrcode.js) | Yes |
 | MemeMkr | Pending | Pending | — | Pending | No |
 | PuzzleMkr | Pending | Pending | — | Pending | No |
 | PlotMkr | Pending | Pending | — | Pending | No |

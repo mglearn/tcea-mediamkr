@@ -12,7 +12,7 @@ final name, purpose, URL path, and migration status.
 | PixelMkr | Image editing | `apps/pixelmkr/` | Planned |
 | BGMkr | Background removal and replacement | `apps/bgmkr/` | Planned |
 | PuzzleMkr | Interactive classroom puzzles | `apps/puzzlemkr/` | Planned |
-| CodeMkr | QR code generation | `apps/codemkr/` | Planned |
+| CodeMkr | QR code generation | `apps/codemkr/` | **Done** — static only; tracking-redirect backend removed; EN/ES |
 | MemeMkr | Meme and captioned-image creation | `apps/mememkr/` | Planned |
 | GIFMkr | Animated GIF creation | `apps/gifmkr/` | Planned |
 | PlotMkr | Charts, graphs, and data visualization | `apps/plotmkr/` | Planned |

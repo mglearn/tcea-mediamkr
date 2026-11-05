@@ -18,7 +18,13 @@ or notice file alongside the code.
 ## Per-application
 
 ### CodeMkr
-_To be recorded on migration (QR generation library)._
+| Component | Version | Purpose | License | Source |
+|---|---|---|---|---|
+| qrcode.js (Kazuhiko Arase) | bundled | QR code generation | MIT | http://www.d-project.com/ |
+
+The MIT copyright/license header is preserved in
+`apps/codemkr/assets/vendor/qrcode.js`. "QR Code" is a registered trademark of
+DENSO WAVE INCORPORATED.
 
 ### MemeMkr
 _To be recorded on migration._

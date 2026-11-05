@@ -1,13 +1,13 @@
 import { parseXml, fontFamily } from './compatibility.mjs';
 import { readZip } from './desktop-formats.mjs';
-import { writeSplatText } from './suite-interchange.mjs';
+import { writeMkrText } from './suite-interchange.mjs';
 const elements = (el, name) => [...el.getElementsByTagNameNS('*', name)];
 const attr = (el, name) => [...(el?.attributes || [])].find(a => a.localName === name)?.value;
 export const TEXT_ACCEPT = '.txt,.md,.markdown,.csv,.tsv,.html,.htm,.doc,.docx,.odt,.json,text/plain,text/markdown';
 export async function importText(file,customFonts={}) {
   if (!file.size || file.size > 20000000) throw Error('Choose a text/document file under 20 MB.');
   const ext = file.name.split('.').at(-1).toLowerCase(); let text = '', marks = [], notes = [];
-  if (ext === 'json') return writeSplatText(JSON.parse(await file.text()));
+  if (ext === 'json') return writeMkrText(JSON.parse(await file.text()));
   if (ext === 'doc') {
     const { decodeLegacyWord } = await import('../shared/word-legacy/import.mjs');
     const { legacyWordXmlToHtml } = await import('../shared/office-text.mjs');

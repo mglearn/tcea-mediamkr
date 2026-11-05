@@ -22,13 +22,18 @@ PROHIBITED = [
     r"videosplat", r"audiosplat", r"mediasplat", r"imagesplat",
     r"backdropsplat", r"memepuzzle", r"qrsplat", r"memesplat",
     r"gifsplat", r"graphsplat", r"pdfsplat",
+    # Office-suite sibling app names that must never appear publicly:
+    r"writesplat", r"showsplat", r"gridsplat", r"listsplat",
+    r"layoutsplat", r"fontsplat", r"ccsplat", r"ciphersplat",
+    # Generic catch-all: any remaining "*splat" token:
+    r"\b[a-z]{3,}splat\b",
     # Old candidate names to avoid as published titles:
     r"\bVideoMkr\b", r"\bImageMkr\b", r"\bQRmkr\b",
     r"\bChartMkr\b", r"\bGraphMkr\b", r"\bAGIFMaker\b",
 ]
 
 # Files/dirs excluded from scanning.
-SKIP_DIRS = {".git", "node_modules", "test-results", ".wrangler", ".tmp"}
+SKIP_DIRS = {".git", "node_modules", "test-results", ".wrangler", ".tmp", "_portal"}
 SCAN_EXT = {".html", ".htm", ".js", ".mjs", ".css", ".json", ".md",
             ".webmanifest", ".svg", ".txt"}
 

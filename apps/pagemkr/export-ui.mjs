@@ -22,7 +22,7 @@ export function setupExports(api) {
     for (const control of $('exportDialog').querySelectorAll('button, input, select')) control.disabled = value;
     if (!value) formatOptions();
   }
-  for (const [value, label] of [['writesplat', 'WriteSplat — complete text stories'], ['showsplat', 'ShowSplat — editable slides'], ['gridsplat', 'GridSplat — table values'], ['listsplat', 'ListSplat — table records']]) $('exportFormat').add(new Option(label, value));
+  for (const [value, label] of [['writemkr', 'WriteMkr — complete text stories'], ['showmkr', 'ShowMkr — editable slides'], ['gridmkr', 'GridMkr — table values'], ['listmkr', 'ListMkr — table records']]) $('exportFormat').add(new Option(label, value));
   function options() { const d = api.getDoc(), pub = $('exportFormat').value === 'pub', bleed = pub || $('exportFormat').value==='epub' ? 0 : Number($('exportBleed').value); if (!Number.isFinite(bleed) || bleed < 0 || bleed > 36) throw Error(t('invalidMeasure')); return { pages: pub||$('exportEpubMode').value==='source'&&$('exportFormat').value==='epub' ? d.pages.map((_,i)=>i) : pageRange($('exportPages').value, d.pages.length), ppi: Number($('exportPpi').value), bleed, cropMarks: !pub && $('exportMarks').checked, profile: pub ? undefined : $('exportProfile').files[0], epubMode: $('exportEpubMode').value, presentationMode: $('exportPresentationMode').value, gifDelayMs: Number($('exportGifSeconds').value) * 1000, gifMaxSize: Number($('exportGifSize').value), issues: api.getIssues(), onProgress: (page, total) => $('exportSummary').textContent = t('exportProgress', { page, total }) }; }
   async function make() {
     if (busy) return null; busy = true; pending = null; lock(true);

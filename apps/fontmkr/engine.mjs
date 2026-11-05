@@ -23,9 +23,9 @@ export const FONTS = [
  {id:'comic',name:'Comic Neue',file:'ComicNeue-Regular.ttf'},
  {id:'serif',name:'Liberation Serif',file:'LiberationSerif-Regular.ttf'},
  {id:'display',name:'DejaVu Sans',file:'DejaVuSans.ttf'},
- {id:'arabic',name:'Arabic · Noto',file:'LayoutSplatArabic.woff'},
- {id:'indic',name:'Devanagari · Noto',file:'LayoutSplatIndic.woff'},
- {id:'cjk',name:'CJK · Noto',file:'LayoutSplatCJK.woff'},
+ {id:'arabic',name:'Arabic · Noto',file:'NotoSansArabic.woff'},
+ {id:'indic',name:'Devanagari · Noto',file:'NotoSansDevanagari.woff'},
+ {id:'cjk',name:'CJK · Noto',file:'NotoSansCJK.woff'},
 ];
 export const DEFAULT_PROJECT = Object.freeze({app:'FontMkr',version:1,text:'Make a splash',preset:'splat',font:'display',size:96,weight:900,italic:false,primary:'#147AD6',secondary:'#0A3476',outline:'#0A3476',outlineWidth:2,spacing:0,curve:0,rotate:0,skew:0,depth:7,background:'#ffffff',transparent:true,above:2,through:0,below:1,seed:1,applyGlitch:false,pulse:false,fontData:'',fontName:'',images:[],shape:'none',shapeFill:'#ede7ff',shapeStroke:'#147AD6',textPath:'straight',pathOffset:50,pathFit:false,bendStrength:85,imageLayout:'free',imageGap:10,bottomText:'',textTransforms:{}});
 const clamp=(value,min,max,fallback)=>Number.isFinite(Number(value))?Math.max(min,Math.min(max,Number(value))):fallback;

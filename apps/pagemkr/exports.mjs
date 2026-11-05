@@ -79,7 +79,7 @@ export async function exportPublication(kind, doc, layout, options = {}) {
     const canvas = await pageCanvas({ ...doc, width: object.w, height: object.h }, { objects: [{ ...object, x: 0, y: 0, rotation: 0, opacity: 1 }] }, layout, options.ppi || 300, 0, null);
     try { return { blob: await canvasBlob(canvas), width: canvas.width, height: canvas.height }; } finally { canvas.width = canvas.height = 1; }
   });
-  if (['writesplat', 'showsplat', 'gridsplat', 'listsplat'].includes(kind)) return exportSuite(kind, doc, layout);
+  if (['writemkr', 'showmkr', 'gridmkr', 'listmkr'].includes(kind)) return exportSuite(kind, doc, layout);
   if (kind === 'json') return { blob: new Blob([JSON.stringify(doc, null, 2)], { type: 'application/json' }), extension: '.pagemkr.json' };
   if (kind === 'pdf') return { blob: await pdfProof(doc, layout, options), extension: '.pdf' };
   if (kind === 'reading') return { blob: new Blob([await portableHtml(readingHtml({ ...doc, pages: pages.map(i => doc.pages[i]) }), doc)], { type: 'text/html;charset=utf-8' }), extension: '.reading.html' };

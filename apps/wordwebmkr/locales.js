@@ -1,4 +1,4 @@
-/* ConceptSplat — locale dictionary. AI-seeded; native-speaker
+/* WordWebMkr — locale dictionary. AI-seeded; native-speaker
    review pending. Largest Wave 2 conversion: chrome, 13 graphic-organizer
    templates (with their node labels and connector relationship words),
    tool buttons, status messages, prompts, and selection-info variants. */

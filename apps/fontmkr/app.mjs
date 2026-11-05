@@ -15,7 +15,7 @@ function read(){const next={...project,text:$('text').value,bottomText:$('bottom
 function dataURL(blob){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=()=>reject(Error('The selected file could not be read.'));reader.readAsDataURL(blob);});}
 async function fontData(){
  const key=project.font==='custom'?project.fontData:project.font;
- if(!fontCache.has(key))fontCache.set(key,(async()=>{if(project.font==='custom')return project.fontData;const font=FONTS.find(f=>f.id===key),response=await fetch(new URL(`../../mediamkr/layoutsplat/fonts/${font.file}`,import.meta.url));if(!response.ok)throw Error('The local typeface could not be loaded.');return dataURL(new Blob([await response.arrayBuffer()],{type:font.file.endsWith('.woff')?'font/woff':'font/ttf'}));})());
+ if(!fontCache.has(key))fontCache.set(key,(async()=>{if(project.font==='custom')return project.fontData;const font=FONTS.find(f=>f.id===key),response=await fetch(new URL(`fonts/${font.file}`,import.meta.url));if(!response.ok)throw Error('The local typeface could not be loaded.');return dataURL(new Blob([await response.arrayBuffer()],{type:font.file.endsWith('.woff')?'font/woff':'font/ttf'}));})());
  return fontCache.get(key);
 }
 async function refresh(){

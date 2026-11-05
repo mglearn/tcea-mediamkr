@@ -389,7 +389,7 @@ conversionReport|Import / conversion report|Informe de importación / conversió
 importingMedia|Importing media locally…|Importando medios localmente…|Đang nhập nội dung cục bộ…|جارٍ استيراد الوسائط محلياً…|正在本地导入媒体…|मीडिया स्थानीय रूप से आयात हो रहा है…
 mediaImportError|This file could not be imported. Your publication is unchanged.|No se pudo importar. La publicación sigue igual.|Không thể nhập tệp. Ấn phẩm không thay đổi.|تعذر الاستيراد. المنشور لم يتغير.|无法导入文件。出版物未更改。|फ़ाइल आयात नहीं हुई। प्रकाशन अपरिवर्तित है।
 returnToPages|Return from master editing before changing publication pages.|Sal de la maestra antes de cambiar páginas.|Thoát chỉnh sửa trang chủ trước khi đổi trang.|عُد من تحرير الرئيسية قبل تغيير الصفحات.|请先退出母版编辑再更改页面。|पृष्ठ बदलने से पहले मास्टर संपादन से लौटें।
-mergePrivacy|Choose local CSV, TSV, Excel, GridSplat JSON, or ListSplat JSON data. Recipient data stays in this browser and is not saved with the template.|Elige CSV, TSV, Excel, GridSplat JSON o ListSplat JSON locales. Los destinatarios quedan en este navegador y no se guardan en la plantilla.|Chọn CSV, TSV, Excel, GridSplat JSON hoặc ListSplat JSON cục bộ. Dữ liệu người nhận ở trong trình duyệt và không lưu trong mẫu.|اختر CSV أو TSV أو Excel أو GridSplat JSON أو ListSplat JSON محلياً. بيانات المستلمين تبقى في المتصفح ولا تُحفظ في القالب.|选择本地 CSV、TSV、Excel、GridSplat JSON 或 ListSplat JSON。收件人数据保留在此浏览器中，不随模板保存。|स्थानीय CSV, TSV, Excel, GridSplat JSON या ListSplat JSON चुनें। प्राप्तकर्ता डेटा ब्राउज़र में रहता है और टेम्पलेट में नहीं सहेजा जाता।
+mergePrivacy|Choose local CSV, TSV, Excel, GridMkr JSON, or ListMkr JSON data. Recipient data stays in this browser and is not saved with the template.|Elige CSV, TSV, Excel, GridMkr JSON o ListMkr JSON locales. Los destinatarios quedan en este navegador y no se guardan en la plantilla.|Chọn CSV, TSV, Excel, GridMkr JSON hoặc ListMkr JSON cục bộ. Dữ liệu người nhận ở trong trình duyệt và không lưu trong mẫu.|اختر CSV أو TSV أو Excel أو GridMkr JSON أو ListMkr JSON محلياً. بيانات المستلمين تبقى في المتصفح ولا تُحفظ في القالب.|选择本地 CSV、TSV、Excel、GridMkr JSON 或 ListMkr JSON。收件人数据保留在此浏览器中，不随模板保存。|स्थानीय CSV, TSV, Excel, GridMkr JSON या ListMkr JSON चुनें। प्राप्तकर्ता डेटा ब्राउज़र में रहता है और टेम्पलेट में नहीं सहेजा जाता।
 dataSource|Data source|Origen de datos|Nguồn dữ liệu|مصدر البيانات|数据源|डेटा स्रोत
 worksheet|Worksheet|Hoja de cálculo|Trang tính|ورقة العمل|工作表|वर्कशीट
 filterField|Filter column|Columna de filtro|Cột lọc|عمود التصفية|筛选列|फ़िल्टर कॉलम
@@ -460,10 +460,10 @@ exportJpeg|JPEG image|Imagen JPEG|Ảnh JPEG|صورة JPEG|JPEG 图像|JPEG च�
 exportSvg|SVG vectors & text|Vectores y texto SVG|Vector và văn bản SVG|متجهات ونص SVG|SVG 矢量与文本|SVG वेक्टर और पाठ
 exportIdml|InDesign IDML package|Paquete InDesign IDML|Gói InDesign IDML|حزمة InDesign IDML|InDesign IDML 包|InDesign IDML पैक
 exportSla|Scribus SLA package|Paquete Scribus SLA|Gói Scribus SLA|حزمة Scribus SLA|Scribus SLA 包|Scribus SLA पैक
-exportWriteSplat|WriteSplat document|Documento WriteSplat|Tài liệu WriteSplat|مستند WriteSplat|WriteSplat 文档|WriteSplat दस्तावेज़
-exportShowSplat|ShowSplat presentation|Presentación ShowSplat|Bản trình chiếu ShowSplat|عرض ShowSplat|ShowSplat 演示文稿|ShowSplat प्रस्तुति
-exportGridSplat|GridSplat workbook|Libro GridSplat|Sổ GridSplat|دفتر GridSplat|GridSplat 工作簿|GridSplat वर्कबुक
-exportListSplat|ListSplat database|Base de datos ListSplat|Cơ sở dữ liệu ListSplat|قاعدة ListSplat|ListSplat 数据库|ListSplat डेटाबेस
+exportWriteMkr|WriteMkr document|Documento WriteMkr|Tài liệu WriteMkr|مستند WriteMkr|WriteMkr 文档|WriteMkr दस्तावेज़
+exportShowMkr|ShowMkr presentation|Presentación ShowMkr|Bản trình chiếu ShowMkr|عرض ShowMkr|ShowMkr 演示文稿|ShowMkr प्रस्तुति
+exportGridMkr|GridMkr workbook|Libro GridMkr|Sổ GridMkr|دفتر GridMkr|GridMkr 工作簿|GridMkr वर्कबुक
+exportListMkr|ListMkr database|Base de datos ListMkr|Cơ sở dữ liệu ListMkr|قاعدة ListMkr|ListMkr 数据库|ListMkr डेटाबेस
 
 importSuiteContent|TCEA MediaMkr content|Contenido TCEA MediaMkr|Nội dung TCEA MediaMkr|محتوى TCEA MediaMkr|TCEA MediaMkr 内容|TCEA MediaMkr सामग्री
 importTextBox|Text into selected text box|Texto en el cuadro seleccionado|Văn bản vào hộp đã chọn|نص في المربع المحدد|文本导入选中文本框|चुने हुए टेक्स्ट बॉक्स में पाठ

@@ -106,7 +106,7 @@ button{font-family:inherit;font-weight:600;border:none;border-radius:8px;padding
   .cell.free{background:#eee!important}
   .cell.marked{background:#fff!important}
 }
-</style>
+.bingo-banner{display:block;width:min(560px,100%);height:auto;margin:0 auto 14px;border-radius:14px;box-shadow:0 8px 22px rgba(8,39,89,.28)}</style>
 <link rel="stylesheet" href="assets/app.css"><script src="assets/widget-i18n.js"></script><script src="assets/locales.js" defer></script></head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
@@ -253,8 +253,8 @@ Hallucination
 
 <!-- ============ PLAYER (student) ============ -->
 <div id="player" class="wrap" style="display:none">
+  <img class="bingo-banner" src="../../assets/images/bingo-banner.png" alt="Bingo" width="1600" height="533">
   <div class="bingo-head">
-    <p class="game-brand" style="font-size:1.5rem;font-weight:800;color:var(--navy)">BingoMkr</p>
     <h2 id="playTitle">BINGO</h2>
     <p class="free-note" id="patternInstruction" data-i18n="instructions">Click squares as they're called.</p>
     <span class="pattern-note" id="patternNote"></span>

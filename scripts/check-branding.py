@@ -41,6 +41,11 @@ SCAN_EXT = {".html", ".htm", ".js", ".mjs", ".css", ".json", ".md",
 # This scanner file itself defines the tokens, so it is skipped.
 ALLOW_FILES = {
     os.path.join("scripts", "check-branding.py"),
+    # Internal dev docs that document the source→MediaMkr migration/cleanup.
+    # They legitimately name the scrubbed source tools and are NOT shipped to
+    # end users (excluded from the /portal bundle by build-portal.sh).
+    os.path.join("docs", "migration-map.md"),
+    os.path.join("docs", "DEPLOY-AND-STATUS.md"),
 }
 
 patterns = [re.compile(p, re.IGNORECASE) for p in PROHIBITED]

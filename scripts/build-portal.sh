@@ -25,8 +25,13 @@ cp index.html legal.html 404.html "$OUT"/
 cp -r assets "$OUT"/assets
 # All tools:
 cp -r apps "$OUT"/apps
-# In-browser help targets (linked from tool "Help" menus):
-cp -r docs "$OUT"/docs
+# In-browser help targets (linked from tool "Help" menus) — user-facing docs only.
+# Dev docs (developer-guide, migration-map, source-license-audit, privacy-inventory,
+# DEPLOY-AND-STATUS) are intentionally NOT shipped.
+mkdir -p "$OUT"/docs
+for d in user-guide.md teacher-guide.md pagemkr-comic-studio.md pagemkr-labels.md; do
+  [ -f "docs/$d" ] && cp "docs/$d" "$OUT"/docs/
+done
 # License/compliance text kept available (also summarized in legal.html):
 cp LICENSE NOTICE.md THIRD_PARTY_LICENSES.md "$OUT"/ 2>/dev/null || true
 

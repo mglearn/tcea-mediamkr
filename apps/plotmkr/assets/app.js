@@ -44,17 +44,17 @@ const THEMES = {
     ink: "#172033",
   },
   bright: {
-    colors: ["#ef4444", "#f59e0b", "#22c55e", "#06b6d4", "#8b5cf6", "#ec4899"],
+    colors: ["#ef4444", "#f59e0b", "#22c55e", "#06b6d4", "#147AD6", "#ec4899"],
     background: "#fffdf4",
     ink: "#172033",
   },
   pastel: {
-    colors: ["#a78bfa", "#f9a8d4", "#93c5fd", "#86efac", "#fde68a", "#fdba74"],
-    background: "#fffaff",
+    colors: ["#147AD6", "#f9a8d4", "#93c5fd", "#86efac", "#fde68a", "#fdba74"],
+    background: "#ffffff",
     ink: "#3f3f46",
   },
   notebook: {
-    colors: ["#2563eb", "#dc2626", "#16a34a", "#7c3aed"],
+    colors: ["#2563eb", "#dc2626", "#16a34a", "#0A3476"],
     background: "#fffef7",
     ink: "#1e3a5f",
   },
@@ -64,7 +64,7 @@ const THEMES = {
     ink: "#ffffff",
   },
   highContrast: {
-    colors: ["#000000", "#0057b8", "#d00000", "#007a3d", "#6f2da8"],
+    colors: ["#000000", "#0057b8", "#d00000", "#007a3d", "#b35900"],
     background: "#ffffff",
     ink: "#000000",
   },
@@ -903,28 +903,28 @@ function exampleThumbnail(modeId, variant) {
     `<svg viewBox="0 0 320 150" role="img" aria-label="Colorful ${modeId} graph preview" xmlns="http://www.w3.org/2000/svg"><rect width="320" height="150" rx="14" fill="#f7f3ff"/><path d="M38 18V126H302" fill="none" stroke="#4b5563" stroke-width="2"/>${content}</svg>`;
   const thumbnails = {
     quick: [
-      `<rect x="60" y="68" width="42" height="58" rx="5" fill="#6d38e8"/><rect x="122" y="43" width="42" height="83" rx="5" fill="#f59e0b"/><rect x="184" y="78" width="42" height="48" rx="5" fill="#14b8a6"/><rect x="246" y="29" width="42" height="97" rx="5" fill="#ef4444"/>`,
-      `<polyline points="48,95 106,64 164,77 222,38 284,57" fill="none" stroke="#6d38e8" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><polyline points="48,112 106,92 164,100 222,75 284,86" fill="none" stroke="#f59e0b" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>`,
+      `<rect x="60" y="68" width="42" height="58" rx="5" fill="#0A3476"/><rect x="122" y="43" width="42" height="83" rx="5" fill="#f59e0b"/><rect x="184" y="78" width="42" height="48" rx="5" fill="#14b8a6"/><rect x="246" y="29" width="42" height="97" rx="5" fill="#ef4444"/>`,
+      `<polyline points="48,95 106,64 164,77 222,38 284,57" fill="none" stroke="#0A3476" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><polyline points="48,112 106,92 164,100 222,75 284,86" fill="none" stroke="#f59e0b" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>`,
     ],
     picture: [
       `<text x="48" y="50" font-size="31">🐶 🐶 🐶 🐶</text><text x="48" y="91" font-size="31">🐱 🐱 🐱</text><text x="48" y="127" font-size="29">🐟 🐟</text>`,
       `<text x="48" y="51" font-size="30">📚 📚 📚</text><text x="48" y="91" font-size="30">📚 📚 📚 📚</text><text x="48" y="129" font-size="30">📚 📚 📚</text>`,
     ],
     coordinate: [
-      `<polyline points="61,95 110,42 165,78 220,30 276,101" fill="none" stroke="#6d38e8" stroke-width="5"/><g fill="#f59e0b" stroke="#fff" stroke-width="3"><circle cx="61" cy="95" r="8"/><circle cx="110" cy="42" r="8"/><circle cx="165" cy="78" r="8"/><circle cx="220" cy="30" r="8"/><circle cx="276" cy="101" r="8"/></g>`,
+      `<polyline points="61,95 110,42 165,78 220,30 276,101" fill="none" stroke="#0A3476" stroke-width="5"/><g fill="#f59e0b" stroke="#fff" stroke-width="3"><circle cx="61" cy="95" r="8"/><circle cx="110" cy="42" r="8"/><circle cx="165" cy="78" r="8"/><circle cx="220" cy="30" r="8"/><circle cx="276" cy="101" r="8"/></g>`,
       `<line x1="48" y1="119" x2="287" y2="28" stroke="#14b8a6" stroke-width="7"/><g fill="#ef4444"><circle cx="72" cy="110" r="7"/><circle cx="130" cy="88" r="7"/><circle cx="190" cy="66" r="7"/><circle cx="259" cy="40" r="7"/></g>`,
     ],
     expression: [
-      `<path d="M42 76 C67 20 95 20 120 76 S173 132 199 76 S252 20 298 76" fill="none" stroke="#6d38e8" stroke-width="6"/><path d="M42 76 C67 132 95 132 120 76 S173 20 199 76 S252 132 298 76" fill="none" stroke="#f59e0b" stroke-width="6"/>`,
-      `<path d="M61 28 Q160 197 276 28" fill="none" stroke="#6d38e8" stroke-width="7"/><path d="M78 101 Q160 -13 263 101" fill="none" stroke="#14b8a6" stroke-width="5" opacity=".85"/>`,
+      `<path d="M42 76 C67 20 95 20 120 76 S173 132 199 76 S252 20 298 76" fill="none" stroke="#0A3476" stroke-width="6"/><path d="M42 76 C67 132 95 132 120 76 S173 20 199 76 S252 132 298 76" fill="none" stroke="#f59e0b" stroke-width="6"/>`,
+      `<path d="M61 28 Q160 197 276 28" fill="none" stroke="#0A3476" stroke-width="7"/><path d="M78 101 Q160 -13 263 101" fill="none" stroke="#14b8a6" stroke-width="5" opacity=".85"/>`,
     ],
     geometry: [
-      `<polygon points="75,113 257,113 168,28" fill="#6d38e8" fill-opacity=".2" stroke="#6d38e8" stroke-width="6"/><g fill="#f59e0b" stroke="#fff" stroke-width="3"><circle cx="75" cy="113" r="9"/><circle cx="257" cy="113" r="9"/><circle cx="168" cy="28" r="9"/></g>`,
-      `<circle cx="163" cy="77" r="52" fill="#14b8a6" fill-opacity=".18" stroke="#14b8a6" stroke-width="6"/><line x1="163" y1="77" x2="215" y2="77" stroke="#ef4444" stroke-width="6"/><circle cx="163" cy="77" r="8" fill="#6d38e8"/><circle cx="215" cy="77" r="8" fill="#f59e0b"/>`,
+      `<polygon points="75,113 257,113 168,28" fill="#0A3476" fill-opacity=".2" stroke="#0A3476" stroke-width="6"/><g fill="#f59e0b" stroke="#fff" stroke-width="3"><circle cx="75" cy="113" r="9"/><circle cx="257" cy="113" r="9"/><circle cx="168" cy="28" r="9"/></g>`,
+      `<circle cx="163" cy="77" r="52" fill="#14b8a6" fill-opacity=".18" stroke="#14b8a6" stroke-width="6"/><line x1="163" y1="77" x2="215" y2="77" stroke="#ef4444" stroke-width="6"/><circle cx="163" cy="77" r="8" fill="#0A3476"/><circle cx="215" cy="77" r="8" fill="#f59e0b"/>`,
     ],
     specialty: [
-      `<polygon points="166,24 251,64 226,127 105,127 81,64" fill="#6d38e8" fill-opacity=".15" stroke="#c4b5fd" stroke-width="2"/><polygon points="166,39 224,68 207,110 122,116 100,70" fill="#6d38e8" fill-opacity=".38" stroke="#6d38e8" stroke-width="5"/>`,
-      `<rect x="55" y="37" width="54" height="89" fill="#6d38e8"/><rect x="55" y="91" width="54" height="35" fill="#f59e0b"/><rect x="133" y="22" width="54" height="104" fill="#14b8a6"/><rect x="133" y="78" width="54" height="48" fill="#f59e0b"/><rect x="211" y="51" width="54" height="75" fill="#ef4444"/><rect x="211" y="96" width="54" height="30" fill="#f59e0b"/>`,
+      `<polygon points="166,24 251,64 226,127 105,127 81,64" fill="#0A3476" fill-opacity=".15" stroke="#b7c6e4" stroke-width="2"/><polygon points="166,39 224,68 207,110 122,116 100,70" fill="#0A3476" fill-opacity=".38" stroke="#0A3476" stroke-width="5"/>`,
+      `<rect x="55" y="37" width="54" height="89" fill="#0A3476"/><rect x="55" y="91" width="54" height="35" fill="#f59e0b"/><rect x="133" y="22" width="54" height="104" fill="#14b8a6"/><rect x="133" y="78" width="54" height="48" fill="#f59e0b"/><rect x="211" y="51" width="54" height="75" fill="#ef4444"/><rect x="211" y="96" width="54" height="30" fill="#f59e0b"/>`,
     ],
   };
   return shell(thumbnails[modeId]?.[variant % 2] || "");

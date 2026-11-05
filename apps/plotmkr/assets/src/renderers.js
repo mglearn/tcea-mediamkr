@@ -5,7 +5,7 @@ import {
   findIntersections,
 } from "./math.js";
 export const PALETTE = [
-  "#6d38e8",
+  "#0A3476",
   "#f59e0b",
   "#2563eb",
   "#16a34a",

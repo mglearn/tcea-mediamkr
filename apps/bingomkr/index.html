@@ -15,12 +15,12 @@
 <link rel="icon" type="image/svg+xml" href="../../assets/icons/favicon.svg">
 <style>
 :root{
-  --navy:#0A3476; --navy-dark:#4c1d95; --navy-mid:#6d28d9;
-  --gold:#f59e0b; --gold-light:#fbbf24; --gold-pale:#fffbeb;
-  --pale-navy:#ede9fe; --white:#ffffff; --off-white:#f7f8fc;
+  --navy:#0A3476; --navy-dark:#082759; --navy-mid:#147AD6;
+  --gold:#FCB040; --gold-light:#fbbf24; --gold-pale:#fffbeb;
+  --pale-navy:#EEF4FC; --white:#ffffff; --off-white:#f7f8fc;
   --text:#1a1a2e; --text-muted:#5a6680; --border:#e2e7f5; --teal:#0f766e;
   /* BingoMkr splash palette (from banner image) */
-  --ib-blue:#0A3476; --ib-blue-deep:#4c1d95; --ib-teal:#0f766e;
+  --ib-blue:#0A3476; --ib-blue-deep:#082759; --ib-teal:#0f766e;
   --ib-yellow:#f59e0b; --ib-green:#0f766e; --ib-purple:#0A3476; --ib-red:#f59e0b;
 }
 *{box-sizing:border-box}
@@ -562,7 +562,7 @@ function launchConfetti(){
   const dpr=window.devicePixelRatio||1;
   function resize(){ canvas.width=innerWidth*dpr; canvas.height=innerHeight*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); }
   resize();
-  const colors=['#FCB040','#0A3476','#17a7b5','#5aa832','#7b2fb0','#e8401f','#f5b81e'];
+  const colors=['#FCB040','#0A3476','#17a7b5','#5aa832','#147AD6','#e8401f','#f5b81e'];
   const pieces=[];
   for(let i=0;i<160;i++){
     pieces.push({

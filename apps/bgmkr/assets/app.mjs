@@ -449,7 +449,7 @@ $('comparison').onpointerup = $('comparison').onpointercancel = () => { dragging
 $('sample').onclick = async () => {
   const canvas = document.createElement('canvas'); canvas.width = 800; canvas.height = 500;
   const ctx = canvas.getContext('2d'); ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, 800, 500);
-  ctx.strokeStyle = '#7c3aed'; ctx.lineWidth = 22; ctx.beginPath(); ctx.arc(400, 180, 75, 0, Math.PI * 2); ctx.stroke();
+  ctx.strokeStyle = '#0A3476'; ctx.lineWidth = 22; ctx.beginPath(); ctx.arc(400, 180, 75, 0, Math.PI * 2); ctx.stroke();
   ctx.fillStyle = '#0f766e'; ctx.beginPath(); ctx.moveTo(400, 110); ctx.lineTo(425, 180); ctx.lineTo(400, 250); ctx.lineTo(375, 180); ctx.closePath(); ctx.fill();
   ctx.fillStyle = '#182139'; ctx.font = 'bold 72px Arial'; ctx.textAlign = 'center'; ctx.fillText('TCEA MediaMkr', 400, 370);
   $('mode').value = 'white'; $('scope').value = 'all'; updateMode();

@@ -1,6 +1,6 @@
 :root {
   --purple: #0A3476;
-  --purple-dark: #4920ae;
+  --purple-dark: #082759;
   --ink: #172033;
   --muted: #657085;
   --line: #ddd9e8;
@@ -123,12 +123,12 @@ body {
   width: 100%;
   border-color: #b7a3f5;
   background: #f1ecff;
-  color: #5420cf;
+  color: #0A3476;
 }
 .lesson-link {
   display: inline-block;
   margin-top: 0.3rem;
-  color: #5420cf;
+  color: #0A3476;
   font-weight: 750;
 }
 .studio {

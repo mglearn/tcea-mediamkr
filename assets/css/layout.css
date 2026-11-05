@@ -1,0 +1,122 @@
+/* TCEA MediaMkr — shared layout: header, footer, page shell.
+ * Used by the homepage and every application's branded chrome.
+ */
+
+.mm-shell { min-height: 100vh; display: flex; flex-direction: column; }
+
+/* ---- Header ---- */
+.mm-header {
+  background: var(--tcea-navy);
+  color: #fff;
+  border-bottom: 4px solid var(--tcea-gold);
+}
+.mm-header-inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.mm-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: #fff;
+  text-decoration: none;
+  letter-spacing: 0.01em;
+}
+.mm-brand:hover { color: var(--tcea-gold-soft); }
+.mm-brand .mm-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  background: var(--tcea-gold);
+  color: var(--tcea-deep-navy);
+  font-weight: 800;
+}
+.mm-app-title {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--tcea-gold);
+  margin-inline-start: 4px;
+}
+.mm-header nav {
+  margin-inline-start: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.mm-header nav a,
+.mm-header nav button {
+  color: #fff;
+  text-decoration: none;
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.92rem;
+  padding: 7px 12px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+.mm-header nav a:hover,
+.mm-header nav button:hover {
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+}
+.mm-header nav a.mm-cta {
+  background: var(--tcea-gold);
+  color: var(--tcea-deep-navy);
+}
+.mm-header nav a.mm-cta:hover { background: #ffc266; }
+
+/* Language switcher */
+.mm-lang {
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--tcea-deep-navy);
+  background: #fff;
+  border: 1px solid var(--tcea-line);
+  border-radius: var(--radius-sm);
+  padding: 7px 10px;
+}
+
+/* ---- Main ---- */
+.mm-main { flex: 1; width: 100%; }
+.mm-wrap { max-width: 1180px; margin: 0 auto; padding: 32px 24px; }
+
+/* ---- Footer ---- */
+.mm-footer {
+  background: var(--tcea-deep-navy);
+  color: #cdd8ec;
+  margin-top: 48px;
+}
+.mm-footer-inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 26px 24px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 28px;
+  align-items: center;
+}
+.mm-footer-brand { font-weight: 700; color: #fff; }
+.mm-footer nav { display: flex; gap: 6px 18px; flex-wrap: wrap; margin-inline-start: auto; }
+.mm-footer a { color: #cdd8ec; text-decoration: none; font-size: 0.9rem; }
+.mm-footer a:hover { color: var(--tcea-gold); text-decoration: underline; }
+
+@media (max-width: 640px) {
+  .mm-header-inner { padding: 12px 16px; }
+  .mm-header nav { margin-inline-start: 0; width: 100%; }
+  .mm-wrap { padding: 24px 16px; }
+  .mm-footer nav { margin-inline-start: 0; }
+}

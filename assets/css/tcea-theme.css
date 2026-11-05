@@ -1,0 +1,96 @@
+/* TCEA MediaMkr — shared design tokens
+ * Navy + gold visual identity, matching the TCEA tools family.
+ * Load this file first; layout.css and components.css build on it.
+ */
+
+:root {
+  /* Brand palette */
+  --tcea-navy: #0A3476;
+  --tcea-deep-navy: #082759;
+  --tcea-navy-mid: #12428f;
+  --tcea-gold: #FCB040;
+  --tcea-gold-soft: #fff0d7;
+  --tcea-blue: #147AD6;
+  --tcea-pale-blue: #EEF4FC;
+  --tcea-white: #FFFFFF;
+  --tcea-background: #F7F8FC;
+  --tcea-text: #172033;
+  --tcea-muted: #5c667a;
+  --tcea-line: #dce3ef;
+  --tcea-panel: #ffffff;
+
+  /* Shape + focus */
+  --border-radius: 12px;
+  --radius-sm: 8px;
+  --radius-lg: 18px;
+  --focus-outline: 3px solid #147AD6;
+  --shadow-sm: 0 1px 3px rgba(10, 52, 118, 0.08);
+  --shadow-md: 0 8px 24px rgba(10, 52, 118, 0.12);
+
+  /* Typography */
+  --font-sans: "DM Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-serif: "DM Serif Display", Georgia, "Times New Roman", serif;
+  --font-mono: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  color: var(--tcea-text);
+  background: var(--tcea-background);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Right-to-left support (Arabic) */
+[dir="rtl"] body { text-align: right; }
+
+h1, h2, h3 { line-height: 1.2; }
+
+a { color: var(--tcea-navy); }
+a:hover { color: var(--tcea-blue); }
+
+/* Visible, consistent focus for keyboard users */
+:focus-visible {
+  outline: var(--focus-outline);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Honor reduced-motion preference everywhere */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* Screen-reader-only utility */
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap; border: 0;
+}
+
+/* Skip link */
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: 0;
+  background: var(--tcea-gold);
+  color: var(--tcea-deep-navy);
+  padding: 10px 16px;
+  font-weight: 700;
+  border-radius: 0 0 var(--radius-sm) 0;
+  z-index: 1000;
+}
+.skip-link:focus { left: 0; }

@@ -1,0 +1,11 @@
+# Dependencies / build caches (apps are migrated as static output, not source trees)
+node_modules/
+.tmp/
+.wrangler/
+test-results/
+playwright-report/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp

@@ -1,0 +1,126 @@
+/* TCEA MediaMkr — shared components: hero, cards, buttons, search, filters. */
+
+/* ---- Hero ---- */
+.mm-hero {
+  background:
+    linear-gradient(135deg, rgba(8,39,89,0.97), rgba(10,52,118,0.93)),
+    radial-gradient(circle at 86% 20%, rgba(252,176,64,0.34), transparent 34%);
+  color: #fff;
+}
+.mm-hero-inner { max-width: 1180px; margin: 0 auto; padding: 54px 24px 60px; }
+.mm-eyebrow {
+  display: inline-flex; align-items: center; gap: 9px;
+  margin-bottom: 16px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--tcea-gold);
+}
+.mm-hero h1 {
+  font-family: var(--font-serif);
+  font-size: clamp(2.1rem, 5vw, 3.2rem);
+  margin: 0 0 10px;
+}
+.mm-hero .mm-tagline { font-size: 1.15rem; color: var(--tcea-gold-soft); margin: 0 0 14px; font-weight: 600; }
+.mm-hero .mm-intro { max-width: 640px; font-size: 1.02rem; color: #e7eefb; margin: 0; }
+
+/* ---- Toolbar: search + filters ---- */
+.mm-toolbar {
+  display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+  margin: 0 0 24px;
+}
+.mm-search {
+  flex: 1 1 260px;
+  display: flex; align-items: center; gap: 8px;
+  background: #fff;
+  border: 1px solid var(--tcea-line);
+  border-radius: var(--border-radius);
+  padding: 10px 14px;
+  box-shadow: var(--shadow-sm);
+}
+.mm-search input {
+  flex: 1; border: 0; outline: 0; font: inherit; font-size: 1rem;
+  background: transparent; color: var(--tcea-text);
+}
+.mm-filters { display: flex; flex-wrap: wrap; gap: 8px; }
+.mm-chip {
+  font: inherit; font-weight: 600; font-size: 0.9rem;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--tcea-line);
+  background: #fff; color: var(--tcea-navy);
+  cursor: pointer;
+}
+.mm-chip[aria-pressed="true"] {
+  background: var(--tcea-navy); color: #fff; border-color: var(--tcea-navy);
+}
+
+/* ---- Category sections ---- */
+.mm-section-title {
+  font-size: 1.3rem; margin: 34px 0 14px;
+  color: var(--tcea-deep-navy);
+  display: flex; align-items: center; gap: 10px;
+}
+.mm-section-title::before {
+  content: ""; width: 22px; height: 4px; border-radius: 2px; background: var(--tcea-gold);
+}
+
+/* ---- Card grid ---- */
+.mm-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 18px;
+}
+.mm-card {
+  display: flex; flex-direction: column;
+  background: var(--tcea-panel);
+  border: 1px solid var(--tcea-line);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.mm-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--tcea-blue); }
+.mm-card[hidden] { display: none; }
+.mm-card-icon {
+  width: 46px; height: 46px; border-radius: 12px;
+  display: grid; place-items: center;
+  background: var(--tcea-pale-blue); color: var(--tcea-navy);
+  margin-bottom: 14px;
+}
+.mm-card-icon svg { width: 26px; height: 26px; }
+.mm-card h3 { margin: 0 0 6px; font-size: 1.15rem; color: var(--tcea-deep-navy); }
+.mm-card p { margin: 0 0 16px; color: var(--tcea-muted); font-size: 0.95rem; flex: 1; }
+
+/* ---- Buttons ---- */
+.mm-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font: inherit; font-weight: 700; font-size: 0.95rem;
+  padding: 10px 18px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  text-decoration: none; cursor: pointer;
+}
+.mm-btn-primary { background: var(--tcea-gold); color: var(--tcea-deep-navy); }
+.mm-btn-primary:hover { background: #ffc266; color: var(--tcea-deep-navy); }
+.mm-btn-ghost { background: transparent; color: var(--tcea-navy); border-color: var(--tcea-line); }
+.mm-btn-ghost:hover { background: var(--tcea-pale-blue); }
+.mm-card .mm-btn { align-self: flex-start; }
+
+/* ---- Empty state ---- */
+.mm-empty {
+  text-align: center; color: var(--tcea-muted);
+  padding: 40px 20px; display: none;
+}
+.mm-empty[data-visible="true"] { display: block; }
+
+/* ---- Quick-start panel ---- */
+.mm-panel {
+  background: var(--tcea-pale-blue);
+  border: 1px solid var(--tcea-line);
+  border-radius: var(--radius-lg);
+  padding: 22px 24px;
+  margin-top: 36px;
+}
+.mm-panel h2 { margin: 0 0 8px; color: var(--tcea-deep-navy); font-size: 1.2rem; }
+.mm-panel ol { margin: 10px 0 0; padding-inline-start: 22px; color: var(--tcea-text); }
+.mm-panel li { margin-bottom: 6px; }

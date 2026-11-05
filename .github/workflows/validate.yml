@@ -1,0 +1,23 @@
+name: Validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Check legal files
+        run: python3 scripts/check-licenses.py
+      - name: Check branding
+        run: python3 scripts/check-branding.py
+      - name: Check links
+        run: python3 scripts/check-links.py

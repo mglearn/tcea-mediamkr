@@ -68,7 +68,18 @@
   }
 
   controls.forEach(function (id) { $("#" + id).addEventListener("input", render); });
-  $("#template").addEventListener("change", function () { uploaded = null; render(); });
+  function loadTemplate() {
+    var value = $("#template").value;
+    if (value.indexOf("../") !== 0) { uploaded = null; render(); return; }
+    // A finished library example — it already includes captions baked into the image.
+    $("#topText").value = ""; $("#bottomText").value = ""; $("#labelText").value = "";
+    $("#status").textContent = t("msg.exampleLoaded");
+    var image = new Image();
+    image.onload = function () { uploaded = image; render(); };
+    image.onerror = function () { $("#status").textContent = t("msg.imgFail"); };
+    image.src = value;
+  }
+  $("#template").addEventListener("change", loadTemplate);
   $("#upload").addEventListener("change", function (event) {
     var file = event.target.files[0]; if (!file) return;
     var image = new Image();

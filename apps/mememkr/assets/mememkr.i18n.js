@@ -25,6 +25,8 @@
       "msg.copied": "Image copied to the clipboard.",
       "msg.copyFail": "Clipboard copy is unavailable here; use Download PNG.",
       "msg.imgFail": "That image could not be loaded.",
+      "msg.exampleLoaded": "This finished example already includes captions. Add new text only to add another overlay.",
+      "tpl.libraryGroup": "Finished library examples (captions included)",
 
       "help.h1": "Keep it classroom-friendly", "help.p1": "Add top and bottom captions, pick a font and colors, and choose a canvas shape. Upload your own image or use a built-in background. Everything is drawn on a canvas in your browser.",
       "footer.local": "Local-first captioned images"
@@ -51,6 +53,8 @@
       "msg.copied": "Imagen copiada al portapapeles.",
       "msg.copyFail": "La copia al portapapeles no está disponible aquí; usa Descargar PNG.",
       "msg.imgFail": "No se pudo cargar esa imagen.",
+      "msg.exampleLoaded": "Este ejemplo terminado ya incluye textos. Agrega texto nuevo solo si quieres otra superposición.",
+      "tpl.libraryGroup": "Ejemplos terminados de la biblioteca (con textos incluidos)",
 
       "help.h1": "Mantenlo apropiado para el aula", "help.p1": "Agrega textos superior e inferior, elige una fuente y colores, y selecciona la forma del lienzo. Sube tu propia imagen o usa un fondo integrado. Todo se dibuja en un lienzo en tu navegador.",
       "footer.local": "Imágenes con texto, local primero"

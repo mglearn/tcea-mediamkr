@@ -7,7 +7,7 @@
    are English-language LLM fingerprints — translating them would change
    what gets stripped. UI chrome, toolbar, find/replace, help cards, and
    toast messages all translate. */
-WidgetI18n.WidgetI18n.register('markmkr', {
+WidgetI18n.register('markmkr', {
   en: {
     "Home":"Home","Help":"Help","Visit TCEA.org":"Visit TCEA.org","Privacy":"Privacy","Accessibility":"Accessibility","Licenses":"Licenses",
     'sample.md':          "# GenAI Prompt Writing Checklist\n\n## Purpose\nUse this checklist to create clearer prompts for ChatGPT, Claude, Gemini, NotebookLM, Perplexity, or similar tools.\n\n### Key Takeaways for Districts\n\n### Broader Context & Historical Parallel\n\n## Strong Prompt Elements\n\n* Clear task\n* Specific audience\n* Required format\n* Source material separated in a code block\n* Desired tone or reading level\n\n## Example Prompt\n\n```text\nCreate a 5th-grade reading activity about ecosystems.\nUse short paragraphs, a vocabulary table, and five comprehension questions.\n```\n\n## Vocabulary Table\n\n| Term | Student-Friendly Meaning | Example |\n|---|---|---|\n| Ecosystem | Living and nonliving things in one place | Pond, forest, desert |\n| Habitat | Where an organism lives | A frog lives near water. |\n| Adaptation | A trait that helps survival | A cactus stores water. |\n\n## Student Checklist\n\n- [ ] I explained my task clearly.\n- [ ] I named my audience.\n- [ ] I gave the AI a format to follow.\n- [x] I included source text when needed.\n\n> Tip: Better structure usually leads to better GenAI output.\n\n![Sample image](./sample-image.png)",

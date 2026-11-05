@@ -2,7 +2,7 @@
    review pending. Largest Wave 2 conversion: chrome, 13 graphic-organizer
    templates (with their node labels and connector relationship words),
    tool buttons, status messages, prompts, and selection-info variants. */
-WidgetI18n.WidgetI18n.register('wordwebmkr', {
+WidgetI18n.register('wordwebmkr', {
   en: {
     "Home":"Home","Help":"Help","Visit TCEA.org":"Visit TCEA.org","Privacy":"Privacy","Accessibility":"Accessibility","Licenses":"Licenses",
     'doc.title':            'WordWebMkr — TCEA MediaMkr',

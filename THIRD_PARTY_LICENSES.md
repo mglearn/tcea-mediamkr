@@ -39,7 +39,25 @@ _To be recorded on migration (charting library)._
 _To be recorded on migration._
 
 ### BGMkr
-_To be recorded on migration (background-removal model + runtime)._
+Runtime (bundled locally under `apps/bgmkr/assets/vendor/`, license files included):
+
+| Component | Version | License | Source |
+|---|---|---|---|
+| Transformers.js | 3.8.1 | Apache-2.0 | https://github.com/huggingface/transformers.js |
+| ONNX Runtime Web | 1.22.0-dev | MIT | https://github.com/microsoft/onnxruntime |
+| @huggingface/jinja | 0.5.3 | MIT | https://github.com/huggingface/transformers.js |
+| JSZip | bundled | MIT (or GPL-3.0-or-later; used under MIT) | https://github.com/Stuk/jszip |
+
+Models (downloaded on request from Hugging Face, not bundled; pixels never sent):
+
+| Model | License | Source |
+|---|---|---|
+| ORMBG (Fast) | Apache-2.0 | https://huggingface.co/onnx-community/ormbg-ONNX |
+| BEN2 (Best) | MIT, © 2025 Prama LLC | https://huggingface.co/onnx-community/BEN2-ONNX |
+
+Runtime license texts and SHA-256 checksums are preserved in
+`apps/bgmkr/assets/vendor/`. White/color removal and built-in backgrounds work
+fully offline with no model download.
 
 ### GIFMkr
 _To be recorded on migration (GIF encoder)._

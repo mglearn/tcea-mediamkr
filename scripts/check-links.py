@@ -21,6 +21,8 @@ ALLOWED_HOSTS = {
     "mglearn.github.io",
     "fonts.googleapis.com", "fonts.gstatic.com",
     "www.gnu.org",
+    "github.com",            # corresponding-source links (AGPL)
+    "huggingface.co",        # on-demand model info/download (BGMkr)
 }
 
 ATTR_RE = re.compile(r'(?:href|src)\s*=\s*["\']([^"\']+)["\']', re.IGNORECASE)

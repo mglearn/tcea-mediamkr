@@ -10,7 +10,7 @@ final name, purpose, URL path, and migration status.
 | AudioMkr | Audio recording and editing | `apps/audiomkr/` | Planned |
 | FormatMkr | Media conversion and preparation | `apps/formatmkr/` | Planned |
 | PixelMkr | Image editing | `apps/pixelmkr/` | Planned |
-| BGMkr | Background removal and replacement | `apps/bgmkr/` | Planned |
+| BGMkr | Background removal and replacement | `apps/bgmkr/` | **Done** — local WASM engine; model from HF on demand; EN/ES |
 | PuzzleMkr | Interactive classroom puzzles | `apps/puzzlemkr/` | Planned |
 | CodeMkr | QR code generation | `apps/codemkr/` | **Done** — static only; tracking-redirect backend removed; EN/ES |
 | MemeMkr | Meme and captioned-image creation | `apps/mememkr/` | Planned |

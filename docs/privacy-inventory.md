@@ -23,7 +23,7 @@ inventory records what was checked and found.
 | PuzzleMkr | Pending | Pending | — | Pending | No |
 | PlotMkr | Pending | Pending | — | Pending | No |
 | PixelMkr | Pending | Pending | screen capture (on use) | Pending | No |
-| BGMkr | Pending | Pending | — | on-device model | No |
+| BGMkr | Model from Hugging Face on demand (pixels stay local); optional background-image URL fetch | none | — | On-device (Transformers.js/ONNX WASM); white/color fully local | Yes |
 | GIFMkr | Pending | Pending | — | Pending | No |
 | DocMkr | Pending | Pending | — | Pending | No |
 | AudioMkr | Pending | Pending | mic (on record) | Pending | No |

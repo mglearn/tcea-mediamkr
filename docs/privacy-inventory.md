@@ -28,7 +28,7 @@ inventory records what was checked and found.
 | BingoMkr | None (fonts only) | game data in shareable URL (opt-in) | — | Fully local | Yes |
 | DocMkr | None (fonts only) | none | — | Fully local (pdf-lib) | Yes |
 | AudioMkr | On-device model assets (local) | app persistence (local) | mic (on record) | Fully local (Web Audio + WASM) | built-from-source |
-| FormatMkr | Pending | Pending | — | WASM | No |
+| FormatMkr | Local FFmpeg/transcription WASM | app local | — | Fully local (ffmpeg.wasm) | built-from-source |
 | ClipMkr | Pending | Pending | mic/screen (on use) | WASM | No |
 
 > Web fonts are loaded from Google Fonts on every page. This is the only

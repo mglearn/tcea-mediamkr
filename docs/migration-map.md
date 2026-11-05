@@ -8,7 +8,7 @@ final name, purpose, URL path, and migration status.
 |---|---|---|---|
 | ClipMkr | Video creation and editing | `apps/clipmkr/` | Planned |
 | AudioMkr | Audio recording and editing | `apps/audiomkr/` | **Done** — rebuilt from source; on-device transcription; bilingual (app i18n) |
-| FormatMkr | Media conversion and preparation | `apps/formatmkr/` | Planned |
+| FormatMkr | Media conversion and preparation | `apps/formatmkr/` | **Done** — rebuilt from source; ffmpeg.wasm + on-device transcription/subtitles; EN/ES (app-language); Drive save stubbed |
 | PixelMkr | Image editing | `apps/pixelmkr/` | **Done** — layers/crop/text/capture, smart+green+color bg removal, photo adjust, blur, GIF export; EN/ES (FontSplat cross-tool button dropped) |
 | BGMkr | Background removal and replacement | `apps/bgmkr/` | **Done** — local WASM engine; model from HF on demand; EN/ES |
 | PuzzleMkr | Interactive classroom puzzles | `apps/puzzlemkr/` | **Done** — authoring + student view + library; no accounts; EN/ES |

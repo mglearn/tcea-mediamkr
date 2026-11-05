@@ -84,7 +84,16 @@ All audio recording/editing is local (Web Audio API). Transcription runs on
 device via the bundled WASM runtime.
 
 ### FormatMkr
-_To be recorded on migration (media-conversion WASM toolchain)._
+Built from source (Vite). Bundled runtime:
+
+| Component | License |
+|---|---|
+| FFmpeg (ffmpeg.wasm core) | LGPL/GPL (see ffmpeg/FONT-LICENSE + upstream) |
+| DejaVu Sans (subtitle font) | Bitstream Vera / public-domain-like (ffmpeg/FONT-LICENSE.txt) |
+| whisper (ggml) + ONNX Runtime Web | MIT |
+
+Media processing is local (FFmpeg WASM). Google Drive saving is stubbed (needs
+org OAuth); every output offers local Download.
 
 ### ClipMkr
 _To be recorded on migration (video pipeline, captioning runtime/model)._

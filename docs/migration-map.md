@@ -9,7 +9,7 @@ final name, purpose, URL path, and migration status.
 | ClipMkr | Video creation and editing | `apps/clipmkr/` | Planned |
 | AudioMkr | Audio recording and editing | `apps/audiomkr/` | Planned |
 | FormatMkr | Media conversion and preparation | `apps/formatmkr/` | Planned |
-| PixelMkr | Image editing | `apps/pixelmkr/` | Planned |
+| PixelMkr | Image editing | `apps/pixelmkr/` | **Done** — layers/crop/text/capture, smart+green+color bg removal, photo adjust, blur, GIF export; EN/ES (FontSplat cross-tool button dropped) |
 | BGMkr | Background removal and replacement | `apps/bgmkr/` | **Done** — local WASM engine; model from HF on demand; EN/ES |
 | PuzzleMkr | Interactive classroom puzzles | `apps/puzzlemkr/` | **Done** — authoring + student view + library; no accounts; EN/ES |
 | CodeMkr | QR code generation | `apps/codemkr/` | **Done** — full parity: standard + optional admin-configured editable QR; TCEA-logo center; EN/ES |

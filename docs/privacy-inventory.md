@@ -22,7 +22,7 @@ inventory records what was checked and found.
 | MemeMkr | None (fonts only) | none | — | Fully local (canvas) | Yes |
 | PuzzleMkr | None (fonts only) | `mediamkr.puzzlemkr.latest` (last puzzle, opt-in) | — | Fully local | Yes |
 | PlotMkr | None (fonts + TEKS links) | `plotmkr.projects.v1` (opt-in) | — | Fully local | Yes |
-| PixelMkr | Pending | Pending | screen capture (on use) | Pending | No |
+| PixelMkr | Model from HF on demand (smart bg removal; pixels local) | none | screen capture + camera (on use) | On-device + local canvas | Yes |
 | BGMkr | Model from Hugging Face on demand (pixels stay local); optional background-image URL fetch | none | — | On-device (Transformers.js/ONNX WASM); white/color fully local | Yes |
 | GIFMkr | None (fonts only) | none | — | Fully local (custom GIF encoder; MP4 via WebCodecs) | Yes |
 | DocMkr | None (fonts only) | none | — | Fully local (pdf-lib) | Yes |

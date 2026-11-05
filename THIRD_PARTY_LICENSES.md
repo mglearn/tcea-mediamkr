@@ -42,7 +42,9 @@ No third-party libraries. Charts, math evaluation, and renderers are
 original project code (canvas/SVG). Fonts as noted under Shared.
 
 ### PixelMkr
-_To be recorded on migration._
+No new third-party libraries. The GIF encoder is original project code;
+smart background removal reuses BGMkr's on-device engine (see BGMkr: Transformers.js
+Apache-2.0, ONNX Runtime MIT, models ORMBG/BEN2). Fonts as noted under Shared.
 
 ### BGMkr
 Runtime (bundled locally under `apps/bgmkr/assets/vendor/`, license files included):

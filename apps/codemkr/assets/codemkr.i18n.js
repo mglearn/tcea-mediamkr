@@ -57,7 +57,29 @@
       "msg.cartoonOff": "Original center image restored. High error correction is enabled; test the finished QR.",
       "msg.cartoonFail": "The cartoon effect could not be applied to this image.",
       "unit.modules": "modules", "unit.ofWidth": "% of QR width",
-      "footer.local": "Local-first static QR generation"
+      "footer.local": "Local-first static QR generation",
+
+      "mode.standard": "Standard QR", "mode.editable": "Editable QR",
+      "ed.noticeTitle": "Editable QR codes use an optional redirect service.",
+      "ed.noticeBody": "The QR stores a permanent redirect address. Updating its destination later does not change the printed QR image. This is off by default and requires an administrator to configure a redirect service.",
+      "ed.configure": "Configure editable QR service",
+      "ed.destination": "Destination URL",
+      "ed.createNew": "Create new", "ed.updateExisting": "Update existing",
+      "ed.codeId": "QR code ID", "ed.create": "Create editable QR", "ed.update": "Update destination",
+      "ed.configured": "Editable QR service configured in this browser.",
+      "ed.needConfig": "An administrator must configure the editable QR service first.",
+      "ed.needDest": "Add a valid destination and configure the service.",
+      "ed.needCode": "Enter the existing QR code ID.",
+      "ed.contacting": "Contacting the configured redirect service…",
+      "ed.rejected": "The service rejected this request.",
+      "ed.created": "Editable QR created. Save the code ID:",
+      "ed.updated": "Destination updated. The existing QR image remains valid.",
+      "ed.error": "Editable QR service error:",
+      "ed.dlgTitle": "Editable QR service",
+      "ed.dlgIntro": "Enter the deployed redirect web-app URL supplied by your administrator. The administrative key is kept only for this browser session.",
+      "ed.endpoint": "Service endpoint", "ed.redirectBase": "Public redirect base", "ed.adminKey": "Administrative key",
+      "ed.keyNote": "Share the public QR redirect URL, never the administrative key. Use a password manager and rotate exposed keys.",
+      "ed.save": "Save configuration", "btn.cancel": "Cancel"
     },
     es: {
       "nav.home": "Inicio", "nav.help": "Ayuda", "nav.tcea": "Visitar TCEA.org",
@@ -113,7 +135,29 @@
       "msg.cartoonOff": "Imagen central original restaurada. Corrección de errores alta activada; prueba el QR terminado.",
       "msg.cartoonFail": "No se pudo aplicar el efecto caricatura a esta imagen.",
       "unit.modules": "módulos", "unit.ofWidth": "% del ancho del QR",
-      "footer.local": "Generación de QR estática, local primero"
+      "footer.local": "Generación de QR estática, local primero",
+
+      "mode.standard": "QR estándar", "mode.editable": "QR editable",
+      "ed.noticeTitle": "Los QR editables usan un servicio de redirección opcional.",
+      "ed.noticeBody": "El QR almacena una dirección de redirección permanente. Cambiar su destino después no modifica la imagen impresa del QR. Está desactivado por defecto y requiere que un administrador configure un servicio de redirección.",
+      "ed.configure": "Configurar servicio de QR editable",
+      "ed.destination": "URL de destino",
+      "ed.createNew": "Crear nuevo", "ed.updateExisting": "Actualizar existente",
+      "ed.codeId": "ID del código QR", "ed.create": "Crear QR editable", "ed.update": "Actualizar destino",
+      "ed.configured": "Servicio de QR editable configurado en este navegador.",
+      "ed.needConfig": "Un administrador debe configurar primero el servicio de QR editable.",
+      "ed.needDest": "Agrega un destino válido y configura el servicio.",
+      "ed.needCode": "Ingresa el ID del código QR existente.",
+      "ed.contacting": "Contactando el servicio de redirección configurado…",
+      "ed.rejected": "El servicio rechazó esta solicitud.",
+      "ed.created": "QR editable creado. Guarda el ID del código:",
+      "ed.updated": "Destino actualizado. La imagen QR existente sigue siendo válida.",
+      "ed.error": "Error del servicio de QR editable:",
+      "ed.dlgTitle": "Servicio de QR editable",
+      "ed.dlgIntro": "Ingresa la URL de la aplicación web de redirección proporcionada por tu administrador. La clave administrativa se guarda solo para esta sesión del navegador.",
+      "ed.endpoint": "Punto de conexión del servicio", "ed.redirectBase": "Base pública de redirección", "ed.adminKey": "Clave administrativa",
+      "ed.keyNote": "Comparte la URL pública de redirección del QR, nunca la clave administrativa. Usa un gestor de contraseñas y rota las claves expuestas.",
+      "ed.save": "Guardar configuración", "btn.cancel": "Cancelar"
     }
   });
 })();

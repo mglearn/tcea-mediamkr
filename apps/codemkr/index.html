@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="no-referrer">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self'; connect-src 'self' https:; object-src 'none'; base-uri 'none'">
 <title>CodeMkr — TCEA MediaMkr</title>
 <meta name="description" content="CodeMkr — create and download static QR codes for links, text, email, phone, and Wi-Fi, entirely in your browser. Part of TCEA MediaMkr.">
 <link rel="icon" type="image/svg+xml" href="../../assets/icons/favicon.svg">
@@ -43,6 +43,25 @@
 
       <section class="cm-studio" aria-label="QR code studio">
         <form id="qrForm" class="cm-controls">
+          <div class="cm-modeswitch" role="group" aria-label="QR code type">
+            <button type="button" class="active" data-mode="standard" aria-pressed="true" data-i18n="mode.standard">Standard QR</button>
+            <button type="button" data-mode="editable" aria-pressed="false" data-i18n="mode.editable">Editable QR</button>
+          </div>
+          <div id="editableFields" hidden>
+            <div class="cm-notice">
+              <strong data-i18n="ed.noticeTitle">Editable QR codes use an optional redirect service.</strong>
+              <p data-i18n="ed.noticeBody">The QR stores a permanent redirect address. Updating its destination later does not change the printed QR image. This is off by default and requires an administrator to configure a redirect service.</p>
+              <button id="backendSetup" type="button" data-i18n="ed.configure">Configure editable QR service</button>
+            </div>
+            <label data-i18n="ed.destination">Destination URL<input id="editableDestination" type="url" placeholder="https://example.org/new-resource"></label>
+            <div class="cm-edit-tabs" role="group" aria-label="Editable QR action">
+              <button type="button" class="active" data-edit-action="create" data-i18n="ed.createNew">Create new</button>
+              <button type="button" data-edit-action="update" data-i18n="ed.updateExisting">Update existing</button>
+            </div>
+            <label id="codeField" hidden data-i18n="ed.codeId">QR code ID<input id="editableCode" pattern="[A-Za-z0-9_-]{4,32}" autocomplete="off"></label>
+            <button id="editableRun" type="button" disabled data-i18n="ed.create">Create editable QR</button>
+            <p id="editableStatus" role="status" aria-live="polite"></p>
+          </div>
           <div id="standardFields">
             <label data-i18n="f.contentType">Content type
               <select id="contentType">
@@ -133,6 +152,21 @@
   </footer>
 </div>
 
+<dialog id="backendDialog" class="cm-dialog">
+  <form method="dialog">
+    <button class="cm-dialog-close" value="cancel" aria-label="Close">×</button>
+    <h2 data-i18n="ed.dlgTitle">Editable QR service</h2>
+    <p data-i18n="ed.dlgIntro">Enter the deployed redirect web-app URL supplied by your administrator. The administrative key is kept only for this browser session.</p>
+    <label data-i18n="ed.endpoint">Service endpoint<input id="backendUrl" type="url" placeholder="https://…/exec"></label>
+    <label data-i18n="ed.redirectBase">Public redirect base<input id="redirectBase" type="url" placeholder="https://…/exec?code="></label>
+    <label data-i18n="ed.adminKey">Administrative key<input id="adminKey" type="password" autocomplete="off"></label>
+    <p class="cm-note" data-i18n="ed.keyNote">Share the public QR redirect URL, never the administrative key. Use a password manager and rotate exposed keys.</p>
+    <div class="cm-dialog-actions">
+      <button value="cancel" data-i18n="btn.cancel">Cancel</button>
+      <button id="saveBackend" class="primary" value="default" data-i18n="ed.save">Save configuration</button>
+    </div>
+  </form>
+</dialog>
 <canvas id="renderCanvas" hidden></canvas>
 <script src="../../assets/js/i18n.js"></script>
 <script src="assets/codemkr.i18n.js"></script>

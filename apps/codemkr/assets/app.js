@@ -5,7 +5,9 @@
   var t = function (k) { return window.MM_I18n ? window.MM_I18n.t(k) : k; };
 
   var STORAGE_KEY = "codemkr.designs.v1";
-  var state = { svg: "", payload: "", logoData: "", originalLogoData: "" };
+  var CONFIG_KEY = "codemkr.backend.v1";
+  var state = { mode: "standard", editAction: "create", svg: "", payload: "",
+    adminKey: "", shortUrl: "", logoData: "", originalLogoData: "" };
   var templates = {
     classic: { dark: "#172033", light: "#ffffff" },
     custom: null
@@ -63,9 +65,59 @@
       '" fill="' + light + '"/><g fill="' + dark + '">' + cells + "</g>" + logo + "</svg>";
   }
 
+  function config() {
+    try { return JSON.parse(localStorage.getItem(CONFIG_KEY)) || {}; } catch (e) { return {}; }
+  }
+  function updateBackendState() {
+    var ready = Boolean(config().endpoint && config().redirectBase);
+    if ($("editableRun")) $("editableRun").disabled = !ready;
+    if ($("editableStatus")) $("editableStatus").textContent =
+      ready ? t("ed.configured") : t("ed.needConfig");
+  }
+  function setMode(mode) {
+    state.mode = mode;
+    document.querySelectorAll("[data-mode]").forEach(function (b) {
+      var active = b.getAttribute("data-mode") === mode;
+      b.classList.toggle("active", active); b.setAttribute("aria-pressed", active);
+    });
+    $("standardFields").hidden = mode !== "standard";
+    $("editableFields").hidden = mode !== "editable";
+    state.shortUrl = ""; updateBackendState(); render();
+  }
+  function setEditAction(action) {
+    state.editAction = action;
+    document.querySelectorAll("[data-edit-action]").forEach(function (b) {
+      b.classList.toggle("active", b.getAttribute("data-edit-action") === action);
+    });
+    $("codeField").hidden = action !== "update";
+    $("editableRun").textContent = action === "create" ? t("ed.create") : t("ed.update");
+  }
+  function runEditable() {
+    var settings = config(), destination = $("editableDestination").value.trim();
+    if (!settings.endpoint || !destination) { $("editableStatus").textContent = t("ed.needDest"); return; }
+    var code = $("editableCode").value.trim();
+    if (state.editAction === "update" && !code) { $("editableStatus").textContent = t("ed.needCode"); return; }
+    $("editableRun").disabled = true; $("editableStatus").textContent = t("ed.contacting");
+    fetch(settings.endpoint, {
+      method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ action: state.editAction, destination: destination, code: code, adminKey: state.adminKey })
+    }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, result: j }; }); })
+      .then(function (res) {
+        if (!res.ok || !res.result.ok) throw new Error(res.result.error || t("ed.rejected"));
+        var resultCode = res.result.code || code;
+        state.shortUrl = res.result.shortUrl || (settings.redirectBase + encodeURIComponent(resultCode));
+        $("editableCode").value = resultCode;
+        $("editableStatus").textContent = state.editAction === "create"
+          ? t("ed.created") + " " + resultCode : t("ed.updated");
+        render();
+      }).catch(function (err) { $("editableStatus").textContent = t("ed.error") + " " + err.message; })
+      .then(function () { $("editableRun").disabled = false; });
+  }
+
   function render() {
     try {
-      state.payload = payload();
+      state.payload = state.mode === "editable"
+        ? (state.shortUrl || $("editableDestination").value.trim()) : payload();
       state.svg = makeSvg(state.payload);
       $("qrPreview").innerHTML = state.svg || "<p>" + t("preview.enterContent") + "</p>";
       $("payloadPreview").textContent = state.payload || t("preview.nothing");
@@ -326,12 +378,34 @@
       if (state.svg) canvasBlob().then(function (b) { download(b, fileName("png")); });
     };
 
+    // Editable / dynamic QR (optional, admin-configured redirect; off by default).
+    document.querySelectorAll("[data-mode]").forEach(function (b) {
+      b.onclick = function () { setMode(b.getAttribute("data-mode")); };
+    });
+    document.querySelectorAll("[data-edit-action]").forEach(function (b) {
+      b.onclick = function () { setEditAction(b.getAttribute("data-edit-action")); };
+    });
+    if ($("backendSetup")) $("backendSetup").onclick = function () {
+      var c = config();
+      $("backendUrl").value = c.endpoint || ""; $("redirectBase").value = c.redirectBase || "";
+      $("adminKey").value = ""; $("backendDialog").showModal();
+    };
+    if ($("saveBackend")) $("saveBackend").onclick = function (e) {
+      e.preventDefault();
+      var endpoint = $("backendUrl").value.trim(), redirectBase = $("redirectBase").value.trim();
+      if (!endpoint || !redirectBase) return;
+      localStorage.setItem(CONFIG_KEY, JSON.stringify({ endpoint: endpoint, redirectBase: redirectBase }));
+      state.adminKey = $("adminKey").value; $("backendDialog").close(); updateBackendState();
+    };
+    if ($("editableRun")) $("editableRun").onclick = runEditable;
+
     setContentType(); refreshDesigns(); updateQuiet(); updateCenterImageSize();
+    setMode("standard"); setEditAction("create"); updateBackendState();
     loadDefaultLogo(); render();
 
     // Re-render dynamic strings when the language changes.
     document.addEventListener("mm:langchange", function () {
-      setContentType(); refreshDesigns(); updateQuiet(); updateCenterImageSize();
+      setContentType(); refreshDesigns(); updateQuiet(); updateCenterImageSize(); updateBackendState();
     });
   }
 

@@ -71,3 +71,31 @@
 .cm-help article { background: var(--tcea-pale-blue); border: 1px solid var(--tcea-line); border-radius: var(--border-radius); padding: 16px 18px; }
 .cm-help h2 { margin: 0 0 6px; font-size: 1.05rem; color: var(--tcea-deep-navy); }
 .cm-help p { margin: 0; color: var(--tcea-text); font-size: 0.92rem; }
+
+/* ---- Editable / dynamic QR mode ---- */
+.cm-modeswitch { display: flex; gap: 8px; }
+.cm-modeswitch button {
+  flex: 1; font: inherit; font-weight: 700; font-size: 0.9rem; padding: 9px 12px;
+  border: 1px solid var(--tcea-line); border-radius: var(--radius-sm);
+  background: #fff; color: var(--tcea-navy); cursor: pointer;
+}
+.cm-modeswitch button.active { background: var(--tcea-navy); color: #fff; border-color: var(--tcea-navy); }
+.cm-notice { background: var(--tcea-pale-blue); border: 1px solid var(--tcea-line); border-radius: var(--border-radius); padding: 12px 14px; }
+.cm-notice strong { display: block; color: var(--tcea-deep-navy); margin-bottom: 4px; }
+.cm-notice p { margin: 0 0 10px; font-size: 0.85rem; color: var(--tcea-muted); }
+.cm-edit-tabs { display: flex; gap: 8px; }
+.cm-edit-tabs button { flex: 1; font: inherit; font-weight: 600; padding: 8px; border: 1px solid var(--tcea-line); border-radius: var(--radius-sm); background: #fff; color: var(--tcea-navy); cursor: pointer; }
+.cm-edit-tabs button.active { background: var(--tcea-pale-blue); border-color: var(--tcea-blue); }
+#editableStatus { font-size: 0.85rem; color: var(--tcea-muted); min-height: 1.2em; margin: 0; }
+
+.cm-dialog { border: 1px solid var(--tcea-line); border-radius: var(--radius-lg); padding: 22px; max-width: 460px; width: calc(100% - 32px); box-shadow: var(--shadow-md); }
+.cm-dialog::backdrop { background: rgba(8,39,89,0.4); }
+.cm-dialog h2 { margin: 0 0 8px; color: var(--tcea-deep-navy); font-size: 1.15rem; }
+.cm-dialog p { font-size: 0.88rem; color: var(--tcea-muted); }
+.cm-dialog label { display: block; font-weight: 600; font-size: 0.85rem; color: var(--tcea-deep-navy); margin-top: 10px; }
+.cm-dialog input { width: 100%; margin-top: 5px; font: inherit; padding: 9px 11px; border: 1px solid var(--tcea-line); border-radius: var(--radius-sm); }
+.cm-note { font-size: 0.8rem; }
+.cm-dialog-close { position: absolute; top: 12px; right: 14px; border: 0; background: transparent; font-size: 1.4rem; cursor: pointer; color: var(--tcea-muted); }
+.cm-dialog-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 16px; }
+.cm-dialog-actions button { font: inherit; font-weight: 700; padding: 9px 16px; border-radius: var(--radius-sm); border: 1px solid var(--tcea-line); background: #fff; color: var(--tcea-navy); cursor: pointer; }
+.cm-dialog-actions button.primary { background: var(--tcea-gold); color: var(--tcea-deep-navy); border-color: transparent; }

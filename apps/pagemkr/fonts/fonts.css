@@ -1,0 +1,17 @@
+@font-face{font-family:"Arial";src:url("LiberationSans-Regular.ttf") format("truetype");font-weight:400;font-style:normal;font-display:block}
+@font-face{font-family:"Arial";src:url("LiberationSans-Bold.ttf") format("truetype");font-weight:700;font-style:normal;font-display:block}
+@font-face{font-family:"Arial";src:url("LiberationSans-Italic.ttf") format("truetype");font-weight:400;font-style:italic;font-display:block}
+@font-face{font-family:"Arial";src:url("LiberationSans-BoldItalic.ttf") format("truetype");font-weight:700;font-style:italic;font-display:block}
+@font-face{font-family:"Georgia";src:url("LiberationSerif-Regular.ttf") format("truetype");font-weight:400;font-style:normal;font-display:block}
+@font-face{font-family:"Georgia";src:url("LiberationSerif-Bold.ttf") format("truetype");font-weight:700;font-style:normal;font-display:block}
+@font-face{font-family:"Georgia";src:url("LiberationSerif-Italic.ttf") format("truetype");font-weight:400;font-style:italic;font-display:block}
+@font-face{font-family:"Georgia";src:url("LiberationSerif-BoldItalic.ttf") format("truetype");font-weight:700;font-style:italic;font-display:block}
+@font-face{font-family:"Verdana";src:url("DejaVuSans.ttf") format("truetype");font-display:block}
+@font-face{font-family:"PageMkr Arabic";src:url("PageMkrArabic.woff") format("woff");font-weight:100 900;font-display:block}
+@font-face{font-family:"PageMkr Indic";src:url("PageMkrIndic.woff") format("woff");font-weight:100 900;font-display:block}
+@font-face{font-family:"PageMkr CJK";src:url("PageMkrCJK.woff") format("woff");font-weight:100 900;font-display:block}
+
+@font-face{font-family:"Comic Neue";src:url("ComicNeue-Regular.ttf") format("truetype");font-weight:400;font-style:normal;font-display:block}
+@font-face{font-family:"Comic Neue";src:url("ComicNeue-Bold.ttf") format("truetype");font-weight:700;font-style:normal;font-display:block}
+@font-face{font-family:"Comic Neue";src:url("ComicNeue-Italic.ttf") format("truetype");font-weight:400;font-style:italic;font-display:block}
+@font-face{font-family:"Comic Neue";src:url("ComicNeue-BoldItalic.ttf") format("truetype");font-weight:700;font-style:italic;font-display:block}

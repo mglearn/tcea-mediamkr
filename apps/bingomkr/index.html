@@ -531,6 +531,8 @@ function checkWin(){
 function showPlayer(){
   document.getElementById('builder').style.display='none';
   const sp=document.getElementById('splashHero'); if(sp) sp.style.display='none';
+  const wh=document.querySelector('.webbingo-heading'); if(wh) wh.style.display='none';
+  const hw=document.querySelector('.how-it-works'); if(hw) hw.style.display='none';
   document.getElementById('player').style.display='block';
   document.getElementById('playTitle').textContent=game.n||'BINGO';
   document.title=(game.n||'BINGO');

@@ -30,6 +30,8 @@ DENSO WAVE INCORPORATED.
 No third-party libraries. Captioning is original canvas code. Fonts as noted under Shared.
 
 ### PuzzleMkr
+Default puzzle image `apps/puzzlemkr/puppy.jpg` from Unsplash (Unsplash License — free use, no attribution required).
+
 | Component | Purpose | License | Source |
 |---|---|---|---|
 | JSZip | .xlsx import template export | MIT | https://github.com/Stuk/jszip |

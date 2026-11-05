@@ -353,7 +353,7 @@
 
         <div class="field">
           <label for="imageUrl" data-i18n="field.imageUrl">Image URL</label>
-          <input id="imageUrl" type="text" value="./kitty.png">
+          <input id="imageUrl" type="text" value="./puppy.jpg">
         </div>
 
         <div class="field">
@@ -409,9 +409,9 @@
     const t = (k, vars) => WidgetI18n.t(k, vars);
     const $ = (sel) => document.querySelector(sel);
     // Same-origin on startup, absolute in exported activities so images remain portable.
-    const defaultImage = new URL('./kitty.png', location.href).href;
-    $('#imageSelect option[value="./kitty.png"]').value = defaultImage;
-    if ($('#imageUrl').value === './kitty.png') $('#imageUrl').value = defaultImage;
+    const defaultImage = new URL('./puppy.jpg', location.href).href;
+    $('#imageSelect option[value="./puppy.jpg"]').value = defaultImage;
+    if ($('#imageUrl').value === './puppy.jpg') $('#imageUrl').value = defaultImage;
     const latestPuzzleKey = "mediamkr.puzzlemkr.latest";
     let uploadedImage = "";
     let tileOrder = [];

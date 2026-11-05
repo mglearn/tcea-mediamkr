@@ -7,7 +7,7 @@
 WidgetI18n.register('puzzlemkr', {
   en: {
     'Home': 'Home', 'Help': 'Help', 'Visit TCEA.org': 'Visit TCEA.org', 'Privacy': 'Privacy', 'Accessibility': 'Accessibility', 'Licenses': 'Licenses',
-    'image.kitty': 'Creative Chaos Cat', 'image.cat1': 'Cute Cat', 'image.tabby': 'Tabby Cat', 'image.orange': 'Orange Cat', 'image.bed': 'Cat in Bed', 'image.custom': 'Custom Image URL',
+    'image.kitty': 'Friendly Dog', 'image.cat1': 'Cute Cat', 'image.tabby': 'Tabby Cat', 'image.orange': 'Orange Cat', 'image.bed': 'Cat in Bed', 'image.custom': 'Custom Image URL',
 
     'doc.title':          'Meme Puzzle Maker — MediaMkr',
     'doc.title.student':  'Meme Puzzle Student — MediaMkr',
@@ -81,7 +81,7 @@ WidgetI18n.register('puzzlemkr', {
   },
   es: {
     'Home': 'Inicio', 'Help': 'Ayuda', 'Visit TCEA.org': 'Visitar TCEA.org', 'Privacy': 'Privacidad', 'Accessibility': 'Accesibilidad', 'Licenses': 'Licencias',
-    'image.kitty': 'Gato del caos creativo', 'image.cat1': 'Gato lindo', 'image.tabby': 'Gato atigrado', 'image.orange': 'Gato naranja', 'image.bed': 'Gato en la cama', 'image.custom': 'URL de imagen personalizada',
+    'image.kitty': 'Perro amistoso', 'image.cat1': 'Gato lindo', 'image.tabby': 'Gato atigrado', 'image.orange': 'Gato naranja', 'image.bed': 'Gato en la cama', 'image.custom': 'URL de imagen personalizada',
 
     'doc.title':          'Creador de Rompecabezas Meme — MediaMkr',
     'doc.title.student':  'Estudiante de Rompecabezas Meme — MediaMkr',

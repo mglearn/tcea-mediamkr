@@ -20,7 +20,7 @@ inventory records what was checked and found.
 |---|---|---|---|---|---|
 | CodeMkr | None (fonts only) | `codemkr.designs.v1` (saved designs, opt-in) | — | Fully local (qrcode.js) | Yes |
 | MemeMkr | None (fonts only) | none | — | Fully local (canvas) | Yes |
-| PuzzleMkr | Pending | Pending | — | Pending | No |
+| PuzzleMkr | None (fonts only) | `mediamkr.puzzlemkr.latest` (last puzzle, opt-in) | — | Fully local | Yes |
 | PlotMkr | Pending | Pending | — | Pending | No |
 | PixelMkr | Pending | Pending | screen capture (on use) | Pending | No |
 | BGMkr | Model from Hugging Face on demand (pixels stay local); optional background-image URL fetch | none | — | On-device (Transformers.js/ONNX WASM); white/color fully local | Yes |

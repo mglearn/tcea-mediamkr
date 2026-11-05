@@ -1,0 +1,46 @@
+{
+  "title": "Inference and Text Evidence",
+  "image": "./images/text-evidence-meme.jpg",
+  "questions": [
+    {
+      "question": "What is a conclusion based on clues and prior knowledge?",
+      "answer": "inference"
+    },
+    {
+      "question": "What supports an inference from a text?",
+      "answer": "text evidence"
+    },
+    {
+      "question": "What kind of evidence uses the author's exact words?",
+      "answer": "direct quotation"
+    },
+    {
+      "question": "What should a reader explain after citing evidence?",
+      "answer": "reasoning"
+    },
+    {
+      "question": "What is the central point an author wants readers to understand?",
+      "answer": "central idea"
+    },
+    {
+      "question": "What details directly support the central idea?",
+      "answer": "supporting details"
+    }
+  ],
+  "tileOrder": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "metadata": {
+    "gradeBand": "6-8",
+    "subject": "English Language Arts",
+    "standards": [
+      "CCSS RI.6.1",
+      "CCSS RI.6.2"
+    ]
+  }
+}

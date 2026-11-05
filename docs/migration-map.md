@@ -11,7 +11,7 @@ final name, purpose, URL path, and migration status.
 | FormatMkr | Media conversion and preparation | `apps/formatmkr/` | Planned |
 | PixelMkr | Image editing | `apps/pixelmkr/` | Planned |
 | BGMkr | Background removal and replacement | `apps/bgmkr/` | **Done** — local WASM engine; model from HF on demand; EN/ES |
-| PuzzleMkr | Interactive classroom puzzles | `apps/puzzlemkr/` | Planned |
+| PuzzleMkr | Interactive classroom puzzles | `apps/puzzlemkr/` | **Done** — authoring + student view + library; no accounts; EN/ES |
 | CodeMkr | QR code generation | `apps/codemkr/` | **Done** — static only; tracking-redirect backend removed; EN/ES |
 | MemeMkr | Meme and captioned-image creation | `apps/mememkr/` | **Done** — local canvas; EN/ES |
 | GIFMkr | Animated GIF creation | `apps/gifmkr/` | **Done** — local GIF/MP4 encoding; EN/ES |

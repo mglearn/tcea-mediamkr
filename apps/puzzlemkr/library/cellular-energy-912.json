@@ -1,0 +1,46 @@
+{
+  "title": "Cellular Energy",
+  "image": "./images/cellular-energy-meme.jpg",
+  "questions": [
+    {
+      "question": "What organelle carries out photosynthesis?",
+      "answer": "chloroplast"
+    },
+    {
+      "question": "What molecule stores usable cellular energy?",
+      "answer": "ATP"
+    },
+    {
+      "question": "What gas is released during photosynthesis?",
+      "answer": "oxygen"
+    },
+    {
+      "question": "What sugar is produced during photosynthesis?",
+      "answer": "glucose"
+    },
+    {
+      "question": "What process releases energy from glucose?",
+      "answer": "cellular respiration"
+    },
+    {
+      "question": "What organelle is a main site of cellular respiration?",
+      "answer": "mitochondrion"
+    }
+  ],
+  "tileOrder": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "metadata": {
+    "gradeBand": "9-12",
+    "subject": "Biology",
+    "standards": [
+      "NGSS HS-LS1-5",
+      "NGSS HS-LS1-7"
+    ]
+  }
+}

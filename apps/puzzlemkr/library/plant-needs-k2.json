@@ -1,0 +1,45 @@
+{
+  "title": "What Plants Need",
+  "image": "./images/plant-needs-meme.jpg",
+  "questions": [
+    {
+      "question": "What gives a plant energy to grow?",
+      "answer": "sunlight"
+    },
+    {
+      "question": "What liquid do plant roots absorb?",
+      "answer": "water"
+    },
+    {
+      "question": "What gas do plants take in from the air?",
+      "answer": "carbon dioxide"
+    },
+    {
+      "question": "Which plant part usually absorbs water?",
+      "answer": "roots"
+    },
+    {
+      "question": "What provides space and nutrients for many plants?",
+      "answer": "soil"
+    },
+    {
+      "question": "Are plants living or nonliving?",
+      "answer": "living"
+    }
+  ],
+  "tileOrder": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "metadata": {
+    "gradeBand": "K-2",
+    "subject": "Science",
+    "standards": [
+      "NGSS 2-LS2-1"
+    ]
+  }
+}

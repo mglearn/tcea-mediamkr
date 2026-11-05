@@ -30,7 +30,12 @@ DENSO WAVE INCORPORATED.
 No third-party libraries. Captioning is original canvas code. Fonts as noted under Shared.
 
 ### PuzzleMkr
-_To be recorded on migration._
+| Component | Purpose | License | Source |
+|---|---|---|---|
+| JSZip | .xlsx import template export | MIT | https://github.com/Stuk/jszip |
+
+JSZip bundled at `apps/puzzlemkr/vendor/jszip.min.js`. Puzzle logic and the
+library packs are original project content.
 
 ### PlotMkr
 _To be recorded on migration (charting library)._

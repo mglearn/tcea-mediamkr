@@ -2,55 +2,846 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="referrer" content="no-referrer">
-<title>PuzzleMkr — TCEA MediaMkr</title>
-<meta name="description" content="PuzzleMkr — Interactive classroom puzzles. Part of TCEA MediaMkr, free creative tools for educators.">
-<link rel="icon" type="image/svg+xml" href="../../assets/icons/favicon.svg">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../../assets/css/tcea-theme.css">
-<link rel="stylesheet" href="../../assets/css/layout.css">
-<link rel="stylesheet" href="../../assets/css/components.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="doc.title">Meme Puzzle Maker</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self'; object-src 'none'; base-uri 'none'">
+  <meta name="referrer" content="no-referrer">
+  <meta name="theme-color" content="#0A3476">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>:root{font-family:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif!important}</style>
+  <script src="./widget-i18n.js"></script>
+  <script src="./vendor/jszip.min.js"></script>
+  <style>
+    .i18n-picker select { padding: 9px 12px; border: 2px solid var(--border, #dce3ef); border-radius: 8px; background: #fff; color: #111827; font-weight: 700; font-size: .85rem; cursor: pointer; min-height: 42px; }
+    .i18n-picker select:focus { border-color: #6d28d9; outline: none; box-shadow: 0 0 0 4px rgba(108, 40, 217, .18); }
+    .header-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  </style>
+  <style>
+    :root {
+      --navy: #0A3476;
+      --gold: #FCB040;
+      --black: #000000;
+      --white: #FFFFFF;
+      --red: #ef4444;
+      --blue: #6d28d9;
+      --yellow: #facc15;
+      --orange: #f97316;
+      --green: #22c55e;
+      --gray-90: #111827;
+      --gray-50: #64748b;
+      --gray-30: #cbd5e1;
+      --gray-10: #eef2ff;
+      --bg: #FFFFFF;
+      --surface: #FFFFFF;
+      --border: #dce3ef;
+      --radius: 8px;
+      --shadow: 0 12px 24px rgba(64, 64, 65, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--gray-90);
+      background: var(--bg);
+    }
+
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+
+    .top-bar {
+      height: 12px;
+      background: linear-gradient(
+        90deg,
+        var(--navy) 0 32%,
+        var(--gold) 32% 52%,
+        var(--orange) 52% 64%,
+        var(--red) 64% 76%,
+        var(--blue) 76% 88%,
+        var(--green) 88% 96%,
+        var(--yellow) 96% 100%
+      );
+    }
+
+    .page {
+      width: min(1320px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 22px 0 38px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding-bottom: 18px;
+      border-bottom: 2px solid var(--gray-10);
+    }
+
+    .title-block { display: grid; gap: 8px; }
+
+    .eyebrow {
+      margin: 0;
+      color: var(--gold);
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--navy);
+      font-size: clamp(2rem, 5vw, 4.2rem);
+      line-height: .95;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 0;
+      max-width: 780px;
+      color: var(--gray-90);
+      font-size: 1rem;
+      line-height: 1.45;
+    }
+
+    .home-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 0 16px;
+      color: var(--white);
+      background: var(--navy);
+      border-radius: var(--radius);
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .app-grid {
+      display: grid;
+      grid-template-columns: minmax(320px, 430px) 1fr;
+      gap: 18px;
+      align-items: start;
+      padding-top: 20px;
+    }
+
+    .panel, .preview {
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .panel, .preview { padding: 18px; }
+
+    .panel h2, .preview h2 {
+      margin: 0 0 14px;
+      color: var(--black);
+      font-size: 1.2rem;
+      letter-spacing: 0;
+    }
+
+    .field { display: grid; gap: 7px; margin-bottom: 14px; }
+    label, .field-title { color: var(--gray-90); font-size: .86rem; font-weight: 800; }
+
+    input, select, textarea {
+      width: 100%;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 12px;
+      color: var(--gray-90);
+      background: var(--white);
+      outline: none;
+    }
+
+    textarea { min-height: 170px; resize: vertical; line-height: 1.45; }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 4px rgba(0, 112, 185, .18);
+    }
+
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    .help {
+      margin: 0;
+      color: var(--gray-50);
+      font-size: .85rem;
+      line-height: 1.4;
+    }
+
+    .button-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .resource-menu { position: relative; }
+    .resource-menu summary { min-height: 42px; display: inline-flex; align-items: center; gap: 8px; padding: 0 13px; border: 2px solid var(--border); border-radius: var(--radius); background: var(--white); color: var(--navy); font-weight: 800; cursor: pointer; list-style: none; }
+    .resource-menu summary::-webkit-details-marker { display: none; }
+    .resource-menu summary::after { content: "▾"; font-size: .72rem; }
+    .resource-menu[open] summary::after { transform: rotate(180deg); }
+    .resource-popover { position: absolute; z-index: 20; top: calc(100% + 7px); right: 0; width: 230px; display: grid; gap: 5px; padding: 8px; border: 2px solid var(--border); border-radius: var(--radius); background: var(--white); box-shadow: var(--shadow); }
+    .resource-popover strong { padding: 7px 8px 3px; color: var(--gray-50); font-size: .74rem; text-transform: uppercase; letter-spacing: .06em; }
+    .resource-popover a, .resource-popover button { width: 100%; min-height: 38px; display: flex; align-items: center; padding: 8px 10px; border: 0; border-radius: 8px; background: transparent; color: var(--gray-90); font: inherit; font-size: .84rem; font-weight: 750; text-align: left; text-decoration: none; cursor: pointer; }
+    .resource-popover a:hover, .resource-popover button:hover { background: var(--gray-10); color: var(--navy); }
+
+    .btn {
+      min-height: 42px;
+      border: 2px solid rgba(30, 57, 141, .22);
+      border-radius: var(--radius);
+      padding: 9px 12px;
+      color: var(--navy);
+      background: var(--white);
+      font-weight: 800;
+      box-shadow: 0 8px 18px rgba(64, 64, 65, .08);
+    }
+
+    .btn.primary { color: var(--white); background: var(--navy); border-color: var(--navy); }
+    .btn.gold { color: var(--black); background: var(--gold); border-color: var(--gold); }
+
+    .puzzle-wrap {
+      display: grid;
+      grid-template-columns: minmax(320px, 1fr) minmax(220px, 320px);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .image-board {
+      position: relative;
+      aspect-ratio: 16 / 10;
+      overflow: hidden;
+      border: 2px solid var(--navy);
+      border-radius: var(--radius);
+      background: var(--gray-10);
+    }
+
+    .image-board img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .tile-grid {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      gap: 2px;
+      padding: 2px;
+    }
+
+    .cover-tile {
+      display: grid;
+      place-items: center;
+      color: var(--white);
+      background: linear-gradient(135deg, var(--navy), var(--blue));
+      border: 1px solid rgba(255, 255, 255, .35);
+      font-weight: 900;
+      font-size: clamp(.85rem, 2vw, 1.4rem);
+      cursor: grab;
+      user-select: none;
+    }
+
+    .cover-tile { touch-action: none; }
+    .cover-tile.active, .cover-tile:focus-visible { outline: 4px solid var(--yellow); outline-offset: -4px; }
+    .cover-tile:active { cursor: grabbing; }
+    .cover-tile.dragging { opacity: .45; }
+    .cover-tile.drag-target { outline: 4px solid var(--yellow); outline-offset: -4px; }
+
+    .cover-tile.open {
+      opacity: 0;
+      transform: scale(.92);
+      transition: opacity 240ms ease, transform 240ms ease;
+      pointer-events: none;
+    }
+
+    .summary {
+      display: grid;
+      gap: 12px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+      background: #fbfcff;
+    }
+
+    .summary strong {
+      display: block;
+      color: var(--navy);
+      font-size: 1.6rem;
+    }
+
+    .question-list {
+      margin: 0;
+      padding-left: 18px;
+      line-height: 1.55;
+    }
+
+    .status {
+      min-height: 1.4em;
+      margin-top: 12px;
+      color: var(--navy);
+      font-weight: 800;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 1080px) {
+      .app-grid, .puzzle-wrap { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      .page { width: min(100% - 18px, 1320px); padding-top: 18px; }
+      header { align-items: flex-start; flex-direction: column; }
+      .split, .button-grid { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
-<a class="skip-link" href="#main">Skip to content</a>
-<div class="mm-shell">
-  <header class="mm-header">
-    <div class="mm-header-inner">
-      <a class="mm-brand" href="../../index.html"><span class="mm-mark" aria-hidden="true">M</span><span>TCEA MediaMkr</span></a>
-      <span class="mm-app-title">PuzzleMkr</span>
-      <nav aria-label="Primary">
-        <a href="../../index.html">Home</a>
-        <a href="../../docs/user-guide.md">Help</a>
-        <a class="mm-cta" href="https://tcea.org/" target="_blank" rel="noopener">Visit TCEA.org</a>
-      </nav>
-    </div>
-  </header>
-  <main id="main" class="mm-main">
-    <section class="mm-hero">
-      <div class="mm-hero-inner">
-        <span class="mm-eyebrow">TCEA MediaMkr</span>
-        <h1>PuzzleMkr</h1>
-        <p class="mm-tagline">Interactive classroom puzzles</p>
-        <p class="mm-intro">This tool is being prepared for TCEA MediaMkr. Check back soon.</p>
-        <p style="margin-top:20px"><a class="mm-btn mm-btn-primary" href="../../index.html">Back to MediaMkr Home</a></p>
+  <div class="top-bar" aria-hidden="true"></div>
+  <div class="page">
+    <header>
+      <div class="title-block">
+        <p class="eyebrow"><a href="../../index.html" style="color:inherit;text-decoration:none" data-i18n-html="header.eyebrow">TCEA MediaMkr Tools</a></p>
+        <h1 data-i18n="header.h1">Meme Puzzle Maker</h1>
+        <p class="subtitle" data-i18n="header.subtitle">Create a low-stakes quiz puzzle where each correct answer removes a tile and reveals a hidden meme image.</p>
       </div>
-    </section>
-  </main>
-  <footer class="mm-footer">
-    <div class="mm-footer-inner">
-      <span class="mm-footer-brand">TCEA MediaMkr | Creative Tools for Educators</span>
-      <nav aria-label="Footer">
-        <a href="../../index.html">MediaMkr Home</a>
-        <a href="https://tcea.org/" target="_blank" rel="noopener">TCEA.org</a>
-        <a href="../../PRIVACY.md">Privacy</a>
-        <a href="../../ACCESSIBILITY.md">Accessibility</a>
-        <a href="../../THIRD_PARTY_LICENSES.md">Licenses</a>
+      <div class="header-actions">
+        <details class="resource-menu" id="resourceMenu">
+          <summary data-i18n="resources.menu">Resources</summary>
+          <div class="resource-popover">
+            <a href="./library/" data-i18n="button.library">PuzzleMaker Library</a>
+            <a href="../mememkr/" data-i18n="button.mememkr">MemeMkr Meme Maker</a>
+            <strong data-i18n="samples.label">Import templates:</strong>
+            <button type="button" data-sample-format="json" data-i18n="samples.json">Sample JSON</button>
+            <button type="button" data-sample-format="csv" data-i18n="samples.csv">Sample CSV</button>
+            <button type="button" data-sample-format="xlsx" data-i18n="samples.xlsx">Sample Excel</button>
+          </div>
+        </details>
+        <div class="i18n-picker" data-i18n-picker></div>
+        <a class="home-link" href="https://tcea.org/" target="_blank" rel="noopener" data-i18n="Visit TCEA.org" style="background:#FCB040;color:#082759;border-color:transparent">Visit TCEA.org</a>
+        <a class="home-link" href="../../index.html" data-i18n="header.home">Home</a>
+      </div>
+    </header>
+
+    <main class="app-grid">
+      <section class="panel" data-i18n-aria-label="panel.setup.aria" aria-label="Teacher setup">
+        <h2 data-i18n="panel.h2">Teacher Setup</h2>
+
+        <div class="field">
+          <label for="titleInput" data-i18n="field.title">Activity Title</label>
+          <input id="titleInput" type="text" value="" maxlength="90">
+        </div>
+
+        <div class="split">
+          <div class="field">
+            <label for="questionCount" data-i18n="field.questionCount">Number of Questions</label>
+            <input id="questionCount" type="number" min="1" max="30" value="5">
+          </div>
+          <div class="field">
+            <label for="imageSelect" data-i18n="field.image">Cute Cat Image</label>
+            <select id="imageSelect">
+              <option value="custom" data-i18n="image.custom">Custom Image URL</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="imageUrl" data-i18n="field.imageUrl">Image URL</label>
+          <input id="imageUrl" type="text" value="../../kitty.png">
+        </div>
+
+        <div class="field">
+          <label for="imageUpload" data-i18n="field.imageUpload">Or Upload an Image</label>
+          <input id="imageUpload" type="file" accept="image/*">
+          <p class="help" data-i18n="help.upload">Uploaded images work best for local classroom use. Very large images can make shared links long.</p>
+        </div>
+
+        <div class="field">
+          <label for="qaInput" data-i18n="field.qa">Questions and Answers</label>
+          <textarea id="qaInput" spellcheck="true"></textarea>
+          <p class="help" data-i18n-html="help.qa.html">Use one line per item: <strong>question,answer</strong>. You can also use <strong>question | answer</strong> or tab-separated text.</p>
+        </div>
+
+        <div class="button-grid">
+          <button class="btn primary" id="previewBtn" data-i18n="button.preview">Update Preview</button>
+          <button class="btn gold" id="copyLinkBtn" data-i18n="button.copyLink">Copy Student Link</button>
+          <button class="btn" id="openStudentBtn" data-i18n="button.openStudent">Open Student Page</button>
+          <button class="btn" id="loadBtn" data-i18n="button.load">Load JSON, CSV, or Excel</button>
+          <button class="btn" id="downloadBtn" data-i18n="button.download">Download Setup</button>
+        </div>
+        <input id="setupUpload" type="file" accept=".json,.csv,.xlsx,application/json,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden>
+        <div class="status" id="status" role="status" aria-live="polite"></div>
+      </section>
+
+      <section class="preview" data-i18n-aria-label="panel.preview.aria" aria-label="Puzzle preview">
+        <h2 data-i18n="preview.h2">Preview</h2>
+        <p class="help" data-i18n="preview.dragHelp">Drag numbered squares to choose which part of the image each question reveals.</p>
+        <div class="puzzle-wrap">
+          <div class="image-board">
+            <img id="previewImage" data-i18n-alt="preview.imgAlt" alt="Hidden puzzle image">
+            <div class="tile-grid" id="tileGrid"></div>
+          </div>
+          <aside class="summary">
+            <div>
+              <span class="field-title" data-i18n="summary.questions">Questions</span>
+              <strong id="questionTotal">5</strong>
+            </div>
+            <div>
+              <span class="field-title" data-i18n="summary.link">Student Link</span>
+              <p class="help" data-i18n="summary.linkHelp">Share links work like Dicebreaker links: the activity setup is encoded in the URL.</p>
+            </div>
+            <ol class="question-list" id="questionList"></ol>
+          </aside>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="locales.js?v=20261015"></script>
+  <script src="./tiles.js?v=20261012-tiles"></script>
+  <script>
+    const t = (k, vars) => WidgetI18n.t(k, vars);
+    const $ = (sel) => document.querySelector(sel);
+    // Same-origin on startup, absolute in exported activities so images remain portable.
+    const defaultImage = new URL('../../kitty.png', location.href).href;
+    $('#imageSelect option[value="../../kitty.png"]').value = defaultImage;
+    if ($('#imageUrl').value === '../../kitty.png') $('#imageUrl').value = defaultImage;
+    const latestPuzzleKey = "mediamkr.puzzlemkr.latest";
+    let uploadedImage = "";
+    let tileOrder = [];
+    let selectedQuestion = -1;
+    let activityMetadata = null;
+    // Track last-applied translated defaults so language switches refresh
+    // them without overwriting custom teacher content.
+    let lastTitleDefault = "";
+    let lastQaDefault = "";
+
+    function parseQA(text, limit) {
+      const rows = text.split(/\n+/).map(line => line.trim()).filter(Boolean);
+      const out = [];
+      for (const row of rows) {
+        let parts = row.split("\t");
+        if (parts.length < 2) parts = row.split("|");
+        if (parts.length < 2) {
+          const parsed = parseCsvQuestions(row)[0];
+          if (parsed) out.push(parsed);
+          if (out.length >= limit) break;
+          continue;
+        }
+        const question = (parts.shift() || "").trim();
+        const answer = parts.join(" ").trim();
+        if (question && answer) out.push({ question, answer });
+        if (out.length >= limit) break;
+      }
+      return out;
+    }
+
+    function normalizeAnswer(text) {
+      return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, " ").trim();
+    }
+
+    function config() {
+      const total = Math.max(1, Math.min(30, Number($("#questionCount").value) || 5));
+      const questions = parseQA($("#qaInput").value, total);
+      const order = tileOrder.filter((index, position, values) =>
+        index >= 0 && index < questions.length && values.indexOf(index) === position
+      );
+      for (let index = 0; index < questions.length; index += 1) {
+        if (!order.includes(index)) order.push(index);
+      }
+      tileOrder = order;
+      return {
+        title: $("#titleInput").value.trim() || t("field.titleDefault"),
+        image: uploadedImage || $("#imageUrl").value.trim(),
+        questions,
+        tileOrder: [...tileOrder],
+        ...(activityMetadata ? { metadata: activityMetadata } : {}),
+      };
+    }
+
+    function gridShape(count) {
+      const cols = Math.ceil(Math.sqrt(count * 1.6));
+      const rows = Math.ceil(count / cols);
+      return { rows, cols };
+    }
+
+    function renderPreview(openCount = 0) {
+      const data = config();
+      // Keep the most recent setup available to the student route in this
+      // browser. The encoded URL remains the portable, cross-device link.
+      try { localStorage.setItem(latestPuzzleKey, JSON.stringify(data)); } catch {}
+      const count = data.questions.length || 1;
+      const shape = gridShape(count);
+      $("#previewImage").src = data.image;
+      $("#questionTotal").textContent = data.questions.length;
+      $("#questionList").innerHTML = data.questions.map(item => `<li>${escapeHTML(item.question)}</li>`).join("");
+      $("#tileGrid").style.gridTemplateColumns = `repeat(${shape.cols}, 1fr)`;
+      $("#tileGrid").style.gridTemplateRows = `repeat(${shape.rows}, 1fr)`;
+      $("#tileGrid").innerHTML = tileOrder.map((questionIndex, position) =>
+        `<div class="cover-tile${questionIndex < openCount ? " open" : ""}${questionIndex === selectedQuestion ? " active" : ""}" role="button" tabindex="0" data-question="${questionIndex}" data-position="${position}">${questionIndex + 1}</div>`
+      ).join("");
+      $("#status").textContent = t("status.ready", { n: data.questions.length });
+    }
+
+    function b64urlEncode(str) {
+      const bytes = new TextEncoder().encode(str);
+      let bin = "";
+      for (const b of bytes) bin += String.fromCharCode(b);
+      return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+    }
+
+    function prepareUploadedImage(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = () => reject(reader.error || new Error("Image could not be read."));
+        reader.onload = () => {
+          const image = new Image();
+          image.onerror = () => reject(new Error("Image could not be decoded."));
+          image.onload = () => {
+            // Student links carry the image with them. Bound its dimensions
+            // and encode it efficiently so the complete link remains usable
+            // when pasted into another browser or device.
+            const scale = Math.min(1, 1024 / image.naturalWidth, 768 / image.naturalHeight);
+            const canvas = document.createElement("canvas");
+            canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+            canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+            const context = canvas.getContext("2d");
+            context.fillStyle = "#fff";
+            context.fillRect(0, 0, canvas.width, canvas.height);
+            context.drawImage(image, 0, 0, canvas.width, canvas.height);
+            resolve(canvas.toDataURL("image/jpeg", 0.76));
+          };
+          image.src = String(reader.result || "");
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function studentUrl() {
+      // Cloudflare canonicalizes student.html to /student. Link directly to
+      // that route so the fragment-encoded puzzle is never exposed to a
+      // redirect that may discard it.
+      const url = new URL("student", window.location.href);
+      url.hash = "p=" + b64urlEncode(JSON.stringify(config()));
+      return url.toString();
+    }
+
+    function copyLink() {
+      const url = studentUrl();
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(url)
+          .then(() => $("#status").textContent = t("status.linkCopied"))
+          .catch(() => window.prompt(t("prompt.copyLink"), url));
+      } else {
+        window.prompt(t("prompt.copyLink"), url);
+      }
+    }
+
+    function downloadSetup() {
+      const data = config();
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      const slug = data.title
+        .normalize("NFKD")
+        .replace(/[^\p{L}\p{N}]+/gu, "-")
+        .replace(/^-+|-+$/g, "")
+        .toLowerCase();
+      a.download = `${slug || "meme-puzzle"}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    const sampleQuestions = [
+      { question: "What planet is known as the Red Planet?", answer: "Mars" },
+      { question: "What process lets plants make food?", answer: "photosynthesis" },
+      { question: "What is the largest ocean on Earth?", answer: "Pacific Ocean" },
+    ];
+
+    function downloadBlob(blob, filename) {
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = filename;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    function csvCell(value) {
+      return `"${String(value).replace(/"/g, '""')}"`;
+    }
+
+    function xmlText(value) {
+      return String(value).replace(/[&<>"']/g, character => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&apos;",
+      }[character]));
+    }
+
+    async function downloadSample(format) {
+      if (format === "json") {
+        const sample = {
+          title: "Sample Science Meme Puzzle",
+          image: "https://commons.wikimedia.org/wiki/Special:FilePath/CUTE_CAT.jpg",
+          questions: sampleQuestions,
+          tileOrder: [0, 1, 2],
+        };
+        downloadBlob(new Blob([JSON.stringify(sample, null, 2)], { type: "application/json" }), "meme-puzzle-import-template.json");
+        return;
+      }
+      const rows = [["question", "answer"], ...sampleQuestions.map(item => [item.question, item.answer])];
+      if (format === "csv") {
+        const csv = rows.map(row => row.map(csvCell).join(",")).join("\r\n");
+        downloadBlob(new Blob([csv], { type: "text/csv;charset=utf-8" }), "meme-puzzle-import-template.csv");
+        return;
+      }
+      const zip = new JSZip();
+      const sheetRows = rows.map((row, rowIndex) =>
+        `<row r="${rowIndex + 1}">${row.map((cell, columnIndex) =>
+          `<c r="${String.fromCharCode(65 + columnIndex)}${rowIndex + 1}" t="inlineStr"><is><t>${xmlText(cell)}</t></is></c>`
+        ).join("")}</row>`
+      ).join("");
+      zip.file("[Content_Types].xml", '<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/></Types>');
+      zip.file("_rels/.rels", '<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>');
+      zip.file("xl/workbook.xml", '<?xml version="1.0" encoding="UTF-8"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="Questions" sheetId="1" r:id="rId1"/></sheets></workbook>');
+      zip.file("xl/_rels/workbook.xml.rels", '<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/></Relationships>');
+      zip.file("xl/worksheets/sheet1.xml", `<?xml version="1.0" encoding="UTF-8"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>${sheetRows}</sheetData></worksheet>`);
+      const workbook = await zip.generateAsync({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+      downloadBlob(workbook, "meme-puzzle-import-template.xlsx");
+    }
+
+    function questionsFromRows(rows) {
+      if (!rows.length) return [];
+      const headings = rows[0].map(value => String(value).trim().toLowerCase());
+      const questionIndex = headings.findIndex(value => ["question", "questions", "prompt"].includes(value));
+      const answerIndex = headings.findIndex(value => ["answer", "answers", "response"].includes(value));
+      const hasHeader = questionIndex >= 0 && answerIndex >= 0;
+      const qIndex = hasHeader ? questionIndex : 0;
+      const aIndex = hasHeader ? answerIndex : 1;
+      return rows
+        .slice(hasHeader ? 1 : 0)
+        .map(values => ({
+          // Legacy unquoted CSV separates the answer at the last comma.
+          // Quoted CSV, tabs, and pipes preserve punctuation in either field.
+          question: String(!hasHeader && values.length > 2 ? values.slice(0, -1).join(",") : values[qIndex] ?? "").trim(),
+          answer: String(!hasHeader && values.length > 2 ? values.at(-1) : values[aIndex] ?? "").trim(),
+        }))
+        .filter(item => item.question && item.answer)
+        .slice(0, 30);
+    }
+
+    function parseCsvQuestions(text) {
+      const rows = [];
+      let row = [];
+      let field = "";
+      let quoted = false;
+      for (let index = 0; index < text.length; index += 1) {
+        const character = text[index];
+        if (quoted) {
+          if (character === '"' && text[index + 1] === '"') {
+            field += '"';
+            index += 1;
+          } else if (character === '"') quoted = false;
+          else field += character;
+        } else if (character === '"' && field === "") quoted = true;
+        else if (character === ",") {
+          row.push(field);
+          field = "";
+        } else if (character === "\n") {
+          row.push(field.replace(/\r$/, ""));
+          if (row.some(value => value.trim())) rows.push(row);
+          row = [];
+          field = "";
+        } else field += character;
+      }
+      row.push(field.replace(/\r$/, ""));
+      if (row.some(value => value.trim())) rows.push(row);
+      return questionsFromRows(rows);
+    }
+
+    async function parseXlsxQuestions(file) {
+      if (!window.JSZip) throw new Error("Excel reader unavailable");
+      const zip = await JSZip.loadAsync(await file.arrayBuffer());
+      const sharedStrings = [];
+      const sharedFile = zip.file("xl/sharedStrings.xml");
+      if (sharedFile) {
+        const xml = new DOMParser().parseFromString(await sharedFile.async("text"), "application/xml");
+        xml.querySelectorAll("si").forEach(item => {
+          sharedStrings.push(Array.from(item.querySelectorAll("t")).map(node => node.textContent || "").join(""));
+        });
+      }
+      const sheetFile = zip.file("xl/worksheets/sheet1.xml") ||
+        Object.values(zip.files).find(entry => /^xl\/worksheets\/sheet\d+\.xml$/.test(entry.name));
+      if (!sheetFile) throw new Error("No Excel worksheet found");
+      const xml = new DOMParser().parseFromString(await sheetFile.async("text"), "application/xml");
+      const rows = [];
+      xml.querySelectorAll("row").forEach(rowNode => {
+        const row = [];
+        rowNode.querySelectorAll("c").forEach(cell => {
+          const letters = (cell.getAttribute("r") || "A").match(/[A-Z]+/i)?.[0].toUpperCase() || "A";
+          let column = 0;
+          for (const letter of letters) column = column * 26 + letter.charCodeAt(0) - 64;
+          column -= 1;
+          const type = cell.getAttribute("t");
+          const raw = type === "inlineStr"
+            ? Array.from(cell.querySelectorAll("t")).map(node => node.textContent || "").join("")
+            : cell.querySelector("v")?.textContent || "";
+          row[column] = type === "s" ? sharedStrings[Number(raw)] || "" : raw;
+        });
+        if (row.some(value => String(value || "").trim())) rows.push(row);
+      });
+      return questionsFromRows(rows);
+    }
+
+    async function loadSetup(file) {
+      try {
+        const lowerName = file.name.toLowerCase();
+        const isSpreadsheet = lowerName.endsWith(".csv") || lowerName.endsWith(".xlsx") || file.type === "text/csv";
+        const text = lowerName.endsWith(".xlsx") ? "" : await file.text();
+        if (isSpreadsheet) {
+          const questions = lowerName.endsWith(".xlsx")
+            ? await parseXlsxQuestions(file)
+            : parseCsvQuestions(text);
+          if (!questions.length) throw new Error("Invalid spreadsheet question set");
+          $("#questionCount").value = String(questions.length);
+          tileOrder = questions.map((_, index) => index);
+          activityMetadata = null;
+          $("#qaInput").value = questions
+            .map(item => `${item.question}\t${item.answer}`)
+            .join("\n");
+          renderPreview();
+          $("#status").textContent = t("status.sheetLoaded", { n: questions.length });
+          return;
+        }
+
+        const data = JSON.parse(text);
+        if (
+          !data ||
+          typeof data.title !== "string" ||
+          typeof data.image !== "string" ||
+          !Array.isArray(data.questions) ||
+          !data.questions.length ||
+          data.questions.length > 30 ||
+          data.questions.some(item =>
+            !item || typeof item.question !== "string" || typeof item.answer !== "string"
+          )
+        ) throw new Error("Invalid Meme Puzzle setup");
+
+        $("#titleInput").value = data.title;
+        $("#questionCount").value = String(data.questions.length);
+        tileOrder = Array.isArray(data.tileOrder) ? data.tileOrder.map(Number) : [];
+        activityMetadata = data.metadata && typeof data.metadata === "object" ? data.metadata : null;
+        $("#qaInput").value = data.questions
+          .map(item => `${item.question}\t${item.answer}`)
+          .join("\n");
+
+        if (data.image.startsWith("data:image/")) {
+          uploadedImage = data.image;
+          $("#imageSelect").value = "custom";
+          $("#imageUrl").value = t("image.uploadedLabel");
+        } else {
+          uploadedImage = "";
+          $("#imageUrl").value = data.image;
+          const matchingOption = Array.from($("#imageSelect").options)
+            .find(option => option.value === data.image);
+          $("#imageSelect").value = matchingOption ? data.image : "custom";
+        }
+        renderPreview();
+        $("#status").textContent = t("status.setupLoaded", { n: data.questions.length });
+      } catch {
+        $("#status").textContent = t("status.loadFailed");
+      }
+    }
+
+    function escapeHTML(str) {
+      return String(str).replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
+    }
+
+    $("#imageSelect").addEventListener("change", event => {
+      if (event.target.value !== "custom") {
+        uploadedImage = "";
+        $("#imageUrl").value = event.target.value;
+      }
+      renderPreview();
+    });
+    $("#imageUpload").addEventListener("change", async event => {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      try {
+        uploadedImage = await prepareUploadedImage(file);
+        $("#imageUrl").value = t("image.uploadedLabel");
+        renderPreview();
+      } catch {
+        uploadedImage = "";
+      }
+    });
+    $("#previewBtn").addEventListener("click", () => renderPreview());
+    bindPuzzleTiles($("#tileGrid"), (from, to) => {
+      [tileOrder[from], tileOrder[to]] = [tileOrder[to], tileOrder[from]];
+      renderPreview();
+    }, index => {
+      selectedQuestion = index;
+      renderPreview();
+      const question = config().questions[index];
+      if (question) $("#status").textContent = `${index + 1}. ${question.question}`;
+    });
+    $("#copyLinkBtn").addEventListener("click", copyLink);
+    $("#openStudentBtn").addEventListener("click", () => window.open(studentUrl(), "_blank", "noopener"));
+    $("#loadBtn").addEventListener("click", () => $("#setupUpload").click());
+    $("#setupUpload").addEventListener("change", event => {
+      const file = event.target.files && event.target.files[0];
+      if (file) loadSetup(file);
+      event.target.value = "";
+    });
+    $("#downloadBtn").addEventListener("click", downloadSetup);
+    document.querySelectorAll("[data-sample-format]").forEach(button => {
+      button.addEventListener("click", () => {
+        downloadSample(button.dataset.sampleFormat);
+        $("#resourceMenu").removeAttribute("open");
+      });
+    });
+    document.addEventListener("pointerdown", event => {
+      const menu = $("#resourceMenu");
+      if (menu.open && !menu.contains(event.target)) menu.removeAttribute("open");
+    });
+
+    function seedDefaults() {
+      const titleEl = $("#titleInput");
+      if (!titleEl.value || titleEl.value === lastTitleDefault) titleEl.value = t("field.titleDefault");
+      lastTitleDefault = t("field.titleDefault");
+      const qaEl = $("#qaInput");
+      if (!qaEl.value || qaEl.value === lastQaDefault) qaEl.value = t("qa.default");
+      lastQaDefault = t("qa.default");
+    }
+
+    seedDefaults();
+    renderPreview();
+
+    window.addEventListener("widget-i18n:changed", () => {
+      seedDefaults();
+      renderPreview();
+    });
+  </script>  <footer style="background:#082759;color:#cdd8ec;margin-top:40px">
+    <div style="max-width:1180px;margin:0 auto;padding:22px 24px;display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center">
+      <span style="font-weight:700;color:#fff">TCEA MediaMkr | Creative Tools for Educators</span>
+      <nav aria-label="Footer" style="display:flex;gap:6px 16px;flex-wrap:wrap;margin-inline-start:auto">
+        <a style="color:#cdd8ec;text-decoration:none" href="../../index.html" data-i18n="Home">Home</a>
+        <a style="color:#cdd8ec;text-decoration:none" href="https://tcea.org/" target="_blank" rel="noopener">TCEA.org</a>
+        <a style="color:#cdd8ec;text-decoration:none" href="../../PRIVACY.md" data-i18n="Privacy">Privacy</a>
+        <a style="color:#cdd8ec;text-decoration:none" href="../../ACCESSIBILITY.md" data-i18n="Accessibility">Accessibility</a>
+        <a style="color:#cdd8ec;text-decoration:none" href="../../THIRD_PARTY_LICENSES.md" data-i18n="Licenses">Licenses</a>
       </nav>
     </div>
   </footer>
-</div>
 </body>
 </html>

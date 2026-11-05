@@ -1,0 +1,45 @@
+{
+  "title": "Earth and Star Patterns",
+  "image": "./images/earth-star-patterns-meme.jpg",
+  "questions": [
+    {
+      "question": "What star is closest to Earth?",
+      "answer": "Sun"
+    },
+    {
+      "question": "What motion causes day and night?",
+      "answer": "rotation"
+    },
+    {
+      "question": "About how long does Earth take to rotate once?",
+      "answer": "24 hours"
+    },
+    {
+      "question": "What motion of Earth takes about one year?",
+      "answer": "revolution"
+    },
+    {
+      "question": "Why do stars appear brighter or dimmer?",
+      "answer": "distance"
+    },
+    {
+      "question": "What repeating path does Earth follow around the Sun?",
+      "answer": "orbit"
+    }
+  ],
+  "tileOrder": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "metadata": {
+    "gradeBand": "3-5",
+    "subject": "Science",
+    "standards": [
+      "NGSS 5-ESS1-1"
+    ]
+  }
+}

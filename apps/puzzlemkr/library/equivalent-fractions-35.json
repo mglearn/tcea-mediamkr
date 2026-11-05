@@ -1,0 +1,46 @@
+{
+  "title": "Equivalent Fractions",
+  "image": "./images/equivalent-fractions-meme.jpg",
+  "questions": [
+    {
+      "question": "What fraction is equivalent to one half with denominator 4?",
+      "answer": "2/4"
+    },
+    {
+      "question": "What fraction is equivalent to two thirds with denominator 6?",
+      "answer": "4/6"
+    },
+    {
+      "question": "Simplify three sixths.",
+      "answer": "1/2"
+    },
+    {
+      "question": "What number multiplies both parts of one half to make three sixths?",
+      "answer": "3"
+    },
+    {
+      "question": "Are four eighths and one half equivalent?",
+      "answer": "yes"
+    },
+    {
+      "question": "Simplify six ninths.",
+      "answer": "2/3"
+    }
+  ],
+  "tileOrder": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "metadata": {
+    "gradeBand": "3-5",
+    "subject": "Mathematics",
+    "standards": [
+      "CCSS 4.NF.A.1",
+      "TEKS 4.3(C)"
+    ]
+  }
+}

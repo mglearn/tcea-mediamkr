@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="doc.title.student">Meme Puzzle Student</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self'; object-src 'none'; base-uri 'none'">
+  <meta name="referrer" content="no-referrer">
+  <meta name="theme-color" content="#0A3476">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>:root{font-family:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif!important}</style>
+  <script src="./widget-i18n.js"></script>
+  <style>
+    .i18n-picker select { padding: 7px 10px; border: 2px solid var(--border, #dce3ef); border-radius: 8px; background: #fff; color: #111827; font-weight: 700; font-size: .82rem; cursor: pointer; }
+    .i18n-picker select:focus { border-color: #6d28d9; outline: none; box-shadow: 0 0 0 4px rgba(108, 40, 217, .18); }
+    .header-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  </style>
+  <style>
+    :root {
+      --navy: #0A3476;
+      --gold: #FCB040;
+      --black: #000000;
+      --white: #FFFFFF;
+      --red: #ef4444;
+      --blue: #6d28d9;
+      --yellow: #facc15;
+      --orange: #f97316;
+      --green: #22c55e;
+      --gray-90: #111827;
+      --gray-50: #64748b;
+      --gray-10: #eef2ff;
+      --border: #dce3ef;
+      --radius: 8px;
+      --shadow: 0 12px 24px rgba(64, 64, 65, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; font-family: Arial, Helvetica, sans-serif; color: var(--gray-90); background: var(--white); }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    .top-bar {
+      height: 12px;
+      background: linear-gradient(90deg, var(--navy) 0 32%, var(--gold) 32% 52%, var(--orange) 52% 64%, var(--red) 64% 76%, var(--blue) 76% 88%, var(--green) 88% 96%, var(--yellow) 96% 100%);
+    }
+    .page { width: min(1180px, calc(100% - 28px)); margin: 0 auto; padding: 22px 0 38px; }
+    header { display: grid; gap: 8px; padding-bottom: 18px; border-bottom: 2px solid var(--gray-10); }
+    .eyebrow { margin: 0; color: var(--gold); font-size: .78rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    h1 { margin: 0; color: var(--navy); font-size: clamp(2rem, 5vw, 4rem); line-height: .95; }
+    .subtitle { margin: 0; color: var(--gray-90); line-height: 1.45; }
+    main { display: grid; grid-template-columns: 1fr minmax(280px, 360px); gap: 18px; align-items: start; padding-top: 20px; }
+    .panel, .board-card { border: 2px solid var(--border); border-radius: var(--radius); background: var(--white); box-shadow: var(--shadow); padding: 18px; }
+    .image-board { position: relative; aspect-ratio: 16 / 10; overflow: hidden; border: 2px solid var(--navy); border-radius: var(--radius); background: var(--gray-10); }
+    .image-board img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .tile-grid { position: absolute; inset: 0; display: grid; gap: 2px; padding: 2px; }
+    .cover-tile { display: grid; place-items: center; color: var(--white); background: linear-gradient(135deg, var(--navy), var(--blue)); border: 1px solid rgba(255,255,255,.35); font-weight: 900; font-size: clamp(.85rem, 2vw, 1.4rem); transition: opacity 240ms ease, transform 240ms ease; }
+    .cover-tile.open { opacity: 0; pointer-events: none; }
+    .cover-tile { touch-action: none; cursor: grab; }
+    .cover-tile.active, .cover-tile:focus-visible { outline: 4px solid var(--yellow); outline-offset: -4px; }
+    .cover-tile.dragging { opacity: .45; }
+    .hint { color: var(--gray-50); margin-top: 10px; }
+    .question { color: var(--navy); font-size: 1.25rem; font-weight: 900; line-height: 1.25; }
+    .field { display: grid; gap: 8px; margin-top: 14px; }
+    label { font-size: .86rem; font-weight: 800; }
+    input { width: 100%; border: 2px solid var(--border); border-radius: var(--radius); padding: 10px 12px; outline: none; }
+    input:focus { border-color: var(--blue); box-shadow: 0 0 0 4px rgba(0,112,185,.18); }
+    .btn { min-height: 42px; border: 2px solid var(--navy); border-radius: var(--radius); padding: 9px 12px; color: var(--white); background: var(--navy); font-weight: 800; }
+    .btn.gold { color: var(--black); background: var(--gold); border-color: var(--gold); }
+    .progress { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+    .stat { border: 2px solid var(--border); border-radius: var(--radius); padding: 12px; }
+    .stat span { display: block; color: var(--gray-50); font-size: .78rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .stat strong { display: block; margin-top: 4px; color: var(--navy); font-size: 1.7rem; }
+    .message { min-height: 1.4em; margin-top: 12px; color: var(--navy); font-weight: 800; line-height: 1.4; }
+    .empty { color: var(--gray-50); line-height: 1.45; }
+    @media (max-width: 920px) { main { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="top-bar" aria-hidden="true"></div>
+  <div class="page">
+    <header>
+      <div class="header-row">
+        <p class="eyebrow"><a href="../../index.html" style="color:inherit;text-decoration:none" data-i18n-html="header.eyebrow">TCEA MediaMkr Tools</a></p>
+        <div class="i18n-picker" data-i18n-picker></div>
+      </div>
+      <h1 id="title" data-i18n="header.h1.student">Meme Puzzle</h1>
+      <p class="subtitle" data-i18n="header.subtitle.student">Answer each question correctly to reveal the hidden image.</p>
+    </header>
+    <main id="app">
+      <section class="board-card">
+        <div class="image-board">
+          <img id="puzzleImage" data-i18n-alt="play.imgAlt" alt="Hidden meme puzzle image">
+          <div class="tile-grid" id="tileGrid"></div>
+        </div>
+        <p data-i18n="play.tileHelp">Click a tile to jump to its question. Drag tiles to rearrange them. Keyboard: Alt + arrow keys to move a focused tile.</p>
+      </section>
+      <aside class="panel">
+        <div class="progress">
+          <div class="stat"><span data-i18n="play.correct">Correct</span><strong id="correctCount">0</strong></div>
+          <div class="stat"><span data-i18n="play.total">Total</span><strong id="totalCount">0</strong></div>
+        </div>
+        <div class="question" id="questionText"></div>
+        <div class="hint" id="wordHint"></div>
+        <div class="field">
+          <label for="answerInput" data-i18n="play.answerLabel">Answer</label>
+          <input id="answerInput" type="text" autocomplete="off">
+          <button class="btn gold" id="submitBtn" data-i18n="play.submit">Submit Answer</button>
+        </div>
+        <div class="message" id="message" role="status" aria-live="polite"></div>
+      </aside>
+    </main>
+  </div>
+  <script src="./locales.js?v=20261012-defaults"></script>
+  <script src="./tiles.js?v=20261012-tiles"></script>
+  <script>
+    const t = (k, vars) => WidgetI18n.t(k, vars);
+    const $ = (sel) => document.querySelector(sel);
+    const latestPuzzleKey = "mediamkr.puzzlemkr.latest";
+    const state = { title: "", image: "", questions: [], tileOrder: [], index: 0, correct: 0, solved: new Set() };
+
+    function b64urlDecode(s) {
+      const pad = s.length % 4 === 0 ? "" : "=".repeat(4 - (s.length % 4));
+      const norm = s.replace(/-/g, "+").replace(/_/g, "/") + pad;
+      const bin = atob(norm);
+      const bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      return new TextDecoder().decode(bytes);
+    }
+
+    function normalize(text) {
+      return String(text).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+    }
+
+    function gridShape(count) {
+      const cols = Math.ceil(Math.sqrt(count * 1.6));
+      const rows = Math.ceil(count / cols);
+      return { rows, cols };
+    }
+
+    function loadConfig() {
+      const hash = window.location.hash || "";
+      // Query support keeps older/shared integrations working, while current
+      // teacher links use the fragment so puzzle data never reaches a server.
+      const payload = hash.startsWith("#p=")
+        ? hash.slice(3)
+        : new URLSearchParams(window.location.search).get("p");
+      try {
+        // A portable teacher link carries its setup in `p`. When this route
+        // is opened without that payload, recover the teacher's latest setup
+        // from this browser instead of displaying an empty student page.
+        const saved = localStorage.getItem(latestPuzzleKey);
+        const cfg = payload
+          ? JSON.parse(b64urlDecode(payload))
+          : saved ? JSON.parse(saved) : null;
+        if (!cfg) return false;
+        state.title = cfg.title || state.title;
+        state.image = cfg.image || "";
+        state.questions = Array.isArray(cfg.questions) ? cfg.questions : [];
+        const requestedOrder = Array.isArray(cfg.tileOrder) ? cfg.tileOrder.map(Number) : [];
+        state.tileOrder = requestedOrder.filter((index, position) =>
+          index >= 0 && index < state.questions.length && requestedOrder.indexOf(index) === position
+        );
+        for (let index = 0; index < state.questions.length; index += 1) {
+          if (!state.tileOrder.includes(index)) state.tileOrder.push(index);
+        }
+        return state.questions.length > 0 && state.image;
+      } catch {
+        return false;
+      }
+    }
+
+    function renderTiles() {
+      const count = state.questions.length || 1;
+      const shape = gridShape(count);
+      $("#tileGrid").style.gridTemplateColumns = `repeat(${shape.cols}, 1fr)`;
+      $("#tileGrid").style.gridTemplateRows = `repeat(${shape.rows}, 1fr)`;
+      const order = state.tileOrder.length ? state.tileOrder : Array.from({ length: count }, (_, index) => index);
+      $("#tileGrid").innerHTML = order.map((questionIndex, position) =>
+        `<div role="button" tabindex="${state.solved.has(questionIndex) ? -1 : 0}" aria-label="${t("play.tileLabel", { n: questionIndex + 1 })}" class="cover-tile${state.solved.has(questionIndex) ? " open" : ""}${questionIndex === state.index ? " active" : ""}" data-position="${position}" data-question="${questionIndex}">${questionIndex + 1}</div>`
+      ).join("");
+    }
+
+    function render() {
+      // The teacher's title is custom content — strip the default-binding
+      // attr so the i18n applier doesn't overwrite it on language change.
+      const titleEl = $("#title");
+      if (state.title) {
+        titleEl.removeAttribute("data-i18n");
+        titleEl.textContent = state.title;
+      } else {
+        titleEl.setAttribute("data-i18n", "header.h1.student");
+        titleEl.textContent = t("header.h1.student");
+      }
+      $("#puzzleImage").src = state.image;
+      $("#correctCount").textContent = state.correct;
+      $("#totalCount").textContent = state.questions.length;
+      renderTiles();
+      $("#wordHint").textContent = "";
+      if (state.index >= state.questions.length) {
+        $("#questionText").textContent = t("play.complete");
+        $("#answerInput").disabled = true;
+        $("#submitBtn").disabled = true;
+        $("#message").textContent = t("play.allOpen");
+      } else {
+        $("#questionText").textContent = state.questions[state.index].question;
+        const words = String(state.questions[state.index].answer).trim().split(/\s+/u).filter(Boolean).length;
+        $("#wordHint").textContent = words > 1 ? t("play.wordHint", { n: words }) : "";
+      }
+    }
+
+    function submit() {
+      if (state.index >= state.questions.length) return;
+      const expected = normalize(state.questions[state.index].answer);
+      const actual = normalize($("#answerInput").value);
+      if (actual && actual === expected) {
+        state.solved.add(state.index);
+        state.correct = state.solved.size;
+        const position = state.tileOrder.indexOf(state.index);
+        const nextOrder = [...state.tileOrder.slice(position + 1), ...state.tileOrder.slice(0, position)];
+        state.index = nextOrder.find(index => !state.solved.has(index)) ?? state.questions.length;
+        $("#answerInput").value = "";
+        $("#message").textContent = t("play.correctMsg");
+        render();
+      } else {
+        $("#message").textContent = t("play.tryAgain");
+        $("#answerInput").select();
+      }
+    }
+
+    function init() {
+      if (!loadConfig()) {
+        $("#app").innerHTML = '<section class="panel"><p class="empty" data-i18n="play.noPuzzle">' + t("play.noPuzzle") + '</p></section>';
+        return;
+      }
+      $("#submitBtn").addEventListener("click", submit);
+      $("#answerInput").addEventListener("keydown", event => {
+        if (event.key === "Enter") submit();
+      });
+      bindPuzzleTiles($("#tileGrid"), (from, to) => {
+        [state.tileOrder[from], state.tileOrder[to]] = [state.tileOrder[to], state.tileOrder[from]];
+        renderTiles();
+      }, index => {
+        if (state.solved.has(index)) return;
+        state.index = index;
+        $("#answerInput").value = "";
+        $("#message").textContent = "";
+        render();
+        $("#answerInput").focus();
+      });
+      render();
+    }
+
+    init();
+    window.addEventListener("widget-i18n:changed", () => {
+      // Re-render so dynamic strings (Puzzle complete, Correct., etc.) refresh.
+      if (state.questions.length) render();
+    });
+  </script>  <footer style="background:#082759;color:#cdd8ec;margin-top:40px">
+    <div style="max-width:1180px;margin:0 auto;padding:22px 24px;display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center">
+      <span style="font-weight:700;color:#fff">TCEA MediaMkr | Creative Tools for Educators</span>
+      <nav aria-label="Footer" style="display:flex;gap:6px 16px;flex-wrap:wrap;margin-inline-start:auto">
+        <a style="color:#cdd8ec;text-decoration:none" href="../../index.html" data-i18n="Home">Home</a>
+        <a style="color:#cdd8ec;text-decoration:none" href="https://tcea.org/" target="_blank" rel="noopener">TCEA.org</a>
+        <a style="color:#cdd8ec;text-decoration:none" href="../../PRIVACY.md" data-i18n="Privacy">Privacy</a>
+        <a style="color:#cdd8ec;text-decoration:none" href="../../ACCESSIBILITY.md" data-i18n="Accessibility">Accessibility</a>
+        <a style="color:#cdd8ec;text-decoration:none" href="../../THIRD_PARTY_LICENSES.md" data-i18n="Licenses">Licenses</a>
+      </nav>
+    </div>
+  </footer>
+</body>
+</html>

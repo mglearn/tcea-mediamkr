@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>PuzzleMaker Library — MediaMkr</title>
+  <link rel="icon" type="image/svg+xml" href="../../../assets/icons/favicon.svg">
+  <style>
+    :root{font-family:Inter,system-ui,sans-serif;color:#172033;background:#F7F8FC;--purple:#0A3476;--line:#dce3ef}
+    *{box-sizing:border-box}body{margin:0}.stripe{height:8px;background:linear-gradient(90deg,#0A3476 0 28%,#FCB040 28% 48%,#f97316 48% 65%,#ef4444 65% 82%,#22c55e 82%)}
+    main{width:min(1180px,calc(100% - 32px));margin:0 auto;padding:34px 0 60px}header{display:flex;justify-content:space-between;gap:20px;align-items:start}h1{color:var(--purple);font-size:clamp(2rem,5vw,3.6rem);margin:0}header p{color:#64748b;max-width:720px;line-height:1.5}.back{color:var(--purple);font-weight:800;text-decoration:none;border:2px solid var(--line);border-radius:10px;padding:10px 14px;background:white;white-space:nowrap}
+    .filters{display:flex;flex-wrap:wrap;gap:12px;margin:26px 0}.filters label{font-weight:800;font-size:.85rem}.filters select{display:block;margin-top:5px;min-width:180px;padding:10px;border:2px solid var(--line);border-radius:9px;background:white}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}.card{background:white;border:2px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 12px 30px #0A347610}.card img{display:block;width:100%;aspect-ratio:16/10;object-fit:cover;background:#eef2ff}.body{padding:17px}.body h2{margin:0 0 6px;font-size:1.2rem}.meta{color:#64748b;font-size:.82rem}.standards{display:flex;flex-wrap:wrap;gap:6px;margin:13px 0}.standards span{background:#EEF4FC;color:#082759;border-radius:999px;padding:5px 8px;font-size:.72rem;font-weight:800}.download{display:block;text-align:center;text-decoration:none;color:white;background:var(--purple);border-radius:9px;padding:10px;font-weight:850}.empty{color:#64748b;padding:24px;border:2px dashed var(--line);border-radius:12px}
+    @media(max-width:650px){header{display:block}.back{display:inline-block;margin-top:12px}}
+  </style>
+</head>
+<body>
+  <div class="stripe"></div>
+  <main>
+    <header>
+      <div><h1>PuzzleMaker Library</h1><p>Download classroom-ready Meme Puzzle JSON setups. Every activity includes its image, question set, answer key, tile layout, grade band, subject, and standards connections.</p></div>
+      <a class="back" href="../">← Meme Puzzle Maker</a>
+    </header>
+    <section class="filters" aria-label="Library filters">
+      <label>Grade band<select id="grade"><option value="">All grade bands</option></select></label>
+      <label>Content area<select id="subject"><option value="">All content areas</option></select></label>
+    </section>
+    <section class="grid" id="library" aria-live="polite"></section>
+  </main>
+  <script>
+    const files=[
+      "plant-needs-k2.json","equivalent-fractions-35.json","earth-star-patterns-35.json","text-evidence-68.json","cellular-energy-912.json",
+      "magnet-mayhem-k2.json","states-of-matter-35.json","food-web-35.json","electric-circuits-35.json","water-cycle-35.json","plate-tectonics-68.json","natural-selection-912.json",
+      "map-skills-35.json","texas-revolution-35.json","three-branches-35.json","supply-and-demand-35.json","primary-sources-68.json","westward-expansion-68.json",
+      "main-idea-35.json","context-clues-35.json","point-of-view-35.json","figurative-language-35.json","theme-68.json","argument-evidence-68.json","revision-process-912.json"
+      ,"magnet-mayhem-bilingual-k2.json","water-cycle-bilingual-35.json","map-skills-bilingual-35.json","three-branches-bilingual-35.json","context-clues-bilingual-35.json","figurative-language-bilingual-35.json"
+    ];
+    const library=document.querySelector("#library");
+    const grade=document.querySelector("#grade");
+    const subject=document.querySelector("#subject");
+    let activities=[];
+    const escapeHtml=value=>String(value).replace(/[&<>"']/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char]));
+    function options(select,values){values.sort().forEach(value=>select.insertAdjacentHTML("beforeend",`<option>${escapeHtml(value)}</option>`))}
+    function render(){
+      const shown=activities.filter(item=>(!grade.value||item.data.metadata.gradeBand===grade.value)&&(!subject.value||item.data.metadata.subject===subject.value));
+      library.innerHTML=shown.length?shown.map(item=>`<article class="card"><img src="${item.data.image}" alt="Meme for ${escapeHtml(item.data.title)}"><div class="body"><h2>${escapeHtml(item.data.title)}</h2><div class="meta">Grades ${escapeHtml(item.data.metadata.gradeBand)} · ${escapeHtml(item.data.metadata.subject)} · ${item.data.questions.length} questions</div><div class="standards">${item.data.metadata.standards.map(value=>`<span>${escapeHtml(value)}</span>`).join("")}</div><a class="download" href="./${item.file}" data-download="${item.file}">Download JSON setup</a></div></article>`).join(""):"<p class='empty'>No activities match those filters.</p>";
+    }
+    Promise.all(files.map(async file=>({file,data:await fetch(`./${file}`).then(response=>{if(!response.ok)throw Error(file);return response.json()})}))).then(items=>{
+      activities=items;
+      options(grade,[...new Set(items.map(item=>item.data.metadata.gradeBand))]);
+      options(subject,[...new Set(items.map(item=>item.data.metadata.subject))]);
+      render();
+    }).catch(()=>{library.innerHTML="<p class='empty'>The activity library could not be loaded.</p>"});
+    grade.addEventListener("change",render);subject.addEventListener("change",render);
+    const blobToDataUrl=blob=>new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(blob)});
+    library.addEventListener("click",async event=>{
+      const link=event.target.closest("[data-download]");
+      if(!link)return;
+      event.preventDefault();
+      const original=link.textContent;
+      link.textContent="Preparing download…";
+      try{
+        const file=link.dataset.download;
+        const data=await fetch(`./${file}`).then(response=>{if(!response.ok)throw Error(file);return response.json()});
+        if(data.image&&!data.image.startsWith("data:")){
+          const imageResponse=await fetch(new URL(data.image,location.href));
+          if(!imageResponse.ok)throw Error(data.image);
+          data.image=await blobToDataUrl(await imageResponse.blob());
+        }
+        const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"}));
+        const download=document.createElement("a");
+        download.href=url;download.download=file;download.click();
+        setTimeout(()=>URL.revokeObjectURL(url),1000);
+      }catch(error){alert("The activity download could not be prepared. Please try again.")}
+      finally{link.textContent=original}
+    });
+  </script>
+</body>
+</html>

@@ -46,6 +46,9 @@ def check_file(path):
         url = m.group(1).strip()
         if not url or url.startswith(("#", "mailto:", "tel:", "data:", "javascript:")):
             continue
+        # Skip template-literal / interpolated placeholders built at runtime.
+        if "${" in url or "{{" in url or "<%" in url:
+            continue
         if url.startswith("//"):
             problems.append(("protocol-relative", url))
             continue

@@ -124,3 +124,20 @@
 .mm-panel h2 { margin: 0 0 8px; color: var(--tcea-deep-navy); font-size: 1.2rem; }
 .mm-panel ol { margin: 10px 0 0; padding-inline-start: 22px; color: var(--tcea-text); }
 .mm-panel li { margin-bottom: 6px; }
+
+/* ---- Homepage imagery ---- */
+.mm-hero-inner { position: relative; }
+.mm-hero-img {
+  display: block; width: min(560px, 100%); height: auto; margin-top: 22px;
+  border-radius: var(--radius-lg); border: 1px solid rgba(252,176,64,0.35);
+  box-shadow: 0 18px 40px rgba(8,39,89,0.35);
+}
+@media (min-width: 900px) {
+  .mm-hero-inner { display: grid; grid-template-columns: 1fr minmax(0, 46%); gap: 32px; align-items: center; }
+  .mm-hero-inner > .mm-eyebrow, .mm-hero-inner > h1, .mm-hero-inner > .mm-tagline, .mm-hero-inner > .mm-intro { grid-column: 1; }
+  .mm-hero-img { grid-column: 2; grid-row: 1 / 6; margin-top: 0; align-self: center; }
+}
+.mm-card-thumb {
+  display: block; width: 72px; height: 72px; border-radius: 16px;
+  margin-bottom: 14px; box-shadow: 0 6px 16px rgba(8,39,89,0.18);
+}

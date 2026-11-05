@@ -2,6 +2,7 @@
 WidgetI18n.WidgetI18n.register('bingomkr',{
   "en": {
     "Home":"Home","Visit TCEA.org":"Visit TCEA.org","Privacy":"Privacy","Accessibility":"Accessibility","Licenses":"Licenses",
+    "how.title":"How it works","how.s1":"Add your bingo terms (words, numbers, or short phrases).","how.s2":"Generate unique cards for your class.","how.s3":"Share one link with students, or embed it in Google Sites.","how.s4":"Call items aloud — students mark their cards until someone wins.",
     "nav.tools": "Tools and widgets",
     "nav.caller": "Bingo Caller",
     "nav.guide": "Walkthrough",
@@ -72,6 +73,7 @@ WidgetI18n.WidgetI18n.register('bingomkr',{
   },
   "es": {
     "Home":"Inicio","Visit TCEA.org":"Visitar TCEA.org","Privacy":"Privacidad","Accessibility":"Accesibilidad","Licenses":"Licencias",
+    "how.title":"Cómo funciona","how.s1":"Agrega tus términos de bingo (palabras, números o frases cortas).","how.s2":"Genera tarjetas únicas para tu clase.","how.s3":"Comparte un enlace con los estudiantes o insértalo en Google Sites.","how.s4":"Canta los elementos en voz alta: los estudiantes marcan sus tarjetas hasta que alguien gana.",
     "nav.tools": "Herramientas y widgets",
     "nav.caller": "Cantador de bingo",
     "nav.guide": "Guía paso a paso",

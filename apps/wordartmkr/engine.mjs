@@ -2,7 +2,7 @@ import {containArtwork,rotatedRect,pictureBounds} from './art-bounds.mjs';
 import {composeImageArt} from './image-layout.mjs?v=20261027-bounds';
 // WordArtMkr's original vector text effects. No third-party generator or service.
 export const PRESETS = [
- ['splat','Splat shine','#147AD6','#0A3476','gloss'],['neon','Neon nights','#147AD6','#65f3fa','neon'],
+ ['gloss','Glossy pop','#147AD6','#0A3476','gloss'],['neon','Neon nights','#147AD6','#65f3fa','neon'],
  ['chrome','Chrome studio','#f5f7ff','#56627e','chrome'],['gold','Liquid gold','#fff5a3','#be7314','gold'],
  ['retro','Retro print','#ffe4b8','#ef6c76','retro'],['comic','Comic pop','#ffcf45','#ff8d3a','comic'],
  ['rainbow','Rainbow ribbon','#147AD6','#17bebb','rainbow'],['sunset','Sunset glow','#ffbf65','#147AD6','gradient'],
@@ -27,7 +27,7 @@ export const FONTS = [
  {id:'indic',name:'Devanagari · Noto',file:'NotoSansDevanagari.woff'},
  {id:'cjk',name:'CJK · Noto',file:'NotoSansCJK.woff'},
 ];
-export const DEFAULT_PROJECT = Object.freeze({app:'WordArtMkr',version:1,text:'Make a splash',preset:'splat',font:'display',size:96,weight:900,italic:false,primary:'#147AD6',secondary:'#0A3476',outline:'#0A3476',outlineWidth:2,spacing:0,curve:0,rotate:0,skew:0,depth:7,background:'#ffffff',transparent:true,above:2,through:0,below:1,seed:1,applyGlitch:false,pulse:false,fontData:'',fontName:'',images:[],shape:'none',shapeFill:'#ede7ff',shapeStroke:'#147AD6',textPath:'straight',pathOffset:50,pathFit:false,bendStrength:85,imageLayout:'free',imageGap:10,bottomText:'',textTransforms:{}});
+export const DEFAULT_PROJECT = Object.freeze({app:'WordArtMkr',version:1,text:'Make a splash',preset:'gloss',font:'display',size:96,weight:900,italic:false,primary:'#147AD6',secondary:'#0A3476',outline:'#0A3476',outlineWidth:2,spacing:0,curve:0,rotate:0,skew:0,depth:7,background:'#ffffff',transparent:true,above:2,through:0,below:1,seed:1,applyGlitch:false,pulse:false,fontData:'',fontName:'',images:[],shape:'none',shapeFill:'#ede7ff',shapeStroke:'#147AD6',textPath:'straight',pathOffset:50,pathFit:false,bendStrength:85,imageLayout:'free',imageGap:10,bottomText:'',textTransforms:{}});
 const clamp=(value,min,max,fallback)=>Number.isFinite(Number(value))?Math.max(min,Math.min(max,Number(value))):fallback;
 const hex=(value,fallback)=>/^#[0-9a-f]{6}$/i.test(value||'')?value:fallback;
 export const xml=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));
@@ -104,7 +104,7 @@ export function renderWordArt(input,{fontData='',measure,motionOpacity=1}={}) {
   const inner=path?`<textPath href="#arc${i}" startOffset="${offset}%"${fit}>${xml(line||' ')}</textPath>`:xml(line||' ');
   if(path)paths+=`<path id="arc${i}" d="${path}"/>`;
   const text=(attrs,dx=0,dy=0)=>`<text ${common}${path?'':` x="${x}" y="${y}"`}${path?'':fit} ${attrs}${dx||dy?` transform="translate(${dx} ${dy})"`:''}>${inner}</text>`;
-  if(['stack','retro','splat','comic','blueburst','bronze','silverpress','forest'].includes(preset.id))for(let k=Math.round(p.depth);k>0;k--)content+=text(`fill="${preset.effect==='retro'?(k>p.depth/2?'#2d8e97':'#e66f78'):p.outline}" stroke="${p.outline}" stroke-width="${p.outlineWidth}"`,k*.65,k*.8);
+  if(['stack','retro','gloss','comic','blueburst','bronze','silverpress','forest'].includes(preset.id))for(let k=Math.round(p.depth);k>0;k--)content+=text(`fill="${preset.effect==='retro'?(k>p.depth/2?'#2d8e97':'#e66f78'):p.outline}" stroke="${p.outline}" stroke-width="${p.outlineWidth}"`,k*.65,k*.8);
   if(preset.effect==='glitch'){content+=text('fill="#18dce0"',-5,1)+text('fill="#147AD6"',5,-1);}
   if(preset.effect==='sticker')content+=text('fill="white" stroke="white" stroke-width="15"');
   const stroke=preset.effect==='outline'?p.primary:preset.effect==='comic'?'#082759':p.outline,sw=preset.effect==='outline'?Math.max(2,p.outlineWidth):p.outlineWidth;

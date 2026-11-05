@@ -1,0 +1,265 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mediamkr.org/solutions/wordweb/mediamkr-wordweb-schema-v2.json",
+  "title": "MediaMkr WordWebMkr — import/export schema (v2)",
+  "description": "Schema VERSION 2 for .mediamkr-cmap.json files used by MediaMkr WordWebMkr (solutions/wordweb). The Studio's Load .json button accepts any object that validates against this schema. Unknown fields are tolerated and ignored. Send this file to an LLM along with your prompt to get back JSON you can load directly. The filename includes -v2 so it's obvious at a glance which schema version your LLM was conditioned on; when the format bumps, the new file will be named -v3 and old links to -v2 will keep resolving.\n\nBackward compatibility: the loader auto-migrates older formats on import, so you do NOT need to update existing files by hand. Specifically it accepts: a missing `type` field (treated as a concept map if `nodes` is present); v1 files where `nodes` was an object keyed by id rather than an array; v1 connectors that used `{from, to}` instead of `{fromId, toId}`; missing `connectors` or `groups` arrays (default to empty); and missing `level` per node (defaults to 1 if `isRoot`, else 2). Files saved by the current Studio always emit the canonical v2 shape below.",
+  "type": "object",
+  "required": ["type", "nodes", "connectors"],
+  "properties": {
+    "type": {
+      "const": "mediamkr-wordweb",
+      "description": "Identifies the file as a MediaMkr concept map. Must be the exact literal string."
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 2,
+      "description": "Schema version. The current writer emits 2. The reader is lenient — older versions still load."
+    },
+    "saved": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp the file was generated. Optional; informational only."
+    },
+    "canvas": {
+      "type": "object",
+      "description": "Hint for the initial view size. The canvas is logically infinite — node coordinates are unbounded and the view auto-fits on load — so this is only used for the default zoom origin.",
+      "properties": {
+        "w": { "type": "number", "default": 1200 },
+        "h": { "type": "number", "default": 720 }
+      }
+    },
+    "nodes": {
+      "type": "array",
+      "minItems": 1,
+      "description": "The wordweb nodes. At least one node is required for a file to load.",
+      "items": { "$ref": "#/$defs/node" }
+    },
+    "connectors": {
+      "type": "array",
+      "description": "Directed edges between nodes. Connectors whose fromId or toId don't match an existing node id are silently dropped on load. Self-loops (fromId === toId) are also dropped.",
+      "items": { "$ref": "#/$defs/connector" }
+    },
+    "groups": {
+      "type": "array",
+      "description": "Optional named clusters that visually outline a set of nodes. Groups with fewer than 2 valid node ids are dropped on load.",
+      "items": { "$ref": "#/$defs/group" }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Stable identifier for a node, connector, or group. Any non-empty string is accepted; if the string ends in digits (e.g. 'n12'), those digits feed the next-id counter so newly-added items don't collide. Recommended convention: 'n1', 'n2', … for nodes; 'c1', 'c2', … for connectors; 'g1', 'g2', … for groups."
+    },
+    "hexColor": {
+      "type": "string",
+      "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$",
+      "description": "CSS-style hex color: #RGB, #RRGGBB, or #RRGGBBAA. Invalid values are replaced with the default for the field."
+    },
+    "node": {
+      "type": "object",
+      "required": ["id", "label"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "label": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Visible text inside the node. The Studio word-wraps long labels into multiple lines and auto-grows the node's height to fit. Strings over 200 characters are truncated on load."
+        },
+        "level": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3,
+          "description": "Visual hierarchy. 1 = main idea (largest box, largest text). 2 = directly connected to a main idea (medium). 3 = supporting detail / leaf (smallest). If omitted, defaults to 1 when isRoot is true, otherwise 2. Use level=3 for short factual nodes attached to a level-2 hub so they read as visually subordinate. The default width and base height for the node come from the level; explicit w/h still override."
+        },
+        "section": {
+          "type": "string",
+          "maxLength": 80,
+          "description": "Optional section / chapter tag. When at least one node in the map has a `section`, the Studio shows a section-filter pill row above the canvas; clicking a section focuses on it and fades nodes in other sections. Useful for breaking large maps into chapters (e.g. \"Inputs\", \"Process\", \"Outputs\") without splitting into separate files. Nodes can omit `section` to always show. Whitespace is trimmed, and values longer than 80 characters are truncated on load."
+        },
+        "x": {
+          "type": "number",
+          "minimum": -100000,
+          "maximum": 100000,
+          "default": 0,
+          "description": "Horizontal canvas coordinate of the node's CENTER, in unit-viewBox pixels. Values outside ±100000 are clamped."
+        },
+        "y": {
+          "type": "number",
+          "minimum": -100000,
+          "maximum": 100000,
+          "default": 0,
+          "description": "Vertical canvas coordinate of the node's CENTER, in unit-viewBox pixels. Values outside ±100000 are clamped."
+        },
+        "w": {
+          "type": "number",
+          "minimum": 40,
+          "maximum": 400,
+          "description": "Rendered node width in pixels. Out-of-range values are clamped. If omitted, defaults from `level`: 248 (level 1), 200 (level 2), 168 (level 3)."
+        },
+        "h": {
+          "type": "number",
+          "minimum": 24,
+          "maximum": 200,
+          "description": "Minimum node height in pixels. The Studio auto-grows nodes vertically to fit wrapped label text, so this acts as a floor rather than an exact value. If omitted, defaults from `level`: 96 (level 1), 80 (level 2), 64 (level 3)."
+        },
+        "link": {
+          "type": "string",
+          "default": "",
+          "description": "Optional clickable URL. Only http://, https://, and mailto: schemes are kept on load; any other value is dropped to an empty string."
+        },
+        "image": {
+          "type": "string",
+          "default": "",
+          "pattern": "^(data:image/.*|)$",
+          "description": "Optional inline image rendered behind the label. Must be a base64 data URL beginning with 'data:image/' (PNG, JPEG, SVG, etc). External http URLs are rejected for privacy/CSP reasons — embed the image data instead."
+        },
+        "isRoot": {
+          "type": "boolean",
+          "default": false,
+          "description": "Marks the central / root node. Root nodes get a default purple style and are emphasized visually. A map can have zero, one, or several root nodes."
+        },
+        "fill": {
+          "$ref": "#/$defs/hexColor",
+          "default": "#fce7f3",
+          "description": "Background fill color. Defaults to the Pink palette swatch (#fce7f3). For consistency with the built-in palette, pair fill+stroke+text from the same color family — see the 'examples' block at the bottom of this schema for the five palette swatches the Studio uses."
+        },
+        "stroke": {
+          "$ref": "#/$defs/hexColor",
+          "default": "#ec4899",
+          "description": "Border color. Defaults to Pink (#ec4899)."
+        },
+        "text": {
+          "$ref": "#/$defs/hexColor",
+          "default": "#831843",
+          "description": "Label text color. Defaults to dark Pink (#831843)."
+        }
+      }
+    },
+    "connector": {
+      "type": "object",
+      "required": ["id", "fromId", "toId"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "fromId": {
+          "$ref": "#/$defs/id",
+          "description": "Id of the source node. Must match a node.id in the same file."
+        },
+        "toId": {
+          "$ref": "#/$defs/id",
+          "description": "Id of the destination node. Must match a node.id in the same file and differ from fromId."
+        },
+        "label": {
+          "type": "string",
+          "maxLength": 200,
+          "default": "",
+          "description": "Optional edge label (e.g. 'causes', 'leads to', 'is a kind of'). Rendered along the line."
+        }
+      }
+    },
+    "group": {
+      "type": "object",
+      "required": ["id", "nodeIds"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "nodeIds": {
+          "type": "array",
+          "minItems": 2,
+          "uniqueItems": true,
+          "description": "Node ids that belong to this cluster. At least 2 valid ids are required for the group to render.",
+          "items": { "$ref": "#/$defs/id" }
+        },
+        "label": {
+          "type": "string",
+          "maxLength": 200,
+          "default": "",
+          "description": "Optional group label drawn near the cluster outline."
+        },
+        "colorIndex": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4,
+          "default": 0,
+          "description": "Index into the Studio's 5-color group palette: 0 Pink, 1 Mint, 2 Lavender, 3 Butter, 4 Sky."
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "type": "mediamkr-wordweb",
+      "version": 2,
+      "saved": "2026-05-30T00:00:00.000Z",
+      "canvas": { "w": 1200, "h": 720 },
+      "nodes": [
+        {
+          "id": "n1",
+          "label": "Photosynthesis converts light energy into chemical energy in plant cells",
+          "level": 1,
+          "x": 600, "y": 200,
+          "isRoot": true,
+          "fill": "#7c3aed", "stroke": "#5b21b6", "text": "#ffffff"
+        },
+        {
+          "id": "n2",
+          "label": "Sunlight",
+          "level": 2,
+          "section": "Inputs",
+          "x": 300, "y": 420,
+          "fill": "#fef9c3", "stroke": "#eab308", "text": "#713f12"
+        },
+        {
+          "id": "n3",
+          "label": "Water (H₂O)",
+          "level": 2,
+          "section": "Inputs",
+          "x": 600, "y": 420,
+          "fill": "#dbeafe", "stroke": "#3b82f6", "text": "#1e3a8a"
+        },
+        {
+          "id": "n4",
+          "label": "Carbon Dioxide (CO₂)",
+          "level": 2,
+          "section": "Inputs",
+          "x": 900, "y": 420,
+          "fill": "#d1fae5", "stroke": "#10b981", "text": "#064e3b"
+        },
+        {
+          "id": "n5",
+          "label": "Glucose + O₂",
+          "level": 2,
+          "section": "Outputs",
+          "x": 600, "y": 620,
+          "fill": "#ede9fe", "stroke": "#8b5cf6", "text": "#4c1d95"
+        },
+        {
+          "id": "n6",
+          "label": "Visible spectrum, 400-700nm",
+          "level": 3,
+          "section": "Inputs",
+          "x": 140, "y": 540,
+          "fill": "#fef9c3", "stroke": "#eab308", "text": "#713f12"
+        }
+      ],
+      "connectors": [
+        { "id": "c1", "fromId": "n2", "toId": "n1", "label": "provides energy" },
+        { "id": "c2", "fromId": "n3", "toId": "n1", "label": "supplies hydrogen" },
+        { "id": "c3", "fromId": "n4", "toId": "n1", "label": "supplies carbon" },
+        { "id": "c4", "fromId": "n1", "toId": "n5", "label": "produces" },
+        { "id": "c5", "fromId": "n6", "toId": "n2", "label": "is the active range" }
+      ],
+      "groups": [
+        {
+          "id": "g1",
+          "label": "Inputs",
+          "nodeIds": ["n2", "n3", "n4"],
+          "colorIndex": 4
+        }
+      ]
+    }
+  ]
+}

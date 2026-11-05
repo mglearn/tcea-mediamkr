@@ -110,11 +110,20 @@ Video editing/recording is local. Google Drive export stubbed (needs org OAuth).
 No third-party libraries. Original project code. Fonts as noted under Shared.
 
 ### DocMkr
-| Component | Purpose | License | Source |
-|---|---|---|---|
-| pdf-lib | Create/merge/split/rotate PDFs in-browser | MIT, © 2019 Andrew Dillon | https://github.com/Hopding/pdf-lib |
+Full PDF suite. Bundled libraries (local):
 
-The MIT license text is preserved at `apps/docmkr/assets/vendor/pdf-lib.LICENSE.md`.
+| Component | Purpose | License |
+|---|---|---|
+| pdf-lib | PDF editing | MIT, © 2019 Andrew Dillon |
+| pdf.js (Mozilla) | PDF rendering | Apache-2.0 |
+| JSZip | packaging/export | MIT |
+| Tesseract.js + tesseract-core (vendor/ocr) | OCR | Apache-2.0 |
+| eng/spa traineddata | OCR language data | Apache-2.0 |
+| hash-wasm argon2 | key derivation (encryption) | MIT |
+
+License texts are preserved under `apps/docmkr/vendor/`. All processing is
+local; Google Drive export is not configured in this edition.
+
 
 ---
 

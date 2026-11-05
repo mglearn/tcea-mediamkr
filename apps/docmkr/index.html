@@ -1,87 +1,438 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="referrer" content="no-referrer">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; script-src 'self' 'wasm-unsafe-eval' blob:; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
-<title>DocMkr — TCEA MediaMkr</title>
-<meta name="description" content="DocMkr — merge, split, and prepare PDF documents in your browser. Combine PDFs and images, extract pages, and rotate — all on this device. Part of TCEA MediaMkr.">
-<link rel="icon" type="image/svg+xml" href="../../assets/icons/favicon.svg">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../../assets/css/tcea-theme.css">
-<link rel="stylesheet" href="../../assets/css/layout.css">
-<link rel="stylesheet" href="assets/app.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Open, organize, annotate, export, and convert PDFs to EPUB locally in your browser.">
+  <title>DocMkr™ | TCEA MediaMkr</title><meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; media-src blob: mediastream:; script-src 'self' 'wasm-unsafe-eval' blob:; worker-src 'self' blob:; connect-src 'self' https: data: blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; object-src 'none'; base-uri 'none'"><meta name="referrer" content="no-referrer"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="../../assets/css/tcea-theme.css"><link rel="stylesheet" href="../../assets/css/layout.css">
+  <link rel="icon" type="image/svg+xml" href="../../assets/icons/favicon.svg">
+  <link rel="stylesheet" href="./css/app.css">
+  <link rel="stylesheet" href="./css/branding.css">
+  
+  
+
+
+<link rel="stylesheet" href="./src/ocr.css"><link rel="stylesheet" href="./src/toolbar.css">
 </head>
 <body>
-<a class="skip-link" href="#main" data-i18n="skip">Skip to PDF tools</a>
-<div class="mm-shell">
-  <header class="mm-header">
-    <div class="mm-header-inner">
-      <a class="mm-brand" href="../../index.html"><span class="mm-mark" aria-hidden="true">M</span><span>TCEA MediaMkr</span></a>
-      <span class="mm-app-title">DocMkr</span>
-      <nav aria-label="Primary">
-        <a href="../../index.html" data-i18n="nav.home">Home</a>
-        <a href="#help" data-i18n="nav.help">Help</a>
-        <label class="visually-hidden" for="mm-lang">Language</label>
-        <select id="mm-lang" class="mm-lang" data-mm-lang aria-label="Language"></select>
-        <a class="mm-cta" href="https://tcea.org/" target="_blank" rel="noopener" data-i18n="nav.tcea">Visit TCEA.org</a>
-      </nav>
+<header class="mm-header"><div class="mm-header-inner">
+  <a class="mm-brand" href="../../index.html"><span class="mm-mark" aria-hidden="true">M</span><span>TCEA MediaMkr</span></a>
+  <span class="mm-app-title">DocMkr</span>
+  <nav aria-label="Primary"><a href="../../index.html">Home</a><a class="mm-cta" href="https://tcea.org/" target="_blank" rel="noopener">Visit TCEA.org</a></nav>
+</div></header>
+  <a class="skip-link" href="#workspace">Skip to document</a>
+  <header class="topbar">
+    <div class="brand">
+      <img src="./docmkr.png" alt="">
+      <span class="eyebrow">TCEA MediaMkr</span>
+      <strong>DocMkr™</strong>
     </div>
+    <div class="actions" role="toolbar" aria-label="Document actions">
+      <button id="openButton" class="primary" type="button">Open file</button>
+      <select id="saveAsSelect" class="save-as-select" aria-label="Save as" disabled>
+        <option value="">Save as…</option>
+        <option value="pdf">PDF (.pdf)</option>
+        <option value="png">PNG (.png)</option>
+        <option value="jpg">JPG (.jpg)</option>
+        <option value="webp">WebP (.webp)</option>
+        <option value="webdeck">WebDeck v5 (.html)</option>
+        <option value="markdown">Markdown (.md)</option>
+        <option value="docx">Word — DOCX (.docx)</option>
+        <option value="odt">OpenDocument — ODF (.odt)</option>
+        <option value="epub">EPUB (.epub)</option>
+        <option value="json">JSON (.json)</option>
+      </select>
+      <button id="ocrButton" type="button" disabled aria-label="Recognize text (OCR)" title="Recognize text in scanned pages and images" data-tool-label="Recognize text (OCR)"><svg class="pdf-ocr-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8V3h5m8 0h5v5M3 16v5h5m8 0h5v-5M8 8h8m-4 0v9"/></svg>OCR</button>
+<details class="pdf-toolbar-menu" name="pdf-toolbar"><summary aria-expanded="false">Tools</summary><div class="pdf-toolbar-popover">
+      <button id="websiteButton" type="button">Capture to PDF</button>
+      <button id="scanButton" type="button">Scan to PDF</button>
+      <button id="mergeButton" type="button" disabled>Add PDF</button>
+      <button id="protectButton" type="button">Protect / Unprotect</button>
+      <button id="saveDriveButton" type="button" disabled>Save PDF to Google Drive</button>
+      <button id="toolSearchButton" type="button" aria-keyshortcuts="Control+K Meta+K">Find a tool</button>
+</div></details>
+<details class="pdf-toolbar-menu" name="pdf-toolbar"><summary aria-expanded="false">View</summary><div class="pdf-toolbar-popover">
+      <button id="presentButton" type="button" disabled aria-keyshortcuts="Control+L Meta+L"><span>Present PDF</span></button>
+      <button id="fullscreenButton" type="button" disabled>⛶ <span>Full screen</span></button>
+      <label class="ds-language-control ds-language-inline"><span>🌐 Language</span><select data-pdf-language aria-label="Language"><option value="en">English</option><option value="es">Español</option><option value="vi">Tiếng Việt</option><option value="ar">العربية</option><option value="zh">中文</option><option value="uh">हिन्दी / اردو</option></select></label>
+
+</div></details>
+      <button id="pagesButton" class="mobile-only" type="button" disabled aria-expanded="false">Pages</button>
+      <button id="unlockButton" type="button" hidden aria-hidden="true" tabindex="-1">Unprotect</button>
+      <button id="undoButton" class="pdf-history-icon" aria-label="Undo" title="Undo (Ctrl/Cmd+Z)" type="button" disabled aria-keyshortcuts="Control+Z Meta+Z">Undo</button>
+      <button id="redoButton" class="pdf-history-icon" aria-label="Redo" title="Redo (Ctrl/Cmd+Shift+Z)" type="button" disabled aria-keyshortcuts="Control+Y Meta+Shift+Z">Redo</button>
+      <button class="ds-apps-link" type="button" data-ds-app-launcher aria-label="Open TCEA MediaMkr apps" title="Apps">Apps ▦</button>
+    </div>
+    <input id="fileInput" type="file" accept=".pdf,.docx,.odt,application/vnd.oasis.opendocument.text,.pptx,.epub,.md,.markdown,.txt,image/*" multiple hidden>
+    <input id="mergeInput" type="file" accept="application/pdf,.pdf" hidden>
+    <input id="imageInput" type="file" accept="image/png,image/jpeg" hidden>
+    <input id="imagePagesInput" type="file" accept="image/png,image/jpeg" multiple hidden>
+    <input id="signatureImageInput" type="file" accept="image/png,image/jpeg" hidden>
+    <input id="vaultInput" type="file" accept=".csplat,.ciphersplat,application/octet-stream" hidden>
   </header>
 
-  <main id="main" class="mm-main">
-    <div class="mm-wrap">
-      <section class="dm-intro">
-        <p class="mm-eyebrow" data-i18n="intro.eyebrow">PDF tools, right in your browser</p>
-        <h1 data-i18n="intro.h1">Merge, split, and prepare PDFs.</h1>
-        <p data-i18n="intro.p">Combine PDFs and images into one document, pull out the pages you need, and rotate pages — all on this device. Nothing is uploaded.</p>
-      </section>
+  <main id="workspace" class="workspace empty" tabindex="-1">
+    <aside id="sidebar" class="sidebar" aria-label="Page thumbnails">
+      <div class="panel-heading"><strong>Pages</strong><span id="pageCount">0</span></div>
+      <ol id="thumbnails" class="thumbnails"></ol>
+    </aside>
 
-      <div class="dm-toolbar">
-        <button type="button" id="addPdf" class="dm-btn" data-i18n="add.pdf">Add PDFs</button>
-        <button type="button" id="addImages" class="dm-btn" data-i18n="add.images">Add images</button>
-        <input type="file" id="pdfInput" accept="application/pdf,.pdf" multiple hidden>
-        <input type="file" id="imgInput" accept="image/png,image/jpeg" multiple hidden>
+    <section class="stage" aria-label="PDF document">
+      <div id="dropZone" class="drop-zone">
+        <div class="drop-card">
+          <img class="drop-logo" src="./docmkr.png" alt="DocMkr logo">
+          <h1>Open a file. Make it a PDF.</h1>
+          <p>Drop PDF, DOCX, ODT, PPTX, EPUB, Markdown, text, or images here. Conversion happens on this device.</p>
+          <button id="websiteStartButton" type="button">Capture an open tab or window</button>
+          <button id="scanStartButton" type="button">Scan paper or photos</button>
+          <button id="chooseButton" class="primary" type="button">Choose files</button>
+          <section class="quick-start" aria-labelledby="quickStartTitle">
+            <h2 id="quickStartTitle">Quick start</h2>
+            <ol>
+              <li><strong>Open or scan.</strong> Choose a PDF or supported document, drop files here, or scan paper and photos into a new document.</li>
+              <li><strong>Edit.</strong> Open Edit &amp; annotate. Choose text, an image, or a signature, then click or tap the page to place it. Highlights and drawing are also available. Select a text box to change its text, size, color, or opacity at the top of the tools panel.</li>
+              <li><strong>Organize.</strong> Drag page thumbnails to reorder them. Open Pages for rotation, cropping, duplication, or splitting.</li>
+              <li><strong>Save a copy.</strong> Use Undo to reverse an edit, then choose Save as… for PDF, images, or document formats. Your original file stays unchanged.</li>
+            </ol>
+            <p>Your work stays in this browser. Save a copy before closing the tab.</p>
+          </section>
+        </div>
       </div>
-      <p class="dm-hint" data-i18n="add.hint">Add PDF files and PNG/JPEG images. Drag to reorder. Each image becomes one page.</p>
-
-      <div id="fileList" class="dm-list" aria-live="polite"></div>
-
-      <div class="dm-build">
-        <label data-i18n="out.name">Output file name<input id="outName" type="text" value="document" maxlength="80"></label>
-        <button type="button" id="merge" class="dm-btn primary" data-i18n="btn.merge" disabled>Build PDF</button>
-        <button type="button" id="clear" class="dm-btn" data-i18n="btn.clear" disabled>Clear all</button>
+      <div id="inkTools" class="ink-tools" aria-label="Pen controls" hidden>
+        <span>Write on the PDF with your finger, stylus, or mouse.</span>
+        <label>Pen color <input id="inkColor" type="color" value="#172033"></label>
+        <label>Pen width <select id="inkWidth"><option value="1">Fine</option><option value="2" selected>Medium</option><option value="4">Thick</option></select></label>
+        <button id="inkUndo" type="button">Undo stroke</button>
+        <button id="inkDone" type="button" class="primary">Done drawing</button>
       </div>
-      <p class="dm-status" id="status" role="status" aria-live="polite" data-i18n="status.ready">Add files, then build your PDF.</p>
+      <div id="textFormatTools" class="text-format-tools" role="toolbar" aria-label="Text formatting" hidden>
+        <button type="button" data-text-format="bold" aria-label="Bold" aria-pressed="false"><strong>B</strong><span>Bold</span></button>
+        <button type="button" data-text-format="italic" aria-label="Italic" aria-pressed="false"><em>I</em><span>Italic</span></button>
+        <span class="format-divider" aria-hidden="true"></span>
+        <button type="button" data-text-align="left" aria-label="Align left" aria-pressed="true"><span>Left</span></button>
+        <button type="button" data-text-align="center" aria-label="Align center" aria-pressed="false"><span>Center</span></button>
+        <button type="button" data-text-align="right" aria-label="Align right" aria-pressed="false"><span>Right</span></button>
+        <button id="editInlineText" type="button">Edit on page</button>
+        <button id="finishInlineText" type="button" class="primary" disabled>Done editing</button>
+        <span class="tool-hint">Double-click text to edit. Drag its border to move it.</span>
+      </div>
+      <div id="placementTools" class="placement-tools" hidden>
+        <span id="placementMessage" role="status"></span>
+        <button id="placementCancel" type="button">Cancel placement</button>
+      </div>
+      <div id="importNotice" class="import-notice" role="status" hidden></div>
+      <aside id="visualCoverWarning" class="visual-cover-warning" role="note" aria-label="Visual covers are not secure redaction" hidden><strong>Not secure redaction:</strong> visual covers preserve original content. For FERPA-protected or sensitive records, use an approved redaction workflow before sharing. <a href="../../THIRD_PARTY_LICENSES.md" target="_blank" rel="noopener">Redaction guidance</a></aside>
+      <div id="documentView" class="document-view" hidden>
+        <div id="pageShell" class="page-shell">
+          <canvas id="pdfCanvas"></canvas>
+          <div id="textHitLayer" class="text-hit-layer" aria-label="Detected PDF text"></div>
+          <div id="annotationLayer" class="annotation-layer" tabindex="0" aria-label="PDF page annotations and insertion area" aria-describedby="placementMessage"></div>
+        </div>
+      </div>
+    </section>
 
-      <section id="help" class="dm-help">
-        <article><h2 data-i18n="help.h1">How it works</h2><p data-i18n="help.p1">Add PDFs and images, drag to put them in order, then Build PDF. For a PDF you can set a page range (for example 1-3, 5) to keep only those pages. Set a rotation to turn pages a quarter turn.</p></article>
-        <article><h2 data-i18n="help.h2">Private by design</h2><p data-i18n="help.p2">Your files are read and combined in your browser using a local PDF library. Nothing is sent to a server, and the finished PDF downloads straight to your device.</p></article>
-      </section>
-    </div>
+    <aside class="tools" aria-label="Editing tools">
+      <div class="selection-properties" aria-label="Selection controls">
+        <p id="selectionHint" class="tool-hint">Select a text box or object to edit its properties here.</p>
+      <fieldset id="textProperties" hidden disabled>
+        <legend>Selected text</legend>
+        <label>Text <textarea id="textValue" rows="3"></textarea></label>
+        <label>Size <input id="fontSize" type="number" min="8" max="96" value="18"></label>
+        <label>Color <input id="textColor" type="color" value="#172033"></label>
+        <button id="deleteTextButton" class="danger" type="button">Delete text</button>
+      </fieldset>
+      <fieldset id="objectProperties" hidden disabled>
+        <legend>Appearance</legend>
+        <label id="opacityProperty">Opacity <input id="objectOpacity" type="range" min="10" max="100" value="100"></label>
+        <label id="imageAltRow" hidden>Image description <textarea id="imageAltText" rows="3" maxlength="500" placeholder="Describe meaningful content, or leave blank only if decorative"></textarea></label>
+        <button id="deleteObjectButton" class="danger" type="button">Delete object</button>
+      </fieldset>
+      </div>
+      <div class="tool-groups">
+      <details class="tool-group" id="toolGroup-edit" open><summary>Edit & annotate</summary>
+        <div class="tool-grid">
+          <button id="editTextButton" type="button" disabled aria-pressed="false">Edit PDF text</button>
+          <button id="addTextButton" type="button" disabled>Add text</button>
+          <button id="highlightButton" type="button" disabled>Highlight</button>
+          <button id="drawButton" type="button" disabled>Draw</button>
+          <button id="addImageButton" type="button" disabled>Add image</button>
+          <button id="signatureButton" type="button" disabled>Add signature</button>
+          <button id="removeAreaButton" type="button" disabled aria-pressed="false">Remove area</button>
+        </div>
+        <p class="tool-hint">Remove area adds a visual cover; underlying content remains in the PDF.</p>
+      </details>
+      <details class="tool-group" id="toolGroup-pages"><summary>Pages</summary>
+        <div class="tool-grid">
+          <button id="cropButton" type="button" disabled>Crop pages</button>
+          <button id="customRotateButton" type="button" disabled>Deskew / custom rotation</button>
+          <button id="rotateLeftButton" type="button" disabled>Rotate left</button>
+          <button id="rotateRightButton" type="button" disabled>Rotate right</button>
+          <button id="reversePagesButton" type="button" disabled>Reverse page order</button>
+          <button id="blankPageButton" type="button" disabled>Insert blank page</button>
+          <button id="imagePagesButton" type="button" disabled>Images to PDF pages</button>
+          <button id="removeBlankPagesButton" type="button" disabled>Remove blank pages</button>
+          <button id="duplicatePageButton" type="button" disabled>Duplicate page</button>
+          <button id="deletePageButton" class="danger" type="button" disabled>Delete page</button>
+          <button id="extractPageButton" type="button" disabled>Extract page</button>
+          <button id="splitButton" type="button" disabled>Separate / Split</button>
+        </div>
+        <p class="tool-hint">Ctrl/Cmd-click thumbnails to select pages; Shift-click selects a range. Drag to reorder, or right-click for page actions.</p>
+      </details>
+      <details class="tool-group" id="toolGroup-output"><summary>Output</summary>
+        <div class="tool-grid">
+          <button id="decorateButton" type="button" disabled>Headers, footers & numbers</button>
+          <button id="exportImagesButton" type="button" disabled>Export pages as images</button>
+          <button id="sanitizeButton" type="button" disabled>Sanitize PDF copy</button>
+          <button id="accessibilityButton" type="button" disabled>Accessibility check</button>
+        </div>
+      </details>
+      </div>
+    </aside>
   </main>
 
-  <footer class="mm-footer">
-    <div class="mm-footer-inner">
-      <span class="mm-footer-brand">TCEA MediaMkr | Creative Tools for Educators</span>
-      <nav aria-label="Footer">
-        <a href="../../index.html" data-i18n="nav.home">Home</a>
-        <a href="https://tcea.org/" target="_blank" rel="noopener">TCEA.org</a>
-        <a href="../../PRIVACY.md">Privacy</a>
-        <a href="../../ACCESSIBILITY.md">Accessibility</a>
-        <a href="../../THIRD_PARTY_LICENSES.md">Licenses</a>
-      </nav>
+  <footer class="statusbar">
+    <span id="status" role="status" aria-live="polite">Ready</span>
+    <div class="status-controls">
+      <button id="previousPageButton" type="button" disabled aria-label="Previous page" title="Previous page (Left Arrow)">←</button>
+      <span id="pagePosition" aria-live="polite">0 / 0</span>
+      <button id="nextPageButton" type="button" disabled aria-label="Next page" title="Next page (Right Arrow)">→</button>
+      <button id="zoomOutButton" type="button" disabled aria-label="Zoom out">−</button>
+      <span id="zoomLabel">100%</span>
+      <button id="zoomInButton" type="button" disabled aria-label="Zoom in">+</button>
+      <button id="fitButton" type="button" disabled>Fit width</button>
+      <button id="aboutButton" type="button">About DocMkr</button><button id="privacyButton" class="privacy" type="button">🔒 Local Processing</button>
     </div>
   </footer>
-</div>
 
-<script src="assets/vendor/pdf-lib.min.js"></script>
-<script src="../../assets/js/i18n.js"></script>
-<script src="assets/docmkr.i18n.js"></script>
-<script src="../../assets/js/navigation.js"></script>
-<script src="assets/app.js"></script>
+  <dialog id="aboutDialog" class="about-dialog" aria-labelledby="aboutTitle">
+    <form method="dialog"><div class="about-heading"><h2 id="aboutTitle">About DocMkr</h2><button value="close" autofocus aria-label="Close About DocMkr">Close</button></div></form>
+    <img class="about-features" src="./about-features.png" width="1491" height="1055" alt="DocMkr features: private browser-based PDF tools for school and classroom work. Open and convert files; edit and annotate; capture and scan; organize pages; export documents; process locally; sanitize and encrypt PDFs; and check accessibility.">
+    <p><a href="./about-features.png" target="_blank" rel="noopener">Open the full-size feature graphic</a></p>
+    <p class="about-summary">Free browser-based PDF tools for school and classroom work. Open, convert, annotate, scan, organize, export, sanitize, protect and review accessibility.</p>
+  </dialog>
+  <dialog id="privacyDialog">
+    <form method="dialog">
+      <h2>Your files stay here</h2>
+      <p>PDF bytes, page images, extracted text, and edits are processed in this browser. A copy is uploaded to your chosen Google account only when you select Save PDF to Google Drive and authorize it.</p>
+      <p>This prototype stores no document or recovery data after the tab closes.</p>
+      <button class="primary" value="close">Close</button>
+    </form>
+  </dialog>
+
+  <dialog id="splitDialog">
+    <form id="splitForm">
+      <h2>Separate PDF</h2>
+      <p>Create new PDFs without changing the open document.</p>
+      <label><input type="radio" name="splitMode" value="ranges" checked> Page ranges</label>
+      <label class="dialog-field">Ranges <input id="splitRanges" type="text" placeholder="1-3, 5, 8-10" autocomplete="off"></label>
+      <label><input type="radio" name="splitMode" value="every"> One PDF for every page</label>
+      <div class="dialog-actions">
+        <button type="button" value="cancel">Cancel</button>
+        <button class="primary" type="submit">Download</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="cropDialog">
+    <form id="cropForm">
+      <h2>Crop selected pages</h2>
+      <p>Enter margins as percentages of each page. Cropping changes the exported page boundary without changing the source file.</p>
+      <div class="dialog-grid"><label>Top % <input id="cropTop" type="number" min="0" max="45" step="0.5" value="0"></label><label>Right % <input id="cropRight" type="number" min="0" max="45" step="0.5" value="0"></label><label>Bottom % <input id="cropBottom" type="number" min="0" max="45" step="0.5" value="0"></label><label>Left % <input id="cropLeft" type="number" min="0" max="45" step="0.5" value="0"></label></div>
+      <div class="dialog-actions"><button id="cropReset" type="button">Reset crop</button><button id="cropCancel" type="button">Cancel</button><button class="primary" type="submit">Apply crop</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="customRotateDialog">
+    <form id="customRotateForm">
+      <h2>Deskew / custom rotation</h2>
+      <p>Use a small positive or negative angle to straighten selected scanned pages.</p>
+      <label class="dialog-field">Angle in degrees <input id="customRotation" type="number" min="-45" max="45" step="0.1" value="0" required></label>
+      <div class="dialog-actions"><button id="customRotateCancel" type="button">Cancel</button><button class="primary" type="submit">Apply rotation</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="signatureDialog">
+    <form id="signatureForm">
+      <h2>Add signature</h2>
+      <button id="signatureDraw" type="button" class="primary">Draw signature on PDF</button>
+      <p>Draw directly on the page with your finger, stylus, or mouse. Or add a typed signature or place a PNG/JPEG signature image. It remains movable and resizable until export.</p>
+      <label class="dialog-field">Typed signature <input id="signatureText" type="text" maxlength="200" placeholder="Your name"></label>
+      <div class="dialog-actions"><button id="signatureUpload" type="button">Use signature image</button><button id="signatureCancel" type="button">Cancel</button><button class="primary" type="submit">Add typed signature</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="decorateDialog">
+    <form id="decorateForm">
+      <h2>Headers, footers and page numbers</h2>
+      <p>Apply text to the selected pages. Use <code>{page}</code> and <code>{pages}</code> as placeholders.</p>
+      <label class="dialog-field">Header <input id="headerText" type="text" maxlength="300" placeholder="Document title"></label>
+      <label class="dialog-field">Footer <input id="footerText" type="text" maxlength="300" placeholder="Page {page} of {pages}"></label>
+      <label class="dialog-field">Position <select id="decorationAlignment"><option value="center">Centered</option><option value="left">Left</option><option value="right">Right</option></select></label>
+      <div class="dialog-actions"><button id="decorateCancel" type="button">Cancel</button><button class="primary" type="submit">Apply</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="sanitizeDialog">
+    <form id="sanitizeForm">
+      <h2>Sanitize PDF copy</h2>
+      <p>DocMkr will rasterize the edited pages into a new PDF. This removes document metadata, scripts, attachments, forms, annotations and hidden content.</p>
+      <p class="security-warning">The sanitized copy will no longer contain searchable or selectable text. Keep the original until you verify the result.</p>
+      <div class="dialog-actions"><button id="sanitizeCancel" type="button">Cancel</button><button class="primary" type="submit">Sanitize and download</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="accessibilityDialog" class="wide-dialog">
+    <form id="accessibilityForm">
+      <h2>PDF accessibility check</h2>
+      <p>Review the document against the supplied local-government guide. Automated checks cannot certify WCAG conformance or replace assistive-technology testing.</p>
+      <div class="dialog-grid"><label>Document title <input id="documentTitle" type="text" required maxlength="300"></label><label>Document language <input id="documentLanguage" type="text" value="en" required maxlength="35"></label></div>
+      <section id="accessibilityResults" class="preflight" aria-live="polite"><p>Run the check to inspect document structure, text, images, forms, metadata, and annotation contrast.</p></section>
+      <p class="security-warning"><strong>Tagged PDF limitation:</strong> DocMkr can preserve or flatten visual content, but its current PDF engine cannot author a complete tagged structure tree with headings, lists, tables, reading order, and artifact tags. Use the semantic HTML alternative or remediate the exported PDF in a dedicated tagged-PDF tool before public distribution.</p>
+      <div class="dialog-actions"><button id="accessibilityCancel" type="button">Close</button><button id="accessibleHtmlButton" type="button">Download accessible HTML</button><button class="primary" type="submit">Run check</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="textSaveDialog" aria-labelledby="textSaveHeading">
+    <form id="textSaveForm">
+      <h2 id="textSaveHeading">Save as</h2>
+      <p>Keep detected headings, bold/italic text, paragraphs, lists, and links from the current pages. Processing stays on this device.</p>
+      <label id="textSaveLayoutRow" class="dialog-field">Formatting <select id="textSaveLayout"><option value="formatted">Editable text with formatting</option><option value="appearance">Keep page appearance (page images)</option></select></label>
+      <p class="tool-hint">Editable formatting is reconstructed; review complex layouts and tables. Markdown supports text structure, not exact fonts or page layout. Keep page appearance preserves the visual pages, including graphics, as images; text in those images is not editable. Scans need OCR for editable text.</p>
+      <label class="dialog-field">Document title <input id="textSaveTitle" required maxlength="200"></label>
+      <label class="dialog-field">Language <input id="textSaveLanguage" value="en" required maxlength="35"></label>
+      <p id="textSaveStatus" role="status" aria-live="polite"></p>
+      <div class="dialog-actions"><button id="textSaveClose" type="button">Close</button><button id="textSaveRun" class="primary" type="submit">Save and download</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="epubDialog">
+    <form id="epubForm">
+      <h2>Save as EPUB</h2>
+      <p>Create an EPUB 3 ebook from the current PDF. Conversion happens entirely on this device.</p>
+      <label class="dialog-field">Formatting <select id="epubLayout"><option value="formatted">Reflowable text, formatting, and images</option><option value="appearance">Keep page appearance (page images)</option></select></label>
+      <label class="dialog-field">Book title <input id="epubTitle" type="text" required maxlength="200"></label>
+      <label class="dialog-field">Author <input id="epubAuthor" type="text" maxlength="200" placeholder="Unknown author"></label>
+      <label class="dialog-field">Publisher <input id="epubPublisher" type="text" maxlength="200"></label>
+      <label class="dialog-field">Description <textarea id="epubDescription" rows="3" maxlength="2000"></textarea></label>
+      <label class="dialog-field">Rights <input id="epubRights" type="text" maxlength="300" placeholder="For example: © 2026 Author name"></label>
+      <label class="dialog-field">Language <input id="epubLanguage" type="text" value="en" required maxlength="35" inputmode="text" aria-describedby="epubLanguageHint"></label>
+      <p id="epubLanguageHint" class="tool-hint">Use a language tag such as <code>en</code>, <code>es</code>, or <code>en-US</code>.</p>
+      <label><input id="epubPageChapters" type="checkbox" checked> Put each PDF page in its own EPUB section</label>
+      <label class="dialog-field">Cover image <input id="epubCover" type="file" accept="image/png,image/jpeg"></label>
+      <label id="epubCoverAltRow" class="dialog-field" hidden>Cover description <input id="epubCoverAlt" type="text" maxlength="500" placeholder="Describe meaningful cover artwork"></label>
+      <p class="tool-hint">Reflowable text retains detected headings, emphasis, paragraphs, lists, links, and embedded images. Images are included from the edited page appearance; review their placement and descriptions. Complex layouts may be simplified. Keep page appearance preserves all visual content as page images; text will not be selectable or reflowable. Scans need OCR for selectable text.</p>
+      <section id="epubPreflight" class="preflight" aria-live="polite" hidden></section>
+      <div class="dialog-actions">
+        <button id="epubCancel" type="button">Cancel</button>
+        <button id="epubRun" class="primary" type="submit">Save and download</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="pageActionsDialog" class="page-actions-dialog">
+    <div role="menu" aria-labelledby="pageActionsTitle">
+      <h2 id="pageActionsTitle">Page actions</h2>
+      <p id="pageActionsCopy" class="tool-hint"></p>
+      <button id="contextMoveButton" type="button" role="menuitem">Move to page…</button>
+      <button id="contextDuplicateButton" type="button" role="menuitem">Duplicate</button>
+      <button id="contextExtractButton" type="button" role="menuitem">Extract</button>
+      <button id="contextSplitButton" type="button" role="menuitem">Separate / Split</button>
+      <button id="contextDeleteButton" class="danger" type="button" role="menuitem">Delete</button>
+      <button id="contextCancelButton" type="button">Cancel</button>
+    </div>
+  </dialog>
+
+  <dialog id="movePagesDialog">
+    <form id="movePagesForm">
+      <h2>Move selected pages</h2>
+      <p id="movePagesCopy">Choose the position where the selected page should begin.</p>
+      <label class="dialog-field">Move to page <input id="movePagePosition" type="number" min="1" step="1" required inputmode="numeric"></label>
+      <div class="dialog-actions">
+        <button id="movePagesCancel" type="button">Cancel</button>
+        <button class="primary" type="submit">Move pages</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="vaultDialog">
+    <form id="vaultForm">
+      <h2 id="vaultTitle">Protect or unprotect a PDF</h2>
+      <div id="vaultIntro">
+        <p>DocMkr uses secure encryption to protect a PDF inside an authenticated, encrypted <code>.csplat</code> package. The PDF is encrypted locally with AES-256-GCM; neither the PDF nor its password leaves this device.</p>
+        <div class="vault-choices">
+          <button id="vaultProtectChoice" type="button">Protect this PDF</button>
+          <button id="vaultUnlockChoice" type="button">Unprotect a PDF</button>
+        </div>
+        <h3>Password safety</h3>
+        <ul class="security-guidance">
+          <li>Use a unique password of at least 12 characters. A password manager can create and store one.</li>
+          <li>Send the protected file and password through different channels—for example, email the file and share the password by phone.</li>
+          <li>DocMkr cannot recover a forgotten password. Test unprotecting the download before deleting the original PDF.</li>
+        </ul>
+      </div>
+      <div id="vaultFields" hidden>
+        <p id="vaultCopy"></p>
+        <label class="dialog-field">Password <input id="vaultPassword" type="password" minlength="12" autocomplete="new-password"></label>
+        <label id="vaultConfirmRow" class="dialog-field">Confirm password <input id="vaultConfirm" type="password" minlength="12" autocomplete="new-password"></label>
+        <p id="vaultGeneratorLink"><a href="#" target="_blank" rel="noopener noreferrer">Generate a secure password with secure encryption ↗</a></p>
+        <p class="tool-hint">secure encryption derives the encryption key with Argon2id and protects the PDF with authenticated AES-256-GCM encryption.</p>
+      </div>
+      <div class="dialog-actions">
+        <button id="vaultCancel" type="button">Cancel</button>
+        <button id="vaultRun" class="primary" type="submit" hidden>Continue</button>
+      </div>
+    </form>
+  </dialog>
+
+
+  <dialog id="websiteDialog" aria-labelledby="websiteTitle" class="scan-dialog">
+    <div class="scan-heading"><h2 id="websiteTitle">Capture an open tab or window</h2><button id="websiteClose" type="button">Close</button></div>
+    <p>Share the tab or window showing your page, including a logged-in page or unpublished preview. Return here and capture a page. Scroll the source and capture again to add more pages. Only the visible area is captured; text becomes an image without OCR.</p>
+    <p class="tool-hint">Choose only the content you want in your PDF. Captures stay on this device. Requires a desktop browser that supports tab or window sharing.</p>
+    <p>After adding captures to the editor, use Recognize text (OCR) to review image text and make selected lines editable.</p>
+    <div class="scan-actions"><button id="websiteShare" type="button">Choose tab or window</button><button id="websiteStop" type="button" disabled>Stop sharing</button><button id="websiteCapture" type="button" disabled>Capture visible page</button></div>
+    <video id="websiteVideo" muted playsinline aria-label="Shared page preview" hidden style="max-width:100%;max-height:240px"></video>
+    <p id="websiteStatus" role="status" aria-live="polite"></p>
+    <ol id="websitePages" class="scan-pages" aria-label="Captured website pages"></ol>
+    <div class="scan-actions"><button id="websiteDownload" type="button" disabled>Download captured PDF</button><button id="websiteAdd" type="button" disabled>Add captures to editor</button></div>
+    <p class="tool-hint">Each capture becomes one PDF page fitted to the image. Adding appends to an open PDF. Closing discards captures; download or add them first.</p>
+  </dialog>
+
+  <dialog id="scanDialog" aria-labelledby="scanTitle" class="scan-dialog">
+    <div class="scan-heading"><h2 id="scanTitle">Scan to PDF</h2><button id="scanClose" type="button" aria-label="Close scanner">Close</button></div>
+    <p>Photograph paper, adjust its corners, and combine the pages into a PDF. Photos stay on this device. Scans start as images. Add them to the editor, then choose Recognize text (OCR) to review detected English or Spanish text and make it editable.</p>
+    <p id="scanStatus" role="status" aria-live="polite"></p>
+    <fieldset id="scanControls" class="scan-controls">
+      <legend class="sr-only">Scan controls</legend>
+      <div class="scan-actions">
+        <label class="button-link primary scan-file-button" id="scanTakePhoto">Take a photo<input id="scanCapture" type="file" accept="image/*" capture="environment" aria-describedby="scanCameraHelp"></label>
+        <label class="button-link scan-file-button" id="scanUpload">Choose photos<input id="scanFiles" type="file" accept="image/jpeg,image/png,image/webp" multiple></label>
+        <button id="scanCamera" type="button">Live camera preview</button>
+      </div>
+      <p id="scanCameraHelp" class="tool-hint">On your phone, tap Take a photo and choose Camera if prompted. Take the picture, then confirm it to return here. You can also choose or drop JPEG, PNG or WebP photos · up to 20 pages · 40 MB per photo.</p>
+      <details class="scan-camera-help"><summary>Camera not opening?</summary><p>In Android Settings, open Apps → Firefox (or your browser) → Permissions → Camera and allow access. For the live preview, also allow this site's camera request in your browser. If it still will not open, take a picture with your phone's Camera app, return here, and tap Choose photos.</p></details>
+      <section id="scanCameraPanel" hidden><video id="scanVideo" muted playsinline aria-label="Document camera preview"></video><div class="scan-actions"><button id="scanSnapshot" type="button">Capture page</button><button id="scanStopCamera" type="button">Stop camera</button></div></section>
+      <ol id="scanPages" class="scan-pages" aria-label="Scanned pages"></ol>
+      <section id="scanEditor" hidden>
+        <h3>Adjust page corners</h3><p>Drag each corner to the paper edge. With a corner focused, use arrow keys for fine adjustment, or Shift + arrow for larger steps.</p>
+        <div id="scanPhotoStage" class="scan-photo-stage"><img id="scanPhoto" alt="Original document photo"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><polygon id="scanOutline" /></svg>
+        <button type="button" class="scan-corner" aria-label="Top left corner">1</button><button type="button" class="scan-corner" aria-label="Top right corner">2</button><button type="button" class="scan-corner" aria-label="Bottom right corner">3</button><button type="button" class="scan-corner" aria-label="Bottom left corner">4</button></div>
+        <div class="scan-actions"><label>Appearance <select id="scanFilter"><option value="color">Original color</option><option value="clean">Clean up contrast</option><option value="gray">Grayscale</option><option value="bw">Black and white</option></select></label><button id="scanResetCorners" type="button">Reset corners</button><button id="scanRotate" type="button">Rotate output 90°</button><button id="scanSave" class="primary" type="button">Save page</button></div>
+        <img id="scanResult" class="scan-result" alt="Corrected scan preview" hidden>
+      </section>
+      <label>PDF page size <select id="scanPaper"><option value="a4">A4</option><option value="letter">US Letter</option><option value="photo">Fit scan</option></select></label>
+      <div class="scan-actions"><button id="scanDownload" class="primary" type="button" disabled>Download scanned PDF</button><button id="scanAdd" type="button" disabled>Add scans to editor</button></div>
+      <p class="tool-hint">Save each page before creating the PDF. Adding scans appends them to an open document. Closing the scanner discards this scan session.</p>
+    </fieldset>
+  </dialog>
+
+  <script src="./vendor/pdf.min.js"></script>
+  <script src="./vendor/jszip.min.js"></script>
+  <script src="./vendor/pdf-lib.min.js"></script>
+  <script src="./vendor/hash-wasm/argon2.umd.min.js"></script>
+  <script src="./src/boot.js"></script>
+  <script src="./assets/js/pdf-ui-strings.js"></script>
+  <script src="./assets/js/pdf-language-loader.js"></script>
+<footer class="mm-footer"><div class="mm-footer-inner"><span class="mm-footer-brand">TCEA MediaMkr | Creative Tools for Educators</span><nav aria-label="Footer"><a href="../../index.html">Home</a><a href="https://tcea.org/" target="_blank" rel="noopener">TCEA.org</a><a href="../../PRIVACY.md">Privacy</a><a href="../../ACCESSIBILITY.md">Accessibility</a><a href="../../THIRD_PARTY_LICENSES.md">Licenses</a></nav></div></footer>
 </body>
 </html>

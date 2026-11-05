@@ -1,0 +1,2134 @@
+import {setupToolbar} from './toolbar.js';
+import {setupOcr, OCR_LIMITS} from './ocr.js';
+import { collectEpubImages } from "./epub-images.js";
+import { setupPresentation } from "./presentation.js";
+import { saveToGoogleDrive } from "../../../mediamkr/shared/google-drive.js";
+import { createWebDeck, blobDataUrl } from "./webdeck-export.js";
+import {prepareFiles, importAccept} from "./file-import.js";
+import { textAppearance, textInkAppearance, standardTextFont } from "./text-appearance.js";
+import { setupPlacement } from "./placement.js";
+import { setupToolSearch } from "./tool-search.js";
+import { setupWebsitePdf } from "./website-to-pdf.js?v=20260923-capture-only";
+import { setupScanner } from "./scan-to-pdf.js?v=20260914-phone-camera";
+import { protectPdf, unlockPdf } from "./ciphersplat-pdf.js";
+import { createEpub } from "./epub-export.js?v=20260914-formatting";
+import { formats, collectTextDocument, createTextFile } from "./document-export.js?v=20260914-formatting";
+
+const pdfjs = globalThis.pdfjsLib;
+const { PDFDocument, StandardFonts, rgb, degrees } = globalThis.PDFLib;
+pdfjs.GlobalWorkerOptions.workerSrc = "./vendor/pdf.worker.min.js";
+
+const $ = (id) => document.getElementById(id);
+const ids = ["saveDriveButton", "openButton", "presentButton", "fullscreenButton", "pagesButton", "chooseButton", "fileInput", "mergeButton", "mergeInput", "imageInput", "imagePagesInput", "signatureImageInput", "vaultInput", "protectButton", "unlockButton", "saveAsSelect", "undoButton", "redoButton", "sidebar", "thumbnails", "pageCount", "dropZone", "documentView", "pageShell", "pdfCanvas", "textHitLayer", "annotationLayer", "status", "editTextButton", "removeAreaButton", "addTextButton", "highlightButton", "drawButton", "addImageButton", "signatureButton", "cropButton", "customRotateButton", "rotateLeftButton", "rotateRightButton", "reversePagesButton", "blankPageButton", "imagePagesButton", "exportImagesButton", "removeBlankPagesButton", "decorateButton", "sanitizeButton", "accessibilityButton", "duplicatePageButton", "deletePageButton", "extractPageButton", "splitButton", "textProperties", "textValue", "fontSize", "textColor", "deleteTextButton", "objectProperties", "objectOpacity", "imageAltRow", "imageAltText", "deleteObjectButton", "previousPageButton", "nextPageButton", "pagePosition", "zoomOutButton", "zoomInButton", "zoomLabel", "fitButton", "privacyButton", "privacyDialog", "splitDialog", "splitForm", "splitRanges", "cropDialog", "cropForm", "cropTop", "cropRight", "cropBottom", "cropLeft", "cropReset", "cropCancel", "customRotateDialog", "customRotateForm", "customRotation", "customRotateCancel", "signatureDialog", "signatureForm", "signatureText", "signatureUpload", "signatureCancel", "decorateDialog", "decorateForm", "headerText", "footerText", "decorationAlignment", "decorateCancel", "sanitizeDialog", "sanitizeForm", "sanitizeCancel", "accessibilityDialog", "accessibilityForm", "documentTitle", "documentLanguage", "accessibilityResults", "accessibilityCancel", "accessibleHtmlButton", "epubDialog", "epubForm", "epubTitle", "epubAuthor", "epubPublisher", "epubDescription", "epubRights", "epubLanguage", "epubPageChapters", "epubCover", "epubCoverAltRow", "epubCoverAlt", "epubPreflight", "epubCancel", "epubRun", "pageActionsDialog", "pageActionsTitle", "pageActionsCopy", "contextMoveButton", "contextDuplicateButton", "contextExtractButton", "contextSplitButton", "contextDeleteButton", "contextCancelButton", "movePagesDialog", "movePagesForm", "movePagesCopy", "movePagePosition", "movePagesCancel", "vaultDialog", "vaultForm", "vaultTitle", "vaultIntro", "vaultFields", "vaultCopy", "vaultPassword", "vaultConfirm", "vaultConfirmRow", "vaultGeneratorLink", "vaultProtectChoice", "vaultUnlockChoice", "vaultCancel", "vaultRun"];
+ids.push("textSaveLayout", "textSaveLayoutRow", "epubLayout", "textSaveDialog", "textSaveForm", "textSaveHeading", "textSaveTitle", "textSaveLanguage", "textSaveStatus", "textSaveClose", "textSaveRun");
+ids.push("ocrButton");
+const els = Object.fromEntries(ids.map((id) => [id, $(id)]));
+const state = {
+  fileName: "document.pdf",
+  sources: new Map(),
+  assets: new Map(),
+  pages: [],
+  current: 0,
+  selectedPageIds: new Set(),
+  selectionAnchor: 0,
+  zoom: 1,
+  renderScale: 1,
+  selectedId: null,
+  mode: "select",
+  history: [],
+  future: [],
+  renderToken: 0,
+  thumbnailObserver: null,
+  documentTitle: "",
+  documentLanguage: "en",
+};
+
+let imageRequest = 0;
+let ocr;
+const placement = setupPlacement({
+  layer: els.annotationLayer, bar: $('placementTools'), message: $('placementMessage'),
+  cancelButton: $('placementCancel'), currentPage, scale: () => state.renderScale,
+  leave: () => { setMode('select'); announce('Placement cancelled.'); },
+  insert: (object, label) => {
+    setMode('select');
+    mutate(object.signature ? 'Add signature' : object.type === 'image' ? 'Add image' : 'Add text', () => {
+      currentPage().annotations.push(object); state.selectedId = object.id;
+    });
+    renderAnnotations();
+    announce(`${label[0].toUpperCase()+label.slice(1)} placed. Drag to move or use the handles to resize. Undo is available.`);
+    if (object.type === 'text') startInlineTextEditing(object, true);
+  },
+});
+function beginPlacement(object, label, options) {
+  setMode('place'); state.selectedId = null; renderAnnotations();
+  placement.begin(object, label, options);
+}
+
+function announce(message) {
+  els.status.textContent = message;
+}
+function uid() {
+  return crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`;
+}
+function currentPage() {
+  return state.pages[state.current];
+}
+function selectedPageIndexes() {
+  const indexes = state.pages.map((page, index) => (state.selectedPageIds.has(page.id) ? index : -1)).filter((index) => index >= 0);
+  return indexes.length ? indexes : state.pages.length ? [state.current] : [];
+}
+function selectOnlyPage(index) {
+  state.selectedPageIds = new Set(state.pages[index] ? [state.pages[index].id] : []);
+  state.selectionAnchor = index;
+}
+function selectedObject() {
+  return currentPage()?.annotations.find((o) => o.id === state.selectedId);
+}
+function snapshot() {
+  return JSON.stringify({ pages: state.pages, current: state.current, selectedPageIds: [...state.selectedPageIds] });
+}
+function commit(before, label) {
+  const after = snapshot();
+  if (before === after) return;
+  state.history.push({ before, after, label });
+  if (state.history.length > 100) state.history.shift();
+  state.future = [];
+  syncHistory();
+  queueThumbnailRefresh();
+}
+function mutate(label, fn) {
+  const before = snapshot();
+  fn();
+  commit(before, label);
+}
+function syncHistory() {
+  els.undoButton.disabled = !state.history.length;
+  $("inkUndo").disabled = state.history.at(-1)?.label !== "Draw";
+  els.redoButton.disabled = !state.future.length;
+  els.undoButton.textContent = state.history.length ? `Undo ${state.history.at(-1).label}` : 'Undo';
+  els.redoButton.textContent = state.future.length ? `Redo ${state.future.at(-1).label}` : 'Redo';
+  for(const button of [els.undoButton,els.redoButton]){button.setAttribute('aria-label',button.textContent);button.title=button.textContent;}
+}
+function restore(value) {
+  const data = JSON.parse(value);
+  state.pages = data.pages;
+  state.current = Math.max(0, Math.min(data.current, state.pages.length - 1));
+  state.selectedPageIds = new Set(data.selectedPageIds || (state.pages[state.current] ? [state.pages[state.current].id] : []));
+  state.selectionAnchor = state.current;
+  state.selectedId = null;
+  setMode("select");
+  renderAll();
+}
+function setEnabled(on) {
+  if (els.saveDriveButton) els.saveDriveButton.disabled = !on;
+  ["ocrButton", "presentButton", "fullscreenButton", "pagesButton", "mergeButton", "saveAsSelect", "editTextButton", "removeAreaButton", "addTextButton", "highlightButton", "drawButton", "addImageButton", "signatureButton", "cropButton", "customRotateButton", "rotateLeftButton", "rotateRightButton", "reversePagesButton", "blankPageButton", "imagePagesButton", "exportImagesButton", "removeBlankPagesButton", "decorateButton", "sanitizeButton", "accessibilityButton", "duplicatePageButton", "deletePageButton", "extractPageButton", "splitButton", "previousPageButton", "nextPageButton", "zoomOutButton", "zoomInButton", "fitButton"].forEach((id) => (els[id].disabled = !on));
+  syncPageNavigation();
+}
+function syncPageNavigation() {
+  const count = state.pages.length;
+  els.pagePosition.textContent = count ? `${state.current + 1} / ${count}` : "0 / 0";
+  els.previousPageButton.disabled = !count || state.current <= 0;
+  els.nextPageButton.disabled = !count || state.current >= count - 1;
+}
+let cancelInk = null;
+function setMode(mode) {
+  if (mode !== "select") finishInlineTextEditing();
+  imageRequest++;
+  placement.cancel();
+  cancelInk?.();
+  $("inkTools").hidden = mode !== "draw";
+  $("inkUndo").disabled = state.history.at(-1)?.label !== "Draw";
+  state.mode = mode;
+  document.body.classList.toggle("inking", mode === "draw");
+  els.annotationLayer.classList.toggle("drawing", mode === "draw");
+  els.annotationLayer.classList.toggle("masking", mode === "mask");
+  els.annotationLayer.classList.toggle("editing-text", mode === "edit-text");
+  els.textHitLayer.classList.toggle("active", mode === "edit-text");
+  els.drawButton.classList.toggle("active", mode === "draw");
+  els.removeAreaButton.classList.toggle("active", mode === "mask");
+  els.editTextButton.classList.toggle("active", mode === "edit-text");
+  els.drawButton.setAttribute("aria-pressed", String(mode === "draw"));
+  els.removeAreaButton.setAttribute("aria-pressed", String(mode === "mask"));
+  els.editTextButton.setAttribute("aria-pressed", String(mode === "edit-text"));
+  updateTextFormatTools();
+}
+
+async function loadSource(file) {
+  if (!file || !file.name.toLowerCase().endsWith(".pdf")) throw Error("Choose a PDF file.");
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  const pdf = await pdfjs.getDocument({ data: bytes.slice(), fontExtraProperties: true }).promise;
+  return { id: uid(), name: file.name, bytes, pdf };
+}
+function pagesFor(source) {
+  return Array.from({ length: source.pdf.numPages }, (_, sourceIndex) => ({
+    id: uid(),
+    sourceId: source.id,
+    sourceIndex,
+    rotation: 0,
+    annotations: [],
+  }));
+}
+let importToken = 0;
+els.fileInput.accept = importAccept;
+async function openFile(input) {
+  const files = input instanceof File ? [input] : [...(input || [])];
+  if (!files.length) return false;
+  ocr?.reset();
+  const token = ++importToken;
+  try {
+    const prepared = await prepareFiles(files, name => { if (token === importToken) announce(`Opening ${name}…`); });
+    if (token !== importToken) return false;
+    const file = prepared.file;
+    const source = await loadSource(file);
+    if (token !== importToken) { await source.pdf.destroy(); return false; }
+    for (const asset of state.assets.values()) URL.revokeObjectURL(asset.url);
+    state.sources = new Map([[source.id, source]]);
+    state.assets.clear();
+    state.pages = pagesFor(source);
+    state.fileName = file.name;
+    state.documentTitle = file.name.replace(/\.pdf$/i, "");
+    state.documentLanguage = document.documentElement.lang || "en";
+    state.current = 0;
+    selectOnlyPage(0);
+    state.zoom = 1;
+    state.selectedId = null;
+    state.history = [];
+    state.future = [];
+    setMode("select");
+    els.dropZone.hidden = true;
+    els.documentView.hidden = false;
+    setEnabled(true);
+    syncHistory();
+    await renderAll();
+    if (token !== importToken) return false;
+    const notice = $("importNotice");
+    if (notice) {notice.hidden = !prepared.notice;notice.replaceChildren(...(prepared.notice || "").split("\n").filter(Boolean).map(text => {const line = document.createElement("div");line.textContent = text;return line;}));}
+    announce(prepared.converted ? `${prepared.originalName} converted to PDF. ${state.pages.length} pages.` : `${file.name} opened. ${state.pages.length} pages.`);
+    return true;
+  } catch (error) {
+    if (token !== importToken) return false;
+    console.error(error);
+    announce(error?.name === "PasswordException" ? "This encrypted PDF needs password support not available in this release." : error.message || "The PDF could not be opened.");
+  } finally {
+    els.fileInput.value = "";
+  }
+}
+async function mergeFile(file) {
+  try {
+    announce(`Adding ${file?.name || "PDF"}…`);
+    const source = await loadSource(file),
+      before = snapshot();
+    state.sources.set(source.id, source);
+    state.pages.push(...pagesFor(source));
+    state.current = state.pages.length - source.pdf.numPages;
+    selectOnlyPage(state.current);
+    commit(before, "Add PDF");
+    await renderAll();
+    announce(`${source.pdf.numPages} pages from ${file.name} added.`);
+    return true;
+  } catch (error) {
+    console.error(error);
+    announce(error.message || "The additional PDF could not be opened.");
+  } finally {
+    els.mergeInput.value = "";
+  }
+}
+async function sourcePage(item) {
+  return state.sources.get(item.sourceId).pdf.getPage(item.sourceIndex + 1);
+}
+
+async function renderAll() {
+  els.pageCount.textContent = state.pages.length;
+  await Promise.all([renderCurrent(), renderThumbnails()]);
+}
+async function renderCurrent() {
+  cancelInk?.();
+  if (placement.active && placement.pageId !== currentPage()?.id) setMode("select");
+  const token = ++state.renderToken,
+    item = currentPage();
+  if (!item) return;
+  syncPageNavigation();
+  const page = await sourcePage(item);
+  if (token !== state.renderToken) return;
+  const rotation = (page.rotate + item.rotation + (item.fineRotation || 0)) % 360,
+    base = page.getViewport({ scale: 1, rotation }),
+    available = Math.max(320, els.documentView.clientWidth - 64),
+    scale = Math.min(2.2, available / base.width) * state.zoom,
+    viewport = page.getViewport({ scale, rotation }),
+    ratio = Math.min(devicePixelRatio || 1, 2),
+    canvas = els.pdfCanvas;
+  state.renderScale = scale;
+  canvas.width = Math.floor(viewport.width * ratio);
+  canvas.height = Math.floor(viewport.height * ratio);
+  els.pageShell.style.width = `${viewport.width}px`;
+  els.pageShell.style.height = `${viewport.height}px`;
+  await page.render({
+    canvasContext: canvas.getContext("2d"),
+    viewport,
+    transform: ratio !== 1 ? [ratio, 0, 0, ratio, 0, 0] : null,
+  }).promise;
+  if (token !== state.renderToken) return;
+  await renderTextHits(page, viewport, token);
+  renderAnnotations();
+  els.zoomLabel.textContent = `${Math.round(state.zoom * 100)}%`;
+  [...els.thumbnails.children].forEach((node, i) => {
+    node.classList.toggle("selected", state.selectedPageIds.has(state.pages[i].id));
+    node.classList.toggle("current", i === state.current);
+    node.setAttribute("aria-selected", String(state.selectedPageIds.has(state.pages[i].id)));
+  });
+}
+async function renderTextHits(page, viewport, token) {
+  els.textHitLayer.replaceChildren();
+  await page.getOperatorList();
+  const content = await page.getTextContent();
+  if (token !== state.renderToken) return;
+  const runs = [];
+  for (const item of content.items) {
+    if (!item.str?.trim()) continue;
+    const transform = pdfjs.Util.transform(viewport.transform, item.transform),
+      height = Math.max(6, Math.hypot(transform[2], transform[3]) || Math.hypot(transform[0], transform[1])),
+      width = Math.max(height * 0.5, item.width * viewport.scale),
+      left = transform[4],
+      baseline = transform[5],
+      top = baseline - height;
+    if (left >= viewport.width || top >= viewport.height || left + width <= 0 || top + height <= 0) continue;
+    let font;
+    try { font = page.commonObjs.get(item.fontName); } catch { /* Use the PDF text style fallback. */ }
+    const appearance = textAppearance(font, content.styles?.[item.fontName]?.fontFamily);
+    runs.push({
+      ...appearance,
+      text: item.str,
+      left,
+      top,
+      width,
+      height,
+      baseline,
+      fontSize: Math.max(6, Math.hypot(item.transform[0], item.transform[1])),
+
+    });
+  }
+  runs.sort((a, b) => (Math.abs(a.baseline - b.baseline) > Math.max(a.height, b.height) * 0.45 ? a.top - b.top : a.left - b.left));
+  const lines = [];
+  for (const run of runs) {
+    let line = lines.find((candidate) => Math.abs(candidate.baseline - run.baseline) <= Math.max(candidate.height, run.height) * 0.45);
+    if (!line) {
+      line = { runs: [], baseline: run.baseline, height: run.height };
+      lines.push(line);
+    }
+    line.runs.push(run);
+    line.height = Math.max(line.height, run.height);
+  }
+  for (const line of lines) {
+    line.runs.sort((a, b) => a.left - b.left);
+    let text = "",
+      right = line.runs[0].left,
+      fontSize = 0,
+      fontFamily = line.runs[0].fontFamily;
+    for (const run of line.runs) {
+      const gap = run.left - right;
+      if (text && gap > line.height * 0.12 && !/\s$/.test(text) && !/^\s/.test(run.text)) text += " ";
+      text += run.text;
+      right = Math.max(right, run.left + run.width);
+      fontSize = Math.max(fontSize, run.fontSize);
+    }
+    const left = line.runs[0].left - 2,
+      top = Math.min(...line.runs.map((run) => run.top)) - 1,
+      width = right - left + 3,
+      height = line.height + 3;
+    const hit = document.createElement("button");
+    hit.type = "button";
+    hit.className = "text-hit";
+    hit.textContent = text;
+    hit.setAttribute("aria-label", `Edit text: ${text}`);
+    Object.assign(hit.style, {
+      left: `${left}px`,
+      top: `${top}px`,
+      width: `${width}px`,
+      height: `${height}px`,
+    });
+    hit.onclick = (event) => {
+      event.stopPropagation();
+      replaceTextRun(text, {
+        x: left / viewport.width,
+        y: top / viewport.height,
+        w: width / viewport.width,
+        h: height / viewport.height,
+        fontSize,
+        ...textAppearanceForLine(line),
+        ...textInkAppearance(els.pdfCanvas, {left, top, width, height}, viewport, {surroundingBackground:true}),
+      });
+    };
+    els.textHitLayer.append(hit);
+  }
+}
+function textAppearanceForLine(line) {
+  // A mixed-style line adopts the dominant run, measured by character count.
+  const run = line.runs.reduce((a,b)=>a.text.length >= b.text.length ? a : b);
+  return {fontFamily:run.fontFamily,pdfFontFamily:run.pdfFontFamily,bold:run.bold,italic:run.italic,sourceBold:run.sourceBold,sourceItalic:run.sourceItalic,exactFont:run.exactFont,fallbackFontFamily:run.fallbackFontFamily};
+}
+let thumbnailTimer;
+function queueThumbnailRefresh() {
+  clearTimeout(thumbnailTimer);
+  thumbnailTimer = setTimeout(() => {
+    for (const li of els.thumbnails.children) {
+      const item=state.pages[Number(li.dataset.index)];
+      if (item && li.renderedKey !== JSON.stringify(item)) state.thumbnailObserver?.observe(li);
+    }
+  },180);
+}
+async function renderThumbnail(li) {
+  const index=Number(li.dataset.index), original=state.pages[index];
+  if(!original)return;
+  const item=structuredClone(original),key=JSON.stringify(item);
+  if(li.renderedKey===key||li.pendingThumbnailKey===key)return;
+  const token=(li.thumbnailToken||0)+1;li.thumbnailToken=token;li.pendingThumbnailKey=key;
+  const canvas=document.createElement('canvas');let edited;
+  li.setAttribute('aria-busy','true');
+  try {
+    let page,viewport;
+    if(item.annotations.length||item.crop||item.fineRotation){
+      const bytes=await buildPdf([item],{finishEditing:false});
+      edited=await pdfjs.getDocument({data:bytes}).promise;page=await edited.getPage(1);viewport=page.getViewport({scale:.2});
+    } else {page=await sourcePage(item);viewport=page.getViewport({scale:.2,rotation:(page.rotate+item.rotation)%360});}
+    canvas.width=Math.max(1,Math.ceil(viewport.width));canvas.height=Math.max(1,Math.ceil(viewport.height));
+    await page.render({canvasContext:canvas.getContext('2d'),viewport}).promise;
+    if(token!==li.thumbnailToken||!li.isConnected||JSON.stringify(state.pages[index])!==key)return;
+    const target=li.querySelector('canvas');target.width=canvas.width;target.height=canvas.height;target.getContext('2d').drawImage(canvas,0,0);
+    li.renderedKey=key;delete li.dataset.previewError;
+  } catch(error) {if(li.isConnected&&state.pages[index]?.id===item.id){li.dataset.previewError=error.message;console.warn('Page preview could not refresh',error);}}
+  finally {canvas.width=canvas.height=0;if(edited)await edited.destroy();if(token===li.thumbnailToken){li.pendingThumbnailKey=null;li.removeAttribute('aria-busy');}}
+}
+async function renderThumbnails() {
+  state.thumbnailObserver?.disconnect();
+  els.thumbnails.replaceChildren();
+  state.thumbnailObserver = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries)
+        if (entry.isIntersecting) {
+          renderThumbnail(entry.target);
+          state.thumbnailObserver.unobserve(entry.target);
+        }
+    },
+    { root: els.sidebar, rootMargin: "240px" },
+  );
+  for (let index = 0; index < state.pages.length; index++) {
+    const li = document.createElement("li"),
+      canvas = document.createElement("canvas"),
+      label = document.createElement("span");
+    li.className = `thumbnail${state.selectedPageIds.has(state.pages[index].id) ? " selected" : ""}${index === state.current ? " current" : ""}`;
+    li.draggable = true;
+    li.dataset.index = index;
+    li.tabIndex = 0;
+    li.setAttribute("aria-label", `Page ${index + 1}`);
+    li.setAttribute("aria-selected", String(state.selectedPageIds.has(state.pages[index].id)));
+    canvas.width = 120;
+    canvas.height = 160;
+    label.textContent = `Page ${index + 1}`;
+    li.append(canvas, label);
+    els.thumbnails.append(li);
+    li.onclick = (event) => selectPage(index, event);
+    li.onkeydown = (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        selectPage(index, e);
+      }
+    };
+    li.ondragstart = (e) => {
+      if (!state.selectedPageIds.has(state.pages[index].id)) {
+        selectOnlyPage(index);
+        state.current = index;
+      }
+      e.dataTransfer.setData("text/plain", String(index));
+      for (const node of els.thumbnails.children) if (state.selectedPageIds.has(state.pages[Number(node.dataset.index)].id)) node.classList.add("dragging");
+    };
+    li.ondragend = () => els.thumbnails.querySelectorAll(".dragging").forEach((node) => node.classList.remove("dragging"));
+    li.ondragover = (e) => e.preventDefault();
+    li.ondrop = (e) => {
+      e.preventDefault();
+      if (!state.selectedPageIds.has(state.pages[index].id)) moveSelectedPages(index);
+    };
+    li.oncontextmenu = (e) => {
+      e.preventDefault();
+      openPageActions(index);
+    };
+    state.thumbnailObserver.observe(li);
+  }
+}
+function selectPage(index, event = {}) {
+  finishInlineTextEditing();
+  if (event.shiftKey) {
+    const start = Math.min(state.selectionAnchor, index),
+      end = Math.max(state.selectionAnchor, index);
+    state.selectedPageIds = new Set(state.pages.slice(start, end + 1).map((page) => page.id));
+  } else if (event.ctrlKey || event.metaKey) {
+    const id = state.pages[index].id;
+    if (state.selectedPageIds.has(id)) state.selectedPageIds.delete(id);
+    else state.selectedPageIds.add(id);
+    state.selectionAnchor = index;
+  } else selectOnlyPage(index);
+  state.current = index;
+  state.selectedId = null;
+  setMode("select");
+  $("sidebar").classList.remove("open");
+  els.pagesButton.setAttribute("aria-expanded", "false");
+  renderAll();
+  const count = selectedPageIndexes().length;
+  announce(count > 1 ? `${count} pages selected. Page ${index + 1} is active.` : `Page ${index + 1} of ${state.pages.length}`);
+}
+function navigatePage(delta) {
+  if (!state.pages.length) return;
+  const index = Math.max(0, Math.min(state.current + delta, state.pages.length - 1));
+  if (index === state.current) return;
+  selectPage(index);
+}
+function moveSelectedPages(to) {
+  const indexes = selectedPageIndexes(),
+    selectedIds = new Set(indexes.map((index) => state.pages[index].id)),
+    moved = state.pages.filter((page) => selectedIds.has(page.id)),
+    remaining = state.pages.filter((page) => !selectedIds.has(page.id)),
+    destination = Math.max(0, Math.min(Number(to), remaining.length));
+  mutate("Move pages", () => {
+    remaining.splice(destination, 0, ...moved);
+    state.pages = remaining;
+    state.current = destination;
+    state.selectionAnchor = destination;
+  });
+  renderAll();
+  const end = destination + moved.length;
+  announce(moved.length === 1 ? `Page moved to position ${destination + 1}.` : `${moved.length} pages moved to positions ${destination + 1}–${end}.`);
+}
+let pageActionsIndex = 0;
+function openPageActions(index) {
+  if (!state.selectedPageIds.has(state.pages[index].id)) {
+    selectOnlyPage(index);
+    state.current = index;
+    renderAll();
+  }
+  pageActionsIndex = index;
+  const count = selectedPageIndexes().length;
+  els.pageActionsTitle.textContent = count === 1 ? `Page ${index + 1} actions` : `${count} selected pages`;
+  els.pageActionsCopy.textContent = count === 1 ? "Choose an action for this page." : "This action will apply to every selected page.";
+  els.pageActionsDialog.showModal();
+  els.contextMoveButton.focus();
+}
+function openMovePagesDialog(index) {
+  if (!state.selectedPageIds.has(state.pages[index].id)) {
+    selectOnlyPage(index);
+    state.current = index;
+    renderAll();
+  }
+  const count = selectedPageIndexes().length,
+    max = state.pages.length - count + 1;
+  els.movePagesCopy.textContent = count === 1 ? "Choose the new position for this page." : `Choose where these ${count} selected pages should begin. Their order will be preserved.`;
+  els.movePagePosition.max = String(max);
+  els.movePagePosition.value = String(Math.min(index + 1, max));
+  els.movePagesDialog.showModal();
+  els.movePagePosition.select();
+}
+function selectedRangesText() {
+  const indexes = selectedPageIndexes().map((index) => index + 1),
+    ranges = [];
+  let start = indexes[0],
+    end = start;
+  for (const page of indexes.slice(1)) {
+    if (page === end + 1) end = page;
+    else {
+      ranges.push(start === end ? `${start}` : `${start}-${end}`);
+      start = end = page;
+    }
+  }
+  ranges.push(start === end ? `${start}` : `${start}-${end}`);
+  return ranges.join(", ");
+}
+function openSelectedSplit() {
+  els.pageActionsDialog.close();
+  els.splitForm.querySelector('[name="splitMode"][value="ranges"]').checked = true;
+  els.splitRanges.value = selectedRangesText();
+  els.splitDialog.showModal();
+  els.splitRanges.focus();
+}
+function submitMovePages(event) {
+  event.preventDefault();
+  const position = Number(els.movePagePosition.value),
+    max = Number(els.movePagePosition.max);
+  if (!Number.isInteger(position) || position < 1 || position > max) {
+    announce(`Enter a page position from 1 to ${max}.`);
+    els.movePagePosition.focus();
+    return;
+  }
+  els.movePagesDialog.close();
+  moveSelectedPages(position - 1);
+}
+function rotate(delta) {
+  const indexes = selectedPageIndexes();
+  if (indexes.some(index => state.pages[index].annotations.some(o => o.ocr))) return announce("Rotate pages before OCR. Undo the OCR batch before changing page orientation, then recognize the rotated page again.");
+  mutate("Rotate pages", () => indexes.forEach((index) => (state.pages[index].rotation = (state.pages[index].rotation + delta + 360) % 360)));
+  renderAll();
+  announce(`${indexes.length} ${indexes.length === 1 ? "page" : "pages"} rotated.`);
+}
+function reversePages() {
+  mutate("Reverse page order", () => {
+    state.pages.reverse();
+    state.current = state.pages.length - 1 - state.current;
+    selectOnlyPage(state.current);
+  });
+  renderAll();
+  announce("Page order reversed. Undo is available.");
+}
+async function insertBlankPage() {
+  const document = await PDFDocument.create(), reference = currentPage() ? await sourcePage(currentPage()) : null;
+  const viewport = reference?.getViewport({ scale: 1, rotation: 0 });
+  document.addPage(viewport ? [viewport.width, viewport.height] : [612, 792]);
+  const file = new File([await document.save()], "blank-page.pdf", { type: "application/pdf" }), source = await loadSource(file), page = pagesFor(source)[0], before = snapshot(), position = state.current + 1;
+  state.sources.set(source.id, source);
+  state.pages.splice(position, 0, page);
+  state.current = position;
+  selectOnlyPage(position);
+  commit(before, "Insert blank page");
+  await renderAll();
+  announce(`Blank page inserted at page ${position + 1}.`);
+}
+function openCropDialog() {
+  const crop = currentPage()?.crop || { top: 0, right: 0, bottom: 0, left: 0 };
+  for (const side of ["Top", "Right", "Bottom", "Left"]) els[`crop${side}`].value = (crop[side.toLowerCase()] * 100).toFixed(1).replace(/\.0$/, "");
+  els.cropDialog.showModal();
+}
+function applyCrop(event, reset = false) {
+  event?.preventDefault();
+  const crop = reset ? null : Object.fromEntries(["top", "right", "bottom", "left"].map((side) => [side, Number(els[`crop${side[0].toUpperCase()}${side.slice(1)}`].value) / 100]));
+  if (crop && (crop.left + crop.right >= .9 || crop.top + crop.bottom >= .9)) return announce("Crop margins leave too little page area.");
+  const indexes = selectedPageIndexes();
+  mutate(reset ? "Reset crop" : "Crop pages", () => indexes.forEach((index) => (state.pages[index].crop = crop)));
+  els.cropDialog.close();
+  renderAll();
+  announce(`${indexes.length} page(s) ${reset ? "crop reset" : "cropped"}.`);
+}
+function applyCustomRotation(event) {
+  event.preventDefault();
+  const angle = Number(els.customRotation.value), indexes = selectedPageIndexes();
+  if (indexes.some(index => state.pages[index].annotations.some(o => o.ocr))) { els.customRotateDialog.close(); return announce("Set page orientation before OCR. Undo the OCR batch before changing fine rotation."); }
+  if (!Number.isFinite(angle) || Math.abs(angle) > 45) return announce("Enter an angle from -45 to 45 degrees.");
+  mutate("Deskew pages", () => indexes.forEach((index) => (state.pages[index].fineRotation = angle)));
+  els.customRotateDialog.close();
+  renderAll();
+  announce(`${indexes.length} page(s) set to ${angle}° fine rotation.`);
+}
+async function addImagePages(files) {
+  const chosen = [...(files || [])].filter((file) => ["image/png", "image/jpeg"].includes(file.type));
+  if (!chosen.length) return announce("Choose one or more PNG or JPEG images.");
+  try {
+    announce(`Creating ${chosen.length} PDF page(s) from images…`);
+    const document = await PDFDocument.create();
+    for (const file of chosen) {
+      const bytes = new Uint8Array(await file.arrayBuffer()), bitmap = await createImageBitmap(file), image = file.type === "image/png" ? await document.embedPng(bytes) : await document.embedJpg(bytes);
+      const max = 792, scale = Math.min(1, max / Math.max(bitmap.width, bitmap.height)), width = bitmap.width * scale, height = bitmap.height * scale;
+      document.addPage([width, height]).drawImage(image, { x: 0, y: 0, width, height });
+      bitmap.close();
+    }
+    const file = new File([await document.save()], "image-pages.pdf", { type: "application/pdf" }), source = await loadSource(file), additions = pagesFor(source), before = snapshot(), position = state.current + 1;
+    state.sources.set(source.id, source);
+    state.pages.splice(position, 0, ...additions);
+    state.current = position;
+    state.selectedPageIds = new Set(additions.map((page) => page.id));
+    commit(before, "Add image pages");
+    await renderAll();
+    announce(`${additions.length} image page(s) inserted.`);
+  } catch (error) {
+    console.error(error);
+    announce("The image pages could not be created.");
+  } finally { els.imagePagesInput.value = ""; }
+}
+async function renderPdfPageToBlob(page, scale = 2, mime = "image/png") {
+  const viewport = page.getViewport({ scale }), canvas = document.createElement("canvas");
+  canvas.width = Math.ceil(viewport.width); canvas.height = Math.ceil(viewport.height);
+  await page.render({ canvasContext: canvas.getContext("2d", { alpha: false }), viewport, background: "#ffffff" }).promise;
+  return new Promise((resolve, reject) => canvas.toBlob((blob) => {
+    canvas.width = canvas.height = 0;
+    blob && blob.type === mime ? resolve(blob) : reject(Error("Image export failed."));
+  }, mime, 0.92));
+}
+async function exportWebDeck() {
+  if (!state.pages.length) return;
+  let pdf;
+  els.saveAsSelect.disabled = true;
+  announce("Exporting WebDeck…");
+  try {
+    const bytes = await buildPdf(state.pages), images = [];
+    pdf = await pdfjs.getDocument({ data: bytes.slice() }).promise;
+    for (let number = 1; number <= pdf.numPages; number++) {
+      const page = await pdf.getPage(number), viewport = page.getViewport({ scale: 1 });
+      images.push(await blobDataUrl(await renderPdfPageToBlob(page, Math.min(2, 1200 / Math.max(viewport.width, viewport.height)), "image/webp")));
+      page.cleanup();
+    }
+    const base = state.fileName.replace(/\.pdf$/i, "");
+    downloadBytes(createWebDeck(base, images), `${base}-webdeck.html`, "text/html;charset=utf-8");
+    announce("WebDeck downloaded. Open the HTML file to present.");
+  } catch (error) { console.error(error); announce("WebDeck export failed. The source PDF is unchanged."); }
+  finally { await pdf?.destroy(); els.saveAsSelect.disabled = !state.pages.length; }
+}
+async function exportPageImages(format = "png", indexes = selectedPageIndexes()) {
+  let document;
+  const mime = {png: "image/png", jpg: "image/jpeg", webp: "image/webp"}[format];
+  if (!mime || !indexes.length) return;
+  els.saveAsSelect.disabled = els.exportImagesButton.disabled = true;
+  announce("Exporting page images…");
+  try {
+    const bytes = await buildPdf(indexes.map((index) => state.pages[index])), base = state.fileName.replace(/\.pdf$/i, "");
+    document = await pdfjs.getDocument({ data: bytes.slice() }).promise;
+    const image = async number => renderPdfPageToBlob(await document.getPage(number), 2, mime);
+    if (document.numPages === 1) downloadBytes(await image(1), `${base}-page-${indexes[0] + 1}.${format}`, mime);
+    else {
+      const zip = new globalThis.JSZip();
+      for (let number = 1; number <= document.numPages; number++) zip.file(`page-${indexes[number - 1] + 1}.${format}`, await image(number));
+      downloadBytes(await zip.generateAsync({ type: "blob", compression: "DEFLATE" }), `${base}-images.zip`, "application/zip");
+    }
+    announce(`${indexes.length} page image(s) downloaded.`);
+  } catch (error) { console.error(error); announce("Page image export failed."); }
+  finally {
+    await document?.destroy();
+    els.saveAsSelect.disabled = els.exportImagesButton.disabled = !state.pages.length;
+  }
+}
+async function removeBlankPages() {
+  announce("Checking pages for blank content…");
+  const blank = [];
+  for (let index = 0; index < state.pages.length; index++) {
+    const page = await sourcePage(state.pages[index]), viewport = page.getViewport({ scale: .2, rotation: (page.rotate + state.pages[index].rotation + (state.pages[index].fineRotation || 0)) % 360 }), canvas = document.createElement("canvas");
+    canvas.width = Math.max(1, Math.ceil(viewport.width)); canvas.height = Math.max(1, Math.ceil(viewport.height));
+    const context = canvas.getContext("2d", { alpha: false });
+    await page.render({ canvasContext: context, viewport, background: "#ffffff" }).promise;
+    const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
+    let marks = 0;
+    for (let offset = 0; offset < pixels.length; offset += 4) if (pixels[offset] < 245 || pixels[offset + 1] < 245 || pixels[offset + 2] < 245) marks++;
+    if (marks / (pixels.length / 4) < .001 && !state.pages[index].annotations.length) blank.push(index);
+  }
+  if (!blank.length) return announce("No blank pages detected.");
+  if (blank.length === state.pages.length) return announce("Every page appears blank; nothing was removed.");
+  const before = snapshot(), ids = new Set(blank.map((index) => state.pages[index].id));
+  state.pages = state.pages.filter((page) => !ids.has(page.id)); state.current = Math.min(state.current, state.pages.length - 1); selectOnlyPage(state.current); commit(before, "Remove blank pages");
+  await renderAll(); announce(`${blank.length} blank page(s) removed. Undo is available.`);
+}
+function duplicatePage() {
+  const indexes = selectedPageIndexes(),
+    insertAt = Math.max(...indexes) + 1;
+  mutate("Duplicate pages", () => {
+    const copies = indexes.map((index) => {
+      const copy = structuredClone(state.pages[index]);
+      copy.id = uid();
+      copy.annotations.forEach((o) => (o.id = uid()));
+      return copy;
+    });
+    state.pages.splice(insertAt, 0, ...copies);
+    state.selectedPageIds = new Set(copies.map((page) => page.id));
+    state.current = insertAt;
+    state.selectionAnchor = insertAt;
+  });
+  renderAll();
+  announce(`${indexes.length} ${indexes.length === 1 ? "page" : "pages"} duplicated.`);
+}
+function deletePage() {
+  const indexes = selectedPageIndexes();
+  if (indexes.length >= state.pages.length) {
+    announce("A PDF must contain at least one page. Select fewer pages to delete.");
+    return;
+  }
+  const first = indexes[0];
+  mutate("Delete pages", () => {
+    const ids = new Set(indexes.map((index) => state.pages[index].id));
+    state.pages = state.pages.filter((page) => !ids.has(page.id));
+    state.current = Math.min(first, state.pages.length - 1);
+    selectOnlyPage(state.current);
+    state.selectedId = null;
+  });
+  renderAll();
+  announce(`${indexes.length} ${indexes.length === 1 ? "page" : "pages"} deleted. Undo is available.`);
+}
+function extractPages() {
+  const indexes = selectedPageIndexes(),
+    pages = indexes.map((index) => state.pages[index]),
+    suffix = indexes.length === 1 ? `-page-${indexes[0] + 1}` : "-selected-pages";
+  exportPdf(pages, suffix);
+}
+
+function renderAnnotations() {
+  if($("visualCoverWarning")) $("visualCoverWarning").hidden=!state.pages.some(page=>page.annotations.some(object=>object.cover||object.type==="mask"));
+  finishInlineTextEditing();
+  els.annotationLayer.replaceChildren();
+  const page = currentPage();
+  if (!page) return;
+  for (const object of page.annotations) {
+    if (object.type === "drawing") {
+      const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"),
+        path = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+      svg.classList.add("drawing-object");
+      const aspect = els.annotationLayer.clientHeight / els.annotationLayer.clientWidth;
+      svg.setAttribute("viewBox", `0 0 1000 ${1000 * aspect}`);
+      path.setAttribute("points", object.points.map(([x, y]) => `${x * 1000},${y * 1000 * aspect}`).join(" "));
+      path.setAttribute("fill", "none");
+      path.setAttribute("stroke", object.color);
+      path.setAttribute("stroke-width", String(object.width * 1000));
+      path.setAttribute("stroke-linecap", "round");
+      path.setAttribute("stroke-linejoin", "round");
+      path.setAttribute("opacity", String(object.opacity ?? 1));
+      svg.append(path);
+      els.annotationLayer.append(svg);
+      continue;
+    }
+    if (object.coverBox) {
+      const cover = document.createElement('div'); cover.className = 'ocr-cover'; cover.setAttribute('aria-hidden','true');
+      Object.assign(cover.style,{left:`${object.coverBox.x*100}%`,top:`${object.coverBox.y*100}%`,width:`${object.coverBox.w*100}%`,height:`${object.coverBox.h*100}%`,background:object.coverColor||'#ffffff'});
+      els.annotationLayer.append(cover);
+    }
+    const node = document.createElement("div");
+    node.className = `editable-object ${object.type}-object${object.ocr ? " ocr-text" : ""}${object.cover ? " replacement-object" : ""}${state.selectedId === object.id ? " selected" : ""}`;
+    node.dataset.id = object.id;
+    node.tabIndex = 0;
+    node.setAttribute("aria-label", `${object.type} annotation`);
+    if (object.type === "text") {
+      node.textContent = object.text;
+      if(object.lang)node.lang=object.lang;
+      node.style.fontSize = `${object.fontSize * state.renderScale}px`;
+      node.style.fontFamily = object.fontFamily || "Arial, sans-serif";
+      node.style.lineHeight = "1.2";
+      applyTextStyles(node, object);
+      node.style.color = object.color;
+      if (object.cover) {
+        node.style.background = object.coverBox ? "transparent" : object.coverColor || "#ffffff";
+        node.contentEditable = "true";
+        node.setAttribute("role", "textbox");
+        node.setAttribute("aria-label", "Edit replacement text in place");
+        node.onfocus = () => { if(object.ocr) selectObject(object.id); node.dataset.before = snapshot(); };
+        node.oninput = () => {
+          object.text = node.textContent || "";
+          els.textValue.value = object.text;
+          queueThumbnailRefresh();
+        };
+        node.onblur = () => {
+          object.text = node.textContent || "";
+          for (const handle of node.ocrHandles || []) if (!node.contains(handle)) node.append(handle);
+          syncSize(node, object, {record:false});
+          commit(node.dataset.before || snapshot(), "Edit replacement text");
+        };
+      }
+    } else if (object.type === "image") {
+      const image = document.createElement("img");
+      image.src = state.assets.get(object.assetId)?.url || "";
+      image.alt = object.altText || "";
+      image.draggable = false;
+      image.style.opacity = object.opacity ?? 1;
+      node.append(image);
+    } else node.style.background = object.color || "#ffffff";
+    Object.assign(node.style, {
+      left: `${object.x * 100}%`,
+      top: `${object.y * 100}%`,
+      width: `${object.w * 100}%`,
+      height: `${object.h * 100}%`,
+      opacity: object.type === "image" ? 1 : object.opacity ?? 1,
+    });
+    if (["text", "highlight", "mask"].includes(object.type)) {
+      const handle = document.createElement("button");
+      handle.type = "button";
+      handle.className = "resize-handle";
+      handle.contentEditable = "false";
+      handle.setAttribute("aria-label", `Resize ${object.type}`);
+      handle.onpointerdown = (event) => startResize(event, node, object);
+      node.append(handle);
+      if (object.ocr) node.ocrHandles = [handle];
+    }
+    if (object.ocr) {
+      const move = document.createElement('button');move.type='button';move.contentEditable='false';move.className='ocr-move-handle';move.setAttribute('aria-label','Move recognized text');move.title='Drag to move recognized text';
+      move.onpointerdown=event=>{event.stopPropagation();startDrag(event,node,object);};node.append(move);
+      node.ocrHandles.push(move);
+    }
+    if (object.type === "image") {
+      for (const [corner, label] of [["nw", "top left"], ["ne", "top right"], ["se", "bottom right"], ["sw", "bottom left"]]) {
+        const handle = document.createElement("button");
+        handle.type = "button";
+        handle.className = `resize-handle image-resize-handle ${corner}`;
+        handle.setAttribute("aria-label", `Resize image from ${label}`);
+        handle.title = "Drag to resize proportionally. Arrow keys resize; Shift makes larger adjustments.";
+        handle.onpointerdown = event => startImageResize(event, node, object, corner);
+        handle.onkeydown = event => {
+          if (!["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key)) return;
+          event.preventDefault(); event.stopPropagation();
+          const before = snapshot(), amount = event.shiftKey ? .1 : .02;
+          const grow = event.key === "ArrowRight" ? corner.includes("e") : event.key === "ArrowLeft" ? corner.includes("w") : event.key === "ArrowDown" ? corner.includes("s") : corner.includes("n");
+          resizeImage(object, { ...object }, corner, 1 + (grow ? amount : -amount));
+          commit(before, "Resize image"); renderAnnotations();
+          els.annotationLayer.querySelector(`[data-id="${object.id}"] .${corner}`).focus();
+        };
+        node.append(handle);
+      }
+    }
+    if (object.type === "text" && !object.cover) node.ondblclick = event => {
+      event.preventDefault(); startInlineTextEditing(object);
+    };
+    node.onpointerdown = (e) => startDrag(e, node, object);
+    node.onclick = (e) => {
+      e.stopPropagation();
+      if (!object.cover) selectObject(object.id);
+    };
+    if (!object.cover) node.onblur = () => syncSize(node, object);
+    node.onkeydown = (e) => {
+      if (object.cover) {
+        if (e.key === "Escape") node.blur();
+      } else if (!e.target.matches("textarea")) objectKeydown(e, object);
+    };
+    els.annotationLayer.append(node);
+  }
+  updateProperties();
+  placement.render();
+}
+function selectObject(id) {
+  state.selectedId = id;
+  setMode("select");
+  els.annotationLayer.querySelectorAll(".editable-object").forEach((node) => node.classList.toggle("selected", node.dataset.id === id));
+  updateProperties();
+}
+let inlineEdit = null;
+let propertySelection;
+function applyTextStyles(node, object) {
+  node.style.setProperty('--inline-text-color', object.color || '#172033');
+  const exact = object.exactFont && !!object.bold === object.sourceBold && !!object.italic === object.sourceItalic;
+  if (object.fontFamily) node.style.fontFamily = exact ? object.fontFamily : object.fallbackFontFamily || object.fontFamily;
+  node.style.fontWeight = !exact && object.bold ? '700' : '400';
+  node.style.fontStyle = !exact && object.italic ? 'italic' : 'normal';
+  node.style.textAlign = ['center', 'right'].includes(object.align) ? object.align : 'left';
+}
+function startInlineTextEditing(object = selectedObject(), selectAll = false) {
+  if (object?.type !== 'text' || object.cover) return;
+  finishInlineTextEditing();
+  const node = els.annotationLayer.querySelector(`[data-id="${object.id}"]`);
+  if (!node) return;
+  selectObject(object.id);
+  const editor = document.createElement('textarea');
+  editor.className = 'inline-text-editor';
+  editor.setAttribute('aria-label', 'Edit text on page');
+  editor.spellcheck = true;
+  editor.value = object.text || '';
+  inlineEdit = {object, node, editor, before: snapshot()};
+  node.classList.add('inline-editing');
+  node.append(editor);
+  editor.addEventListener('input', () => {
+    object.text = editor.value; els.textValue.value = object.text; queueThumbnailRefresh();
+  });
+  editor.addEventListener('blur', finishInlineTextEditing);
+  editor.addEventListener('keydown', event => {
+    if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); finishInlineTextEditing(); node.focus(); }
+    if ((event.ctrlKey || event.metaKey) && ['b', 'i'].includes(event.key.toLowerCase())) {
+      event.preventDefault(); event.stopPropagation(); changeTextFormat(event.key.toLowerCase() === 'b' ? 'bold' : 'italic');
+    }
+  });
+  updateTextFormatTools();
+  node.scrollIntoView({block: 'nearest', inline: 'nearest'});
+  editor.focus({preventScroll: true});
+  if (selectAll) editor.select();
+}
+function finishInlineTextEditing() {
+  if (!inlineEdit) return;
+  const {object, node, editor, before} = inlineEdit;
+  inlineEdit = null;
+  object.text = editor.value;
+  node.classList.remove('inline-editing');
+  editor.remove();
+  // Preserve resize controls when the text content is refreshed.
+  const handle = node.querySelector('.resize-handle');
+  node.textContent = object.text;
+  if (handle) node.append(handle);
+  commit(before, 'Edit text');
+  updateProperties();
+}
+function updateTextFormatTools() {
+  const object = selectedObject(), active = object?.type === 'text' && state.mode === 'select';
+  $('textFormatTools').hidden = !active;
+  if (!active) return;
+  document.querySelectorAll('[data-text-format]').forEach(button => button.setAttribute('aria-pressed', String(!!object[button.dataset.textFormat])));
+  document.querySelectorAll('[data-text-align]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.textAlign === (object.align || 'left'))));
+  $('editInlineText').disabled = !!object.cover || !!inlineEdit;
+  $('finishInlineText').disabled = !inlineEdit;
+}
+function changeTextFormat(property, value) {
+  const object = selectedObject();
+  if (object?.type !== 'text') return;
+  const node = els.annotationLayer.querySelector(`[data-id="${object.id}"]`);
+  if (inlineEdit) { commit(inlineEdit.before, 'Edit text'); inlineEdit.before = snapshot(); }
+  if (object.cover && node?.dataset.before) {
+    syncSize(node, object);
+    commit(node.dataset.before, 'Edit replacement text');
+  }
+  mutate(property === 'align' ? 'Align text' : property === 'bold' ? 'Bold text' : 'Italic text', () => {
+    object[property] = value ?? !object[property];
+  });
+  if (node) applyTextStyles(node, object);
+  if (object.cover && node) node.dataset.before = snapshot();
+  if (inlineEdit) inlineEdit.before = snapshot();
+  updateTextFormatTools();
+}
+document.querySelectorAll('[data-text-format], [data-text-align]').forEach(button => {
+  button.addEventListener('mousedown', event => event.preventDefault());
+  button.addEventListener('click', () => button.dataset.textAlign ? changeTextFormat('align', button.dataset.textAlign) : changeTextFormat(button.dataset.textFormat));
+});
+$('editInlineText').onclick = () => startInlineTextEditing();
+$('finishInlineText').onclick = finishInlineTextEditing;
+
+function updateProperties() {
+  updateTextFormatTools();
+  const o = selectedObject(),
+    isText = o?.type === "text";
+  if (propertySelection !== o?.id) {
+    document.querySelector(".selection-properties").scrollTop = 0;
+    propertySelection = o?.id;
+  }
+  els.textProperties.disabled = !isText;
+  els.textProperties.hidden = !isText;
+  els.objectProperties.hidden = !o || isText || o.type === "drawing";
+  const opacityParent = isText ? els.textProperties : els.objectProperties;
+  if ($("opacityProperty").parentElement !== opacityParent)
+    opacityParent.insertBefore($("opacityProperty"), isText ? els.deleteTextButton : opacityParent.firstElementChild.nextElementSibling);
+  els.deleteObjectButton.hidden = isText;
+  $("selectionHint").hidden = Boolean(o && o.type !== "drawing");
+  els.objectProperties.disabled = !o || o.type === "drawing";
+  els.imageAltRow.hidden = o?.type !== "image";
+  if (isText) {
+    els.textValue.value = o.text;
+    els.fontSize.value = o.fontSize;
+    els.textColor.value = o.color;
+  }
+  if (o) els.objectOpacity.value = Math.round((o.opacity ?? 1) * 100);
+  if (o?.type === "image") els.imageAltText.value = o.altText || "";
+}
+function addText() {
+  if (!currentPage()) return;
+  beginPlacement({ id: uid(), type: 'text', text: 'Add directions', w: .32, h: .08,
+    fontSize: 18, color: '#172033', opacity: 1 }, 'text');
+  announce('Click or tap the page where the text should start. Escape cancels.');
+}
+function replaceTextRun(text, bounds) {
+  let object;
+  mutate("Replace PDF text", () => {
+    object = {
+      id: uid(),
+      type: "text",
+      text,
+      color: "#172033",
+      ...bounds,
+      opacity: 1,
+      cover: true,
+    };
+    currentPage().annotations.push(object);
+    state.selectedId = object.id;
+  });
+  setMode("select");
+  renderAnnotations();
+  requestAnimationFrame(() => {
+    const node = els.annotationLayer.querySelector(`[data-id="${object.id}"]`);
+    node?.focus();
+    if (node) {
+      const range = document.createRange(),
+        selection = getSelection();
+      range.selectNodeContents(node);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
+  });
+  announce("PDF text selected. Type directly on the page, then press Tab when finished.");
+}
+function addHighlight() {
+  mutate("Add highlight", () => {
+    const o = {
+      id: uid(),
+      type: "highlight",
+      x: 0.18,
+      y: 0.2,
+      w: 0.45,
+      h: 0.045,
+      color: "#ffe45c",
+      opacity: 0.55,
+    };
+    currentPage().annotations.push(o);
+    state.selectedId = o.id;
+  });
+  renderAnnotations();
+  announce("Highlight added. Drag and resize it over content.");
+}
+async function addImage(file, signature = false) {
+  if (!file || !['image/png', 'image/jpeg'].includes(file.type)) {
+    announce('Choose a PNG or JPEG image.'); return;
+  }
+  const target = currentPage();
+  if (!target) return;
+  setMode('select');
+  const request = imageRequest;
+  let url;
+  try {
+    const bytes = new Uint8Array(await file.arrayBuffer()), assetId = uid();
+    url = URL.createObjectURL(new Blob([bytes], { type: file.type }));
+    const image = new Image(); image.src = url; await image.decode();
+    if (currentPage() !== target || request !== imageRequest) {
+      URL.revokeObjectURL(url); announce('The page or tool changed. Choose the image again.'); return;
+    }
+    const bounds = els.annotationLayer.getBoundingClientRect();
+    let w = .3, h = w * bounds.width / bounds.height * image.naturalHeight / image.naturalWidth;
+    if (h > .6) { w *= .6 / h; h = .6; }
+    state.assets.set(assetId, { bytes, type: file.type, url });
+    beginPlacement({id:uid(), type:'image', assetId, w, h, opacity:1, signature}, signature ? 'signature image' : 'image', {
+      url, cleanup: () => { URL.revokeObjectURL(url); state.assets.delete(assetId); },
+    });
+    announce('Click or tap the page where the image should start. Escape cancels.');
+  } catch (error) {
+    if (url) URL.revokeObjectURL(url);
+    console.error(error); announce('This image could not be opened. Try another PNG or JPEG.');
+  } finally { els.imageInput.value = ''; els.signatureImageInput.value = ''; }
+}
+function addTypedSignature(event) {
+  event.preventDefault();
+  const text = els.signatureText.value.trim();
+  if (!text) return announce('Enter a signature name or choose a signature image.');
+  els.signatureDialog.close();
+  beginPlacement({id:uid(), type:'text', text, w:.32, h:.09, fontSize:26,
+    fontFamily:'cursive', color:'#172033', opacity:1, signature:true}, 'signature');
+  announce('Click or tap the page where the signature should start. Escape cancels.');
+}
+function applyDecorations(event) {
+  event.preventDefault();
+  const header = els.headerText.value.trim(), footer = els.footerText.value.trim(), alignment = els.decorationAlignment.value, indexes = selectedPageIndexes();
+  if (!header && !footer) return announce("Enter header or footer text.");
+  const x = alignment === "left" ? .05 : alignment === "right" ? .65 : .25, width = alignment === "center" ? .5 : .3;
+  mutate("Add headers and footers", () => indexes.forEach((index) => {
+    const values = { page: index + 1, pages: state.pages.length }, expand = (text) => text.replace(/\{page\}/gi, values.page).replace(/\{pages\}/gi, values.pages);
+    if (header) state.pages[index].annotations.push({ id: uid(), type: "text", text: expand(header), x, y: .025, w: width, h: .035, fontSize: 10, color: "#172033", opacity: 1, decoration: true });
+    if (footer) state.pages[index].annotations.push({ id: uid(), type: "text", text: expand(footer), x, y: .94, w: width, h: .035, fontSize: 10, color: "#172033", opacity: 1, decoration: true });
+  }));
+  els.decorateDialog.close(); renderAll(); announce(`Headers and footers applied to ${indexes.length} page(s).`);
+}
+function deleteSelected() {
+  if (!selectedObject()) return;
+  mutate("Delete object", () => {
+    currentPage().annotations = currentPage().annotations.filter((o) => o.id !== state.selectedId);
+    state.selectedId = null;
+  });
+  renderAnnotations();
+  announce("Object deleted.");
+}
+function clampObject(o) {
+  o.w = Math.min(0.98, Math.max(0.03, o.w));
+  o.h = Math.min(0.98, Math.max(0.02, o.h));
+  o.x = Math.min(1 - o.w, Math.max(0, o.x));
+  o.y = Math.min(1 - o.h, Math.max(0, o.y));
+}
+function syncSize(node, o, {record=true}={}) {
+  const before = snapshot(),
+    rect = node.getBoundingClientRect(),
+    parent = els.annotationLayer.getBoundingClientRect();
+  o.w = rect.width / parent.width;
+  o.h = rect.height / parent.height;
+  clampObject(o);
+  if(record) commit(before, "Resize object");
+}
+function resizeImage(object, initial, corner, scale) {
+  const west = corner.includes("w"), north = corner.includes("n");
+  const anchorX = west ? initial.x + initial.w : initial.x;
+  const anchorY = north ? initial.y + initial.h : initial.y;
+  const maxScale = Math.min((west ? anchorX : 1 - anchorX) / initial.w, (north ? anchorY : 1 - anchorY) / initial.h);
+  const parent = els.annotationLayer.getBoundingClientRect();
+  const minScale = Math.min(maxScale, Math.max(24 / parent.width / initial.w, 24 / parent.height / initial.h));
+  scale = Math.max(minScale, Math.min(maxScale, scale));
+  object.w = initial.w * scale; object.h = initial.h * scale;
+  object.x = west ? anchorX - object.w : anchorX;
+  object.y = north ? anchorY - object.h : anchorY;
+}
+function startImageResize(event, node, object, corner) {
+  if (event.button !== 0) return;
+  event.preventDefault(); event.stopPropagation();
+  const before = snapshot(), initial = { ...object }, parent = els.annotationLayer.getBoundingClientRect();
+  const startX = event.clientX, startY = event.clientY, handle = event.currentTarget;
+  handle.setPointerCapture(event.pointerId);
+  const move = next => {
+    const dx = (next.clientX - startX) * (corner.includes("w") ? -1 : 1);
+    const dy = (next.clientY - startY) * (corner.includes("n") ? -1 : 1);
+    const width = initial.w * parent.width, height = initial.h * parent.height;
+    resizeImage(object, initial, corner, 1 + (dx * width + dy * height) / (width * width + height * height));
+    Object.assign(node.style, { left: `${object.x * 100}%`, top: `${object.y * 100}%`, width: `${object.w * 100}%`, height: `${object.h * 100}%` });
+  };
+  const finish = next => {
+    handle.removeEventListener("pointermove", move);
+    handle.removeEventListener("pointerup", finish);
+    handle.removeEventListener("pointercancel", finish);
+    if (next.type === "pointercancel") Object.assign(object, initial);
+    else commit(before, "Resize image");
+    renderAnnotations();
+    announce(next.type === "pointercancel" ? "Resize cancelled." : "Image resized. Undo is available.");
+  };
+  handle.addEventListener("pointermove", move);
+  handle.addEventListener("pointerup", finish);
+  handle.addEventListener("pointercancel", finish);
+}
+
+function startResize(event, node, object) {
+  if (event.button !== 0) return;
+  event.preventDefault();
+  event.stopPropagation();
+  const before = snapshot(), parent = els.annotationLayer.getBoundingClientRect(), startX = event.clientX, startY = event.clientY, startWidth = object.w, startHeight = object.h, handle = event.currentTarget;
+  handle.setPointerCapture(event.pointerId);
+  const move = (next) => {
+    object.w = startWidth + (next.clientX - startX) / parent.width;
+    object.h = startHeight + (next.clientY - startY) / parent.height;
+    clampObject(object);
+    node.style.width = `${object.w * 100}%`;
+    node.style.height = `${object.h * 100}%`;
+  };
+  const up = () => {
+    handle.removeEventListener("pointermove", move);
+    if(record) commit(before, "Resize object");
+    renderAnnotations();
+    announce(`${object.type === "text" ? "Text box" : "Object"} resized.`);
+  };
+  handle.addEventListener("pointermove", move);
+  handle.addEventListener("pointerup", up, { once: true });
+}
+function startDrag(event, node, o) {
+  if (event.button !== 0 || state.mode !== "select" || event.target.isContentEditable || event.target.matches("textarea")) return;
+  state.selectedId = o.id;
+  const before = snapshot(),
+    startX = event.clientX,
+    startY = event.clientY,
+    startLeft = o.x,
+    startTop = o.y,
+    parent = els.annotationLayer.getBoundingClientRect();
+  let moved = false;
+  node.setPointerCapture(event.pointerId);
+  const move = (e) => {
+      if (Math.abs(e.clientX - startX) + Math.abs(e.clientY - startY) > 2) moved = true;
+      o.x = startLeft + (e.clientX - startX) / parent.width;
+      o.y = startTop + (e.clientY - startY) / parent.height;
+      clampObject(o);
+      node.style.left = `${o.x * 100}%`;
+      node.style.top = `${o.y * 100}%`;
+    },
+    up = () => {
+      node.removeEventListener("pointermove", move);
+      commit(before, "Move object");
+      if (moved) renderAnnotations();
+    };
+  node.addEventListener("pointermove", move);
+  node.addEventListener("pointerup", up, { once: true });
+}
+function objectKeydown(event, o) {
+  if (event.key === "Delete" || event.key === "Backspace") {
+    event.preventDefault();
+    deleteSelected();
+    return;
+  }
+  if (!["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key)) return;
+  event.preventDefault();
+  const before = snapshot(),
+    step = event.shiftKey ? 0.01 : 0.002;
+  o.x += event.key === "ArrowLeft" ? -step : event.key === "ArrowRight" ? step : 0;
+  o.y += event.key === "ArrowUp" ? -step : event.key === "ArrowDown" ? step : 0;
+  clampObject(o);
+  commit(before, "Move object");
+  renderAnnotations();
+}
+function startDrawing(event) {
+  if (state.mode !== "draw" || event.button !== 0 || event.isPrimary === false || cancelInk) return;
+  event.preventDefault();
+  const target = currentPage(), before = snapshot();
+  const layer = els.annotationLayer, rect = layer.getBoundingClientRect();
+  const drawing = {
+    id: uid(), type: "drawing", points: [],
+    color: $("inkColor").value,
+    width: Number($("inkWidth").value) * state.renderScale / rect.width,
+    opacity: 1,
+  };
+  target.annotations.push(drawing);
+  const add = (e) => {
+    drawing.points.push([Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width)), Math.max(0, Math.min(1, (e.clientY - rect.top) / rect.height))]);
+  };
+  add(event);
+  // A tiny segment makes a tap visible as a round dot, both on screen and in PDF.
+  drawing.points.push([drawing.points[0][0] + 0.000001, drawing.points[0][1]]);
+  renderAnnotations();
+  const path = layer.lastElementChild.querySelector("polyline");
+  const paint = () => path.setAttribute("points", drawing.points.map(([x, y]) => `${x * 1000},${y * 1000 * rect.height / rect.width}`).join(" "));
+  const move = (e) => {
+    if (e.pointerId !== event.pointerId) return;
+    e.preventDefault();
+    const samples = e.getCoalescedEvents?.();
+    for (const sample of samples?.length ? samples : [e]) add(sample);
+    paint();
+  };
+  const finish = (keep) => {
+    cancelInk = null;
+    layer.removeEventListener("pointermove", move);
+    layer.removeEventListener("pointerup", up);
+    layer.removeEventListener("pointercancel", cancel);
+    layer.removeEventListener("lostpointercapture", cancel);
+    if (layer.hasPointerCapture(event.pointerId)) layer.releasePointerCapture(event.pointerId);
+    if (keep) {
+      commit(before, "Draw");
+      announce("Stroke added. Keep drawing, or choose Done drawing to scroll.");
+    } else target.annotations = target.annotations.filter(o => o !== drawing);
+    renderAnnotations();
+  };
+  const up = (e) => { if (e.pointerId === event.pointerId) { add(e); finish(true); } };
+  const cancel = (e) => { if (e.pointerId === event.pointerId) finish(false); };
+  cancelInk = () => finish(false);
+  layer.addEventListener("pointermove", move);
+  layer.addEventListener("pointerup", up);
+  layer.addEventListener("pointercancel", cancel);
+  layer.addEventListener("lostpointercapture", cancel);
+  layer.setPointerCapture(event.pointerId);
+}
+window.addEventListener("blur", () => cancelInk?.());
+function startMask(event) {
+  if (state.mode !== "mask" || event.button !== 0) return;
+  event.preventDefault();
+  const before = snapshot(),
+    rect = els.annotationLayer.getBoundingClientRect(),
+    startX = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width)),
+    startY = Math.max(0, Math.min(1, (event.clientY - rect.top) / rect.height)),
+    mask = {
+      id: uid(),
+      type: "mask",
+      x: startX,
+      y: startY,
+      w: 0.001,
+      h: 0.001,
+      color: "#ffffff",
+      opacity: 1,
+    };
+  currentPage().annotations.push(mask);
+  els.annotationLayer.setPointerCapture(event.pointerId);
+  const move = (e) => {
+      const x = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width)),
+        y = Math.max(0, Math.min(1, (e.clientY - rect.top) / rect.height));
+      mask.x = Math.min(startX, x);
+      mask.y = Math.min(startY, y);
+      mask.w = Math.max(0.001, Math.abs(x - startX));
+      mask.h = Math.max(0.001, Math.abs(y - startY));
+      renderAnnotations();
+    },
+    up = () => {
+      els.annotationLayer.removeEventListener("pointermove", move);
+      if (mask.w < 0.005 || mask.h < 0.005) currentPage().annotations = currentPage().annotations.filter((o) => o.id !== mask.id);
+      else state.selectedId = mask.id;
+      commit(before, "Remove area");
+      setMode("select");
+      renderAnnotations();
+      announce("Area visually removed. This is not secure redaction.");
+    };
+  els.annotationLayer.addEventListener("pointermove", move);
+  els.annotationLayer.addEventListener("pointerup", up, { once: true });
+}
+
+function hexColor(hex) {
+  const n = parseInt(hex.slice(1), 16);
+  return rgb(((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255);
+}
+async function buildPdf(items, {finishEditing=true} = {}) {
+  if(finishEditing) finishInlineTextEditing();
+  const output = await PDFDocument.create(),
+    font = await output.embedFont(StandardFonts.Helvetica),
+    docs = new Map(),
+    images = new Map();
+  const textFonts = new Map([[StandardFonts.Helvetica, font]]);
+  output.setTitle(state.documentTitle || state.fileName.replace(/\.pdf$/i, ""));
+  output.setLanguage(state.documentLanguage || "en");
+  output.setCreator("DocMkr");
+  for (const item of items) {
+    if (!docs.has(item.sourceId)) docs.set(item.sourceId, await PDFDocument.load(state.sources.get(item.sourceId).bytes));
+    const [page] = await output.copyPages(docs.get(item.sourceId), [item.sourceIndex]);
+    output.addPage(page);
+    if (item.rotation) page.setRotation(degrees((page.getRotation().angle + item.rotation) % 360));
+    const sourceView = await sourcePage(item);
+    const angle = page.getRotation().angle;
+    const viewport = sourceView.getViewport({scale:1, rotation:angle});
+    const {width, height} = viewport;
+    const point = (x, y) => {
+      const [px, py] = viewport.convertToPdfPoint(x * width, y * height);
+      return {x:px, y:py};
+    };
+    for (const o of item.annotations) {
+      if (o.type === "text") {
+        if (o.cover) {
+          const box = o.coverBox || o;
+          page.drawRectangle({
+            ...point(box.x, box.y + box.h),
+            rotate: degrees(angle),
+            width: box.w * width,
+            height: o.coverBox ? box.h * height : Math.max(o.h * height, o.fontSize * 1.25),
+            color: hexColor(o.coverColor || "#ffffff"),
+          });
+        }
+        const name = StandardFonts[standardTextFont(o)];
+        if (!textFonts.has(name)) textFonts.set(name, await output.embedFont(name));
+        const textFont = textFonts.get(name), boxWidth = o.w * width;
+        const lines = globalThis.PDFLib.breakTextIntoLines(o.text || ' ', [' '], boxWidth, text => textFont.widthOfTextAtSize(text, o.fontSize));
+        lines.forEach((line, index) => {
+          const remaining = Math.max(0, boxWidth - textFont.widthOfTextAtSize(line, o.fontSize));
+          const offset = o.align === 'center' ? remaining / 2 : o.align === 'right' ? remaining : 0;
+          page.drawText(line || ' ', {
+            ...point(o.x + offset / width, o.y + (o.fontSize + index * o.fontSize * 1.2) / height),
+            rotate: degrees(angle), size: o.fontSize, font: textFont,
+            color: hexColor(o.color), opacity: o.opacity ?? 1,
+          });
+        });
+      } else if (o.type === "mask")
+        page.drawRectangle({
+          ...point(o.x, o.y + o.h),
+          rotate: degrees(angle),
+          width: o.w * width,
+          height: o.h * height,
+          color: rgb(1, 1, 1),
+        });
+      else if (o.type === "highlight")
+        page.drawRectangle({
+          ...point(o.x, o.y + o.h),
+          rotate: degrees(angle),
+          width: o.w * width,
+          height: o.h * height,
+          color: hexColor(o.color),
+          opacity: o.opacity ?? 0.55,
+        });
+      else if (o.type === "image") {
+        if (!images.has(o.assetId)) {
+          const a = state.assets.get(o.assetId);
+          images.set(o.assetId, a.type === "image/png" ? await output.embedPng(a.bytes) : await output.embedJpg(a.bytes));
+        }
+        page.drawImage(images.get(o.assetId), {
+          ...point(o.x, o.y + o.h),
+          rotate: degrees(angle),
+          width: o.w * width,
+          height: o.h * height,
+          opacity: o.opacity ?? 1,
+        });
+      } else if (o.type === "drawing")
+        for (let i = 1; i < o.points.length; i++) {
+          const [x1, y1] = o.points[i - 1],
+            [x2, y2] = o.points[i];
+          page.drawLine({
+            start: point(x1, y1),
+            end: point(x2, y2),
+            thickness: Math.max(1, o.width * width),
+            lineCap: globalThis.PDFLib.LineCapStyle.Round,
+            color: hexColor(o.color),
+            opacity: o.opacity ?? 1,
+          });
+        }
+    }
+  }
+  const baseBytes = await output.save();
+  if (!items.some((item) => item.crop || item.fineRotation)) return baseBytes;
+  const base = await PDFDocument.load(baseBytes), transformed = await PDFDocument.create();
+  for (let index = 0; index < items.length; index++) {
+    const item = items[index];
+    // A crop/deskew on one page must not rebuild other pages or drop their /Rotate.
+    if (!item.crop && !item.fineRotation) {
+      const [copy] = await transformed.copyPages(base, [index]);
+      transformed.addPage(copy);
+      continue;
+    }
+    const source = base.getPage(index), box = source.getCropBox();
+    const upright = await PDFDocument.create();
+    const original = await upright.embedPage(source, {
+      left:box.x, bottom:box.y, right:box.x+box.width, top:box.y+box.height,
+    });
+    // Embedded pages do not apply /Rotate. Materialize that orientation before
+    // interpreting crop percentages in the displayed page's coordinate system.
+    const rotation = -source.getRotation().angle, rad = rotation * Math.PI / 180;
+    const corners = [[0,0],[box.width,0],[0,box.height],[box.width,box.height]]
+      .map(([x,y]) => [x*Math.cos(rad)-y*Math.sin(rad),x*Math.sin(rad)+y*Math.cos(rad)]);
+    const xs = corners.map(([x])=>x), ys = corners.map(([,y])=>y);
+    const minX = Math.min(...xs), minY = Math.min(...ys);
+    const width = Math.round((Math.max(...xs)-minX)*1e8)/1e8;
+    const height = Math.round((Math.max(...ys)-minY)*1e8)/1e8;
+    const uprightPage = upright.addPage([width,height]);
+    uprightPage.drawPage(original, {x:-minX,y:-minY,width:box.width,height:box.height,rotate:degrees(rotation)});
+    await upright.flush(); // Resolve the nested page XObject before copying it.
+    const crop = item.crop || {top:0,right:0,bottom:0,left:0};
+    const left = crop.left*width, bottom = crop.bottom*height;
+    const croppedWidth = width*(1-crop.left-crop.right), croppedHeight = height*(1-crop.top-crop.bottom);
+    const embedded = await transformed.embedPage(uprightPage, {left,bottom,right:left+croppedWidth,top:bottom+croppedHeight});
+    const angle = item.fineRotation || 0, radians = angle*Math.PI/180;
+    const rotated = [[0,0],[croppedWidth,0],[0,croppedHeight],[croppedWidth,croppedHeight]]
+      .map(([x,y])=>[x*Math.cos(radians)-y*Math.sin(radians),x*Math.sin(radians)+y*Math.cos(radians)]);
+    const rx = rotated.map(([x])=>x), ry = rotated.map(([,y])=>y);
+    const x = Math.min(...rx), y = Math.min(...ry);
+    transformed.addPage([Math.max(...rx)-x,Math.max(...ry)-y])
+      .drawPage(embedded,{x:-x,y:-y,width:croppedWidth,height:croppedHeight,rotate:degrees(angle)});
+  }
+  return transformed.save();
+}
+function downloadBytes(bytes, name, type = "application/pdf") {
+  const url = URL.createObjectURL(new Blob([bytes], { type })),
+    a = document.createElement("a");
+  a.href = url;
+  a.download = name;
+  document.body.append(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 30000);
+}
+async function exportPdf(items = state.pages, suffix = "-edited") {
+  try {
+    announce("Exporting PDF…");
+    els.saveAsSelect.disabled = true;
+    const bytes = await buildPdf(items),
+      name = `${state.fileName.replace(/\.pdf$/i, "")}${suffix}.pdf`;
+    downloadBytes(bytes, name);
+    announce(`${name} downloaded.`);
+    return bytes;
+  } catch (error) {
+    console.error(error);
+    announce("Export failed. The source PDF is unchanged.");
+    return null;
+  } finally {
+    els.saveAsSelect.disabled = false;
+  }
+}
+
+async function sanitizePdf(event) {
+  event.preventDefault();
+  els.sanitizeForm.querySelector('[type="submit"]').disabled = true;
+  try {
+    announce("Flattening and sanitizing the edited PDF…");
+    const edited = await buildPdf(state.pages), source = await pdfjs.getDocument({ data: edited.slice() }).promise, output = await PDFDocument.create();
+    for (let number = 1; number <= source.numPages; number++) {
+      announce(`Sanitizing page ${number} of ${source.numPages}…`);
+      const page = await source.getPage(number), viewport = page.getViewport({ scale: 1.5 }), blob = await renderPdfPageToBlob(page, 1.5), image = await output.embedPng(new Uint8Array(await blob.arrayBuffer()));
+      output.addPage([viewport.width, viewport.height]).drawImage(image, { x: 0, y: 0, width: viewport.width, height: viewport.height });
+    }
+    output.setTitle(""); output.setAuthor(""); output.setSubject(""); output.setKeywords([]); output.setProducer("DocMkr sanitized copy"); output.setCreator("DocMkr");
+    const name = `${state.fileName.replace(/\.pdf$/i, "")}-sanitized.pdf`;
+    downloadBytes(await output.save(), name); await source.destroy(); els.sanitizeDialog.close(); announce(`${name} downloaded. Verify it before deleting the original.`);
+  } catch (error) { console.error(error); announce("Sanitization failed; the source PDF is unchanged."); }
+  finally { els.sanitizeForm.querySelector('[type="submit"]').disabled = false; }
+}
+
+function contrastAgainstWhite(hex) {
+  const channels = [1, 3, 5].map((index) => parseInt(hex.slice(index, index + 2), 16) / 255).map((value) => value <= .04045 ? value / 12.92 : ((value + .055) / 1.055) ** 2.4);
+  const luminance = .2126 * channels[0] + .7152 * channels[1] + .0722 * channels[2];
+  return 1.05 / (luminance + .05);
+}
+function openAccessibilityDialog() {
+  els.documentTitle.value = state.documentTitle || state.fileName.replace(/\.pdf$/i, "");
+  els.documentLanguage.value = state.documentLanguage || "en";
+  els.accessibilityResults.innerHTML = "<p>Run the check to inspect document structure, text, images, forms, metadata, and annotation contrast.</p>";
+  els.accessibilityDialog.showModal();
+}
+async function runAccessibilityCheck(event) {
+  event.preventDefault();
+  const title = els.documentTitle.value.trim(), language = els.documentLanguage.value.trim();
+  if (!title || !/^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/.test(language)) return announce("Enter a descriptive title and valid language tag such as en or en-US.");
+  state.documentTitle = title; state.documentLanguage = language;
+  els.accessibilityForm.querySelector('[type="submit"]').disabled = true;
+  const results = [], sourceReports = new Map();
+  try {
+    announce("Checking PDF accessibility…");
+    for (const [id, source] of state.sources) {
+      const metadata = await source.pdf.getMetadata().catch(() => ({ info: {} })), markInfo = source.pdf.getMarkInfo ? await source.pdf.getMarkInfo().catch(() => null) : null, fields = source.pdf.getFieldObjects ? await source.pdf.getFieldObjects().catch(() => null) : null;
+      sourceReports.set(id, { tagged: Boolean(markInfo?.Marked), title: metadata?.info?.Title || "", fields });
+    }
+    const untagged = [...sourceReports.values()].filter((report) => !report.tagged).length;
+    results.push({ level: untagged ? "error" : "pass", message: untagged ? `${untagged} source document(s) do not report a tagged structure tree. Logical reading order, headings, lists, tables, and decorative artifacts cannot be verified.` : "All source documents report tagged PDF structure." });
+    results.push({ level: "pass", message: `Export metadata will include the title “${title}” and language “${language}”.` });
+    let emptyPages = 0;
+    for (const item of state.pages) if (!(await (await sourcePage(item)).getTextContent()).items.some((entry) => entry.str?.trim())) emptyPages++;
+    results.push({ level: emptyPages ? "error" : "pass", message: emptyPages ? `${emptyPages} page(s) have no extractable text and may be scans requiring OCR or an accessible alternative.` : "Every page contains extractable text." });
+    const images = state.pages.flatMap((page) => page.annotations.filter((object) => object.type === "image")), missingAlt = images.filter((image) => !image.altText).length;
+    results.push({ level: missingAlt ? "warning" : "pass", message: missingAlt ? `${missingAlt} added image(s) have no description. Leave descriptions blank only for decorative images.` : `${images.length} added image(s) have descriptions or no added images are present.` });
+    const lowContrast = state.pages.flatMap((page) => page.annotations.filter((object) => object.type === "text" && contrastAgainstWhite(object.color || "#000000") < 4.5)).length;
+    results.push({ level: lowContrast ? "warning" : "pass", message: lowContrast ? `${lowContrast} text annotation(s) are below the guide's expected 4.5:1 normal-text contrast against white.` : "Text annotations meet 4.5:1 contrast against white." });
+    const fields = [...sourceReports.values()].flatMap((report) => Object.values(report.fields || {}).flat());
+    results.push({ level: fields.length ? "warning" : "pass", message: fields.length ? `${fields.length} form field(s) detected. Verify programmatic labels and logical keyboard tab order in a dedicated PDF accessibility tool.` : "No interactive form fields detected." });
+    results.push({ level: "info", message: "Manual review is still required for reading order, heading hierarchy, meaningful link text, table headers, list nesting, image-description quality, color use, and assistive-technology behavior." });
+    els.accessibilityResults.innerHTML = `<h3>Accessibility preflight</h3><ul>${results.map((result) => `<li class="${result.level}">${escapeHtml(result.message)}</li>`).join("")}</ul>`;
+    announce(`Accessibility check complete: ${results.filter((result) => result.level === "error").length} error(s), ${results.filter((result) => result.level === "warning").length} warning(s).`);
+  } catch (error) { console.error(error); announce("Accessibility check could not be completed."); }
+  finally { els.accessibilityForm.querySelector('[type="submit"]').disabled = false; }
+}
+const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]);
+async function exportAccessibleHtml() {
+  const title = els.documentTitle.value.trim(), language = els.documentLanguage.value.trim();
+  if (!title || !/^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/.test(language)) return announce("Enter a descriptive title and valid language before exporting HTML.");
+  state.documentTitle = title; state.documentLanguage = language; announce("Creating accessible HTML alternative…");
+  const edited = await buildPdf(state.pages), source = await pdfjs.getDocument({ data: edited.slice() }).promise, sections = [];
+  for (let number = 1; number <= source.numPages; number++) {
+    const content = await (await source.getPage(number)).getTextContent(), lines = [], current = [];
+    for (const item of content.items) { if (item.str) current.push(item.str); if (item.hasEOL && current.length) { lines.push(current.join(" ").replace(/\s+/g, " ").trim()); current.length = 0; } }
+    if (current.length) lines.push(current.join(" ").replace(/\s+/g, " ").trim());
+    const imageDescriptions = state.pages[number - 1]?.annotations.filter((object) => object.type === "image" && object.altText).map((object) => `<figure role="img" aria-label="${escapeHtml(object.altText)}"><figcaption>Image: ${escapeHtml(object.altText)}</figcaption></figure>`).join("") || "";
+    sections.push(`<section aria-labelledby="page-${number}"><h2 id="page-${number}">Page ${number}</h2>${lines.filter(Boolean).map((line) => `<p>${escapeHtml(line)}</p>`).join("") || "<p>No extractable text was available for this page.</p>"}${imageDescriptions}</section>`);
+  }
+  await source.destroy();
+  const html = `<!doctype html><html lang="${escapeHtml(language)}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtml(title)}</title><style>body{font:1.1rem/1.6 system-ui,sans-serif;max-width:70ch;margin:auto;padding:1.5rem;color:#111;background:#fff}.skip{position:absolute;left:-9999px}.skip:focus{left:1rem;top:1rem;background:#fff;padding:.75rem}section{border-top:1px solid #bbb;margin-top:2rem}a{color:#0645ad}</style></head><body><a class="skip" href="#content">Skip to content</a><header><h1>${escapeHtml(title)}</h1><p>Accessible HTML alternative generated locally from ${escapeHtml(state.fileName)}.</p></header><main id="content">${sections.join("")}</main></body></html>`;
+  downloadBytes(new Blob([html], { type: "text/html;charset=utf-8" }), `${state.fileName.replace(/\.pdf$/i, "")}-accessible.html`, "text/html");
+  announce("Accessible HTML alternative downloaded. Review reading order and descriptions before publishing.");
+}
+
+function currentTextDocument(title, language) {
+  return collectTextDocument({ pages: state.pages, sources: state.sources, title, language, sourceName: state.fileName,
+    onProgress: (page, total) => announce(`Reading page ${page} of ${total}…`) });
+}
+async function currentAppearanceDocument(title, language) {
+  const bytes = await buildPdf(state.pages);
+  const source = await pdfjs.getDocument({ data: bytes }).promise;
+  const pages = [];
+  try {
+    for (let number = 1; number <= source.numPages; number++) {
+      announce(`Preserving page ${number} of ${source.numPages}…`);
+      const page = await source.getPage(number), viewport = page.getViewport({ scale: 1 });
+      const scale = Math.min(2, 2200 / Math.max(viewport.width, viewport.height));
+      const image = new Uint8Array(await (await renderPdfPageToBlob(page, scale)).arrayBuffer());
+      pages.push({ number, width: viewport.width, height: viewport.height, image, text: "", lines: [], blocks: [] });
+      page.cleanup();
+    }
+    return { title, language, layout: "appearance", pages };
+  } finally { await source.destroy(); }
+}
+let textSaveFormat = "markdown", textSaveBusy = false;
+function openTextSaveDialog(format) {
+  textSaveFormat = format;
+  els.textSaveLayoutRow.hidden = !["docx", "odt"].includes(format);
+  els.textSaveLayout.value = "formatted";
+  els.textSaveHeading.textContent = `Save as ${formats[format].label}`;
+  els.textSaveTitle.value = state.documentTitle || state.fileName.replace(/\.pdf$/i, "");
+  els.textSaveLanguage.value = state.documentLanguage || "en";
+  els.textSaveStatus.textContent = format === "json" ? "JSON includes document metadata and numbered page text; it is not a restorable editing project." : "";
+  els.textSaveDialog.showModal();
+  els.textSaveTitle.select();
+}
+els.textSaveClose.onclick = () => els.textSaveDialog.close();
+els.textSaveDialog.addEventListener("cancel", event => { if (textSaveBusy) event.preventDefault(); });
+els.textSaveForm.onsubmit = async event => {
+  event.preventDefault();
+  if (textSaveBusy) return;
+  const title = els.textSaveTitle.value.trim(), language = els.textSaveLanguage.value.trim();
+  if (!title || !/^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/.test(language)) {
+    els.textSaveStatus.textContent = "Enter a title and language tag such as en or en-US.";
+    return;
+  }
+  textSaveBusy = true;
+  els.textSaveRun.disabled = els.textSaveClose.disabled = els.textSaveLayout.disabled = els.saveAsSelect.disabled = true;
+  els.textSaveStatus.textContent = "Preparing your document…";
+  try {
+    const appearance = ["docx", "odt"].includes(textSaveFormat) && els.textSaveLayout.value === "appearance";
+    const document = await (appearance ? currentAppearanceDocument : currentTextDocument)(title, language);
+    const blob = await createTextFile(textSaveFormat, document);
+    const name = `${title.replace(/[\\/:*?"<>|]+/g, "-") || "document"}.${formats[textSaveFormat].extension}`;
+    downloadBytes(blob, name, formats[textSaveFormat].mime);
+    const emptyPages = appearance ? 0 : document.pages.filter(page => !page.text).length;
+    announce(`${name} downloaded.${emptyPages ? ` ${emptyPages} of ${document.pages.length} pages have no selectable text; scans require OCR.` : ""}`);
+    els.textSaveDialog.close();
+  } catch (error) {
+    console.error(error);
+    els.textSaveStatus.textContent = "The document could not be saved. Please try again or choose PDF.";
+  } finally {
+    textSaveBusy = false;
+    els.textSaveRun.disabled = els.textSaveClose.disabled = els.textSaveLayout.disabled = els.saveAsSelect.disabled = false;
+  }
+};
+
+function openEpubDialog() {
+  els.epubLayout.value = "formatted";
+  els.epubPageChapters.disabled = false;
+  els.epubTitle.value = state.fileName.replace(/\.pdf$/i, "");
+  els.epubAuthor.value = "";
+  els.epubPublisher.value = "";
+  els.epubDescription.value = "";
+  els.epubRights.value = "";
+  els.epubLanguage.value = document.documentElement.lang || "en";
+  els.epubCover.value = "";
+  els.epubCoverAlt.value = "";
+  els.epubCoverAltRow.hidden = true;
+  els.epubPreflight.hidden = true;
+  els.epubDialog.showModal();
+  els.epubTitle.select();
+}
+
+async function exportEpub(event) {
+  event.preventDefault();
+  const title = els.epubTitle.value.trim(), author = els.epubAuthor.value.trim(), language = els.epubLanguage.value.trim();
+  if (!title || !/^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/.test(language)) {
+    announce("Enter a title and a valid language tag such as en or en-US.");
+    return;
+  }
+  els.epubRun.disabled = els.epubCancel.disabled = els.epubLayout.disabled = true;
+  els.saveAsSelect.disabled = true;
+  try {
+    announce("Preparing the edited PDF for EPUB conversion…");
+    const textDocument = await (els.epubLayout.value === "appearance" ? currentAppearanceDocument : currentTextDocument)(title, language);
+    if (els.epubLayout.value !== "appearance") {
+      await collectEpubImages({ pdfjs, pdfBytes: await buildPdf(state.pages), textDocument,
+        onProgress: (page, total) => announce(`Including images from page ${page} of ${total}…`) });
+    }
+    const coverFile = els.epubCover.files[0] || null;
+    const result = await createEpub({ textDocument, title, author, publisher: els.epubPublisher.value.trim(), description: els.epubDescription.value.trim(), rights: els.epubRights.value.trim(), language, pageChapters: els.epubPageChapters.checked, coverFile, coverAlt: els.epubCoverAlt.value.trim(), onProgress: (page, total) => announce(`Converting page ${page} of ${total} to EPUB…`) });
+    const safeName = title.replace(/[\\/:*?"<>|]+/g, "-").trim() || "document";
+    downloadBytes(result.blob, `${safeName}.epub`, "application/epub+zip");
+    els.epubPreflight.innerHTML = `<h3>EPUB preflight</h3><ul>${result.checks.map((check) => `<li class="${check.level}">${check.message}</li>`).join("")}</ul>`;
+    els.epubPreflight.hidden = false;
+    announce(`${safeName}.epub downloaded. Preflight found ${result.checks.filter((check) => check.level === "warning").length} warning(s).${result.emptyPages ? ` ${result.emptyPages} page(s) have no selectable text; scans require OCR.` : ""}`);
+    els.epubDialog.close();
+  } catch (error) {
+    console.error(error);
+    announce(error.message || "The EPUB could not be created.");
+  } finally {
+    els.epubRun.disabled = els.epubCancel.disabled = els.epubLayout.disabled = false;
+    els.saveAsSelect.disabled = false;
+  }
+}
+function parseRanges(value) {
+  const parts = value
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  if (!parts.length) throw Error("Enter at least one page or page range.");
+  return parts.map((part) => {
+    const m = part.match(/^(\d+)(?:\s*-\s*(\d+))?$/);
+    if (!m) throw Error(`Invalid range: ${part}`);
+    const start = Number(m[1]),
+      end = Number(m[2] || m[1]);
+    if (start < 1 || end < start || end > state.pages.length) throw Error(`Range outside document: ${part}`);
+    return state.pages.slice(start - 1, end);
+  });
+}
+async function splitPdf(event) {
+  event.preventDefault();
+  try {
+    const mode = new FormData(els.splitForm).get("splitMode"),
+      groups = mode === "every" ? state.pages.map((page) => [page]) : parseRanges(els.splitRanges.value);
+    els.splitDialog.close();
+    if (groups.length === 1) {
+      downloadBytes(await buildPdf(groups[0]), `${state.fileName.replace(/\.pdf$/i, "")}-part-1.pdf`);
+      announce("Separated PDF downloaded.");
+      return;
+    }
+    announce(`Creating ${groups.length} PDF files…`);
+    const zip = new globalThis.JSZip();
+    for (let i = 0; i < groups.length; i++) zip.file(`part-${i + 1}.pdf`, await buildPdf(groups[i]));
+    const blob = await zip.generateAsync({
+      type: "blob",
+      compression: "DEFLATE",
+    });
+    downloadBytes(blob, `${state.fileName.replace(/\.pdf$/i, "")}-parts.zip`, "application/zip");
+    announce(`${groups.length} separated PDFs downloaded as a ZIP.`);
+  } catch (error) {
+    announce(error.message || "The PDF could not be separated.");
+  }
+}
+let pendingVaultFile = null;
+function openVaultDialog(mode = null, file = null) {
+  pendingVaultFile = file;
+  els.vaultDialog.dataset.mode = mode || "";
+  els.vaultTitle.textContent = mode === "protect" ? "Protect this PDF" : mode === "unlock" ? "Unprotect a PDF" : "Protect or unprotect a PDF";
+  els.vaultIntro.hidden = Boolean(mode);
+  els.vaultFields.hidden = !mode;
+  els.vaultRun.hidden = !mode;
+  els.vaultCopy.textContent = mode === "protect" ? "Create an encrypted .csplat copy of the currently open PDF." : "Enter the password used to protect this file. After authentication, its PDF will open in DocMkr.";
+  els.vaultConfirmRow.hidden = mode !== "protect";
+  els.vaultGeneratorLink.hidden = mode !== "protect";
+  els.vaultPassword.required = Boolean(mode);
+  els.vaultConfirm.required = mode === "protect";
+  els.vaultRun.textContent = mode === "protect" ? "Protect and download" : "Unprotect and open";
+  els.vaultPassword.value = "";
+  els.vaultConfirm.value = "";
+  if (!els.vaultDialog.open) els.vaultDialog.showModal();
+  if (mode) els.vaultPassword.focus();
+}
+async function runVault(event) {
+  event.preventDefault();
+  const mode = els.vaultDialog.dataset.mode,
+    password = els.vaultPassword.value;
+  if (mode === "protect" && password !== els.vaultConfirm.value) {
+    announce("Passwords do not match.");
+    els.vaultConfirm.focus();
+    return;
+  }
+  try {
+    els.vaultRun.disabled = true;
+    if (mode === "protect") {
+      announce("Preparing edited PDF for CipherSplat…");
+      const pdfBytes = await buildPdf(state.pages),
+        pdfName = `${state.fileName.replace(/\.pdf$/i, "")}-edited.pdf`,
+        blob = await protectPdf(pdfBytes, pdfName, password, announce);
+      downloadBytes(blob, `${pdfName}.csplat`, "application/octet-stream");
+      announce("Protected CipherSplat PDF downloaded. Test unlocking it before deleting the original.");
+    } else {
+      const pdfFile = await unlockPdf(pendingVaultFile, password, announce);
+      els.vaultDialog.close();
+      await openFile(pdfFile);
+      announce(`${pdfFile.name} authenticated, decrypted, and opened locally.`);
+    }
+    els.vaultDialog.close();
+  } catch (error) {
+    console.error(error);
+    announce(error.message || "CipherSplat operation failed.");
+  } finally {
+    els.vaultPassword.value = "";
+    els.vaultConfirm.value = "";
+    els.vaultRun.disabled = false;
+    pendingVaultFile = null;
+  }
+}
+function undo() {
+  finishInlineTextEditing();
+  cancelInk?.();
+  const c = state.history.pop();
+  if (!c) return;
+  state.future.push(c);
+  restore(c.before);
+  syncHistory();
+  announce(`Undid ${c.label}.`);
+}
+function redo() {
+  finishInlineTextEditing();
+  cancelInk?.();
+  const c = state.future.pop();
+  if (!c) return;
+  state.history.push(c);
+  restore(c.after);
+  syncHistory();
+  announce(`Redid ${c.label}.`);
+}
+
+els.openButton.onclick = els.chooseButton.onclick = () => els.fileInput.click();
+els.pagesButton.onclick = () => {
+  const sidebar = $("sidebar"),
+    open = sidebar.classList.toggle("open");
+  els.pagesButton.setAttribute("aria-expanded", String(open));
+};
+els.fileInput.onchange = (e) => { const files = [...e.target.files]; e.target.value = ""; void openFile(files); };
+els.mergeButton.onclick = () => els.mergeInput.click();
+els.mergeInput.onchange = (e) => mergeFile(e.target.files[0]);
+if (els.saveDriveButton) els.saveDriveButton.onclick = async () => {
+  if (!state.pages.length) return;
+  els.saveDriveButton.disabled = true;
+  try {
+    await saveToGoogleDrive({ appName: 'DocMkr', authorizationWindow: true,
+      fileName: `${state.fileName.replace(/\.pdf$/i, '')}-edited.pdf`,
+      buildFile: async () => new Blob([await buildPdf(state.pages)], { type: 'application/pdf' }) });
+  } catch (error) { announce(error.message || 'Google Drive saving could not start.'); }
+  finally { els.saveDriveButton.disabled = !state.pages.length; }
+};
+els.saveAsSelect.onchange = () => {
+  const format = els.saveAsSelect.value;
+  els.saveAsSelect.value = "";
+  if (format === "pdf") void exportPdf();
+  else if (["png", "jpg", "webp"].includes(format)) void exportPageImages(format, state.pages.map((_, index) => index));
+  else if (format === "webdeck") void exportWebDeck();
+  else if (format === "epub") openEpubDialog();
+  else if (formats[format]) openTextSaveDialog(format);
+};
+els.epubForm.onsubmit = exportEpub;
+els.epubDialog.addEventListener("cancel", event => { if (els.epubRun.disabled) event.preventDefault(); });
+els.epubLayout.onchange = () => { els.epubPageChapters.disabled = els.epubLayout.value === "appearance"; };
+els.epubCancel.onclick = () => els.epubDialog.close();
+els.epubCover.onchange = () => {
+  els.epubCoverAltRow.hidden = !els.epubCover.files.length;
+  if (!els.epubCover.files.length) els.epubCoverAlt.value = "";
+};
+els.protectButton.onclick = () => openVaultDialog();
+els.unlockButton.onclick = () => els.vaultInput.click();
+els.vaultProtectChoice.onclick = () => {
+  if (!state.pages.length) {
+    announce("Open a PDF before protecting it.");
+    els.vaultDialog.close();
+    els.fileInput.click();
+    return;
+  }
+  openVaultDialog("protect");
+};
+els.vaultUnlockChoice.onclick = () => els.vaultInput.click();
+els.vaultInput.onchange = (e) => {
+  const file = e.target.files[0];
+  if (file) openVaultDialog("unlock", file);
+  els.vaultInput.value = "";
+};
+els.vaultForm.onsubmit = runVault;
+els.vaultCancel.onclick = () => {
+  pendingVaultFile = null;
+  els.vaultDialog.close();
+};
+els.undoButton.onclick = undo;
+els.redoButton.onclick = redo;
+els.editTextButton.onclick = () => {
+  setMode(state.mode === "edit-text" ? "select" : "edit-text");
+  announce(state.mode === "edit-text" ? "Click detected PDF text to replace it." : "PDF text editing cancelled.");
+};
+els.removeAreaButton.onclick = () => {
+  setMode(state.mode === "mask" ? "select" : "mask");
+  announce(state.mode === "mask" ? "Drag over any area to visually remove it." : "Remove area cancelled.");
+};
+els.addTextButton.onclick = addText;
+els.highlightButton.onclick = addHighlight;
+els.drawButton.onclick = () => {
+  setMode(state.mode === "draw" ? "select" : "draw");
+  announce(state.mode === "draw" ? "Write with your finger, stylus, or mouse. Choose Done drawing to scroll." : "Drawing cancelled.");
+};
+$("inkDone").onclick = () => setMode("select");
+$("inkUndo").onclick = () => { if (state.history.at(-1)?.label === "Draw") undo(); setMode("draw"); };
+$("signatureDraw").onclick = () => {
+  els.signatureDialog.close();
+  setMode("draw");
+  announce("Write your signature directly on the PDF, then choose Done drawing.");
+};
+els.addImageButton.onclick = () => { setMode("select"); els.imageInput.click(); };
+els.imageInput.onchange = (e) => addImage(e.target.files[0]);
+els.signatureButton.onclick = () => { setMode("select"); els.signatureText.value = ""; els.signatureDialog.showModal(); els.signatureText.focus(); };
+els.signatureForm.onsubmit = addTypedSignature;
+els.signatureCancel.onclick = () => els.signatureDialog.close();
+els.signatureUpload.onclick = () => els.signatureImageInput.click();
+els.signatureImageInput.onchange = async (e) => { const file = e.target.files[0]; if (file) { els.signatureDialog.close(); await addImage(file, true); } };
+els.cropButton.onclick = openCropDialog;
+els.cropForm.onsubmit = applyCrop;
+els.cropReset.onclick = (event) => applyCrop(event, true);
+els.cropCancel.onclick = () => els.cropDialog.close();
+els.customRotateButton.onclick = () => { els.customRotation.value = currentPage()?.fineRotation || 0; els.customRotateDialog.showModal(); els.customRotation.select(); };
+els.customRotateForm.onsubmit = applyCustomRotation;
+els.customRotateCancel.onclick = () => els.customRotateDialog.close();
+els.rotateLeftButton.onclick = () => rotate(-90);
+els.rotateRightButton.onclick = () => rotate(90);
+els.reversePagesButton.onclick = reversePages;
+els.blankPageButton.onclick = insertBlankPage;
+els.imagePagesButton.onclick = () => els.imagePagesInput.click();
+els.imagePagesInput.onchange = (e) => addImagePages(e.target.files);
+els.exportImagesButton.onclick = () => exportPageImages();
+els.removeBlankPagesButton.onclick = removeBlankPages;
+els.decorateButton.onclick = () => { els.headerText.value = ""; els.footerText.value = "Page {page} of {pages}"; els.decorateDialog.showModal(); els.headerText.focus(); };
+els.decorateForm.onsubmit = applyDecorations;
+els.decorateCancel.onclick = () => els.decorateDialog.close();
+els.sanitizeButton.onclick = () => els.sanitizeDialog.showModal();
+els.sanitizeForm.onsubmit = sanitizePdf;
+els.sanitizeCancel.onclick = () => els.sanitizeDialog.close();
+els.accessibilityButton.onclick = openAccessibilityDialog;
+els.accessibilityForm.onsubmit = runAccessibilityCheck;
+els.accessibilityCancel.onclick = () => els.accessibilityDialog.close();
+els.accessibleHtmlButton.onclick = exportAccessibleHtml;
+els.duplicatePageButton.onclick = duplicatePage;
+els.deletePageButton.onclick = deletePage;
+els.extractPageButton.onclick = extractPages;
+els.splitButton.onclick = () => els.splitDialog.showModal();
+els.splitForm.onsubmit = splitPdf;
+els.splitDialog.querySelector('[value="cancel"]').onclick = () => els.splitDialog.close();
+els.contextMoveButton.onclick = () => {
+  els.pageActionsDialog.close();
+  openMovePagesDialog(pageActionsIndex);
+};
+els.contextDuplicateButton.onclick = () => {
+  els.pageActionsDialog.close();
+  duplicatePage();
+};
+els.contextExtractButton.onclick = () => {
+  els.pageActionsDialog.close();
+  extractPages();
+};
+els.contextSplitButton.onclick = openSelectedSplit;
+els.contextDeleteButton.onclick = () => {
+  els.pageActionsDialog.close();
+  deletePage();
+};
+els.contextCancelButton.onclick = () => els.pageActionsDialog.close();
+els.movePagesForm.onsubmit = submitMovePages;
+els.movePagesCancel.onclick = () => els.movePagesDialog.close();
+els.deleteTextButton.onclick = deleteSelected;
+els.deleteObjectButton.onclick = deleteSelected;
+els.annotationLayer.onclick = () => {
+  state.selectedId = null;
+  renderAnnotations();
+};
+els.annotationLayer.addEventListener("pointerdown", startDrawing);
+els.annotationLayer.addEventListener("pointerdown", startMask);
+els.textValue.onfocus = () => (els.textValue.dataset.before = snapshot());
+els.textValue.oninput = () => {
+  const o = selectedObject();
+  if (!o) return;
+  o.text = els.textValue.value;
+  const node = els.annotationLayer.querySelector(`[data-id="${o.id}"]`);
+  if (node) {
+    const handles=[...(node.ocrHandles||[])];node.textContent=o.text;for(const handle of handles)node.append(handle);
+  }
+  queueThumbnailRefresh();
+};
+els.textValue.onchange = () => {
+  commit(els.textValue.dataset.before || snapshot(), "Edit text");
+  announce("Text updated.");
+};
+els.fontSize.onchange = () => {
+  const o = selectedObject();
+  if (o) {
+    mutate("Change text size", () => (o.fontSize = Number(els.fontSize.value)));
+    renderAnnotations();
+  }
+};
+els.textColor.onchange = () => {
+  const o = selectedObject();
+  if (o) {
+    mutate("Change text color", () => (o.color = els.textColor.value));
+    renderAnnotations();
+  }
+};
+els.objectOpacity.onchange = () => {
+  const o = selectedObject();
+  if (o) {
+    mutate("Change opacity", () => (o.opacity = Number(els.objectOpacity.value) / 100));
+    renderAnnotations();
+  }
+};
+els.imageAltText.onchange = () => {
+  const object = selectedObject();
+  if (object?.type === "image") mutate("Change image description", () => (object.altText = els.imageAltText.value.trim()));
+};
+els.zoomInButton.onclick = () => {
+  state.zoom = Math.min(3, state.zoom + 0.1);
+  renderCurrent();
+};
+els.zoomOutButton.onclick = () => {
+  state.zoom = Math.max(0.5, state.zoom - 0.1);
+  renderCurrent();
+};
+els.fitButton.onclick = () => {
+  state.zoom = 1;
+  renderCurrent();
+};
+els.previousPageButton.onclick = () => navigatePage(-1);
+els.nextPageButton.onclick = () => navigatePage(1);
+$('aboutButton').onclick = () => $('aboutDialog').showModal();
+els.privacyButton.onclick = () => els.privacyDialog.showModal();
+for (const name of ["dragenter", "dragover"])
+  els.dropZone.addEventListener(name, (e) => {
+    e.preventDefault();
+    els.dropZone.classList.add("dragover");
+  });
+for (const name of ["dragleave", "drop"])
+  els.dropZone.addEventListener(name, (e) => {
+    e.preventDefault();
+    els.dropZone.classList.remove("dragover");
+  });
+els.dropZone.addEventListener("drop", (e) => openFile(e.dataTransfer.files));
+window.addEventListener("keydown", (e) => {
+  if (!document.getElementById("presentationViewer")?.hidden) return;
+  const mod = e.ctrlKey || e.metaKey,
+    key = e.key.toLowerCase();
+  const target = e.target;
+  const editing = target instanceof HTMLElement && (target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName));
+  const modalOpen = Boolean(document.querySelector("dialog[open]"));
+  if (target?.classList?.contains("inline-text-editor") && mod && ["z", "y"].includes(key)) return;
+  if (e.key === 'Escape' && placement.active && !modalOpen) {
+    e.preventDefault(); setMode('select'); announce('Placement cancelled.'); return;
+  }
+  if (document.getElementById("scanDialog").open || document.getElementById("ocrDialog")?.open) return;
+  if (mod && key === "o") {
+    e.preventDefault();
+    els.fileInput.click();
+  }
+  if (mod && key === "s" && state.pages.length) {
+    e.preventDefault();
+    exportPdf();
+  }
+  if (mod && key === "z") {
+    e.preventDefault();
+    e.shiftKey ? redo() : undo();
+  }
+  if (mod && key === "y") {
+    e.preventDefault();
+    redo();
+  }
+  if (!mod && !editing && !modalOpen && e.key === "+" && state.pages.length) els.zoomInButton.click();
+  if (!mod && !editing && !modalOpen && e.key === "-" && state.pages.length) els.zoomOutButton.click();
+  if (!mod && !editing && !modalOpen && e.key === "0" && state.pages.length) els.fitButton.click();
+  if (!mod && !e.altKey && !editing && !modalOpen && e.key === "ArrowLeft" && state.pages.length) {
+    e.preventDefault();
+    navigatePage(-1);
+  }
+  if (!mod && !e.altKey && !editing && !modalOpen && e.key === "ArrowRight" && state.pages.length) {
+    e.preventDefault();
+    navigatePage(1);
+  }
+  if (e.key === "Escape" && state.mode === "draw") setMode("select");
+});
+window.addEventListener("resize", () => {
+  if (state.pages.length) renderCurrent();
+});
+window.addEventListener("beforeunload", () => {
+  for (const asset of state.assets.values()) URL.revokeObjectURL(asset.url);
+});
+
+setupScanner({ addPdf: async file => {
+  const added = await (state.pages.length ? mergeFile(file) : openFile(file));
+  if (!added) throw new Error("The scan could not be added. Download the scanned PDF to keep a copy.");
+} });
+
+setupWebsitePdf({ addPdf: async file => {
+  const added = await (state.pages.length ? mergeFile(file) : openFile(file));
+  if (!added) throw new Error("Could not add captures. Download the PDF to keep a copy.");
+} });
+
+// Render the visible composition without final crop/fine-rotation transforms.
+// OCR uses normalized coordinates in the same page model as editable annotations.
+async function renderOcrPage(target, control) {
+  const item = target.model, limits=control.limits||OCR_LIMITS;
+  const bytes = await buildPdf([{...item, crop:null, fineRotation:0}]);
+  if (!control.active()) throw new DOMException('OCR stopped','AbortError');
+  const pdf = await pdfjs.getDocument({data:bytes}).promise;
+  let canvas;
+  try {
+    const page = await pdf.getPage(1), base = page.getViewport({scale:1});
+    if (!control.active()) throw new DOMException('OCR stopped','AbortError');
+    const scale = Math.min(3, limits.edge/Math.max(base.width,base.height), Math.sqrt(limits.pixels/(base.width*base.height)));
+    const viewport = page.getViewport({scale});
+    canvas = document.createElement('canvas');canvas.width=Math.max(1,Math.floor(viewport.width));canvas.height=Math.max(1,Math.floor(viewport.height));
+    const task = page.render({canvasContext:canvas.getContext('2d',{alpha:false}),viewport,background:'#ffffff'});
+    control.cancel(()=>task.cancel());await task.promise;
+    if (!control.active()) throw new DOMException('OCR stopped','AbortError');
+    const content = await page.getTextContent();
+    const existing = content.items.filter(run=>run.str?.trim()).map(run=>{
+      const m=pdfjs.Util.transform(base.transform,run.transform),h=Math.hypot(m[2],m[3])||Math.hypot(m[0],m[1]);
+      return {x:m[4]/base.width,y:(m[5]-h)/base.height,w:Math.max(1,run.width)/base.width,h:Math.max(1,h)/base.height};
+    });
+    const preview = document.createElement('canvas'), factor=Math.min(1,(limits.previewWidth||620)/canvas.width,(limits.previewHeight||780)/canvas.height);
+    preview.width=Math.max(1,Math.round(canvas.width*factor));preview.height=Math.max(1,Math.round(canvas.height*factor));
+    preview.getContext('2d').drawImage(canvas,0,0,preview.width,preview.height);
+    preview.setAttribute('role','img');preview.setAttribute('aria-label',`Original page ${target.number} with detected text regions`);
+    const crop=item.crop||{top:0,right:0,bottom:0,left:0};
+    return {canvas,preview,width:base.width,height:base.height,existing,
+      visible:box=>box.x>=crop.left-.001&&box.y>=crop.top-.001&&box.x+box.w<=1-crop.right+.001&&box.y+box.h<=1-crop.bottom+.001,
+      appearance:box=>textInkAppearance(canvas,{left:box.x*base.width,top:box.y*base.height,width:box.w*base.width,height:box.h*base.height},base,{surroundingBackground:true}),
+      dispose:()=>{canvas.width=canvas.height=0;void pdf.destroy();}
+    };
+  } catch(error) {if(canvas)canvas.width=canvas.height=0;await pdf.destroy();throw error;}
+}
+ocr = setupOcr({
+  button:els.ocrButton,announce,stamp:snapshot,
+  targets:scope=>{
+    const indexes=scope==='all'?state.pages.map((_,i)=>i):scope==='selected'?selectedPageIndexes():[state.current];
+    const pages=indexes.filter(i=>state.pages[i]).map(i=>({id:state.pages[i].id,number:i+1,model:structuredClone(state.pages[i])}));
+    if(pages.some(p=>p.model.fineRotation))throw Error('Set fine rotation to 0° before OCR. Use a straightened image or rotate pages by 90° before recognition.');
+    finishInlineTextEditing();return pages;
+  },
+  renderPage:renderOcrPage,
+  apply:async(chosen,active)=>{
+    const document=await PDFDocument.create(),font=await document.embedFont(StandardFonts.Helvetica),prepared=[];
+    for(const {result,line}of chosen){
+      const item=state.pages.find(p=>p.id===result.target.id);
+      if(!item||item.sourceId!==result.target.model.sourceId)throw Error('The document changed. Recognize text again.');
+      const text=line.text.trim().replace(/\r\n?/g,'\n');
+      let naturalWidth;
+      try { naturalWidth=Math.max(...text.split('\n').map(line=>font.widthOfTextAtSize(line,1))); }
+      catch { throw Error(`Page ${result.number}: a line contains a symbol this PDF font cannot save. Correct it or uncheck that line before Apply.`); }
+      const {box}=line;
+      const fontSize=Math.floor(Math.max(6,Math.min(120,box.h*result.height*1.15,(box.w*result.width-1)/Math.max(1,naturalWidth)))*100)/100;
+      if(naturalWidth*fontSize>box.w*result.width+1)throw Error(`Page ${result.number}: a corrected line is too long for its box. Shorten it or uncheck it before Apply.`);
+      prepared.push({item,object:{id:uid(),type:'text',text,x:box.x,y:Math.max(0,box.y-fontSize*.15/result.height),w:box.w,h:Math.max(box.h,fontSize*1.4*text.split('\n').length/result.height),fontSize,lang:result.language==='spa'?'es':result.language==='eng'?'en':undefined,color:line.color||'#172033',coverColor:line.coverColor||'#ffffff',fontFamily:'Arial, sans-serif',pdfFontFamily:'Helvetica',opacity:1,cover:true,coverBox:{...box},ocr:true}});
+    }
+    if(!active())throw Error('The document changed. Recognize text again before applying.');
+    mutate('Apply OCR text',()=>prepared.forEach(({item,object})=>item.annotations.push(object)));
+    state.selectedId=prepared.find(p=>p.item.id===currentPage()?.id)?.object.id||null;
+    setMode('select');await renderAll();
+  }
+});
+
+setupToolbar();
+setupToolSearch();
+
+setupPresentation({ pdfjs, buildPdf: () => buildPdf(state.pages), state, announce });

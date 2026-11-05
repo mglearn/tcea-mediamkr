@@ -38,7 +38,8 @@ JSZip bundled at `apps/puzzlemkr/vendor/jszip.min.js`. Puzzle logic and the
 library packs are original project content.
 
 ### PlotMkr
-_To be recorded on migration (charting library)._
+No third-party libraries. Charts, math evaluation, and renderers are
+original project code (canvas/SVG). Fonts as noted under Shared.
 
 ### PixelMkr
 _To be recorded on migration._

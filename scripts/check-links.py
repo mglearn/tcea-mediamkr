@@ -23,6 +23,7 @@ ALLOWED_HOSTS = {
     "www.gnu.org",
     "github.com",            # corresponding-source links (AGPL)
     "huggingface.co",        # on-demand model info/download (BGMkr)
+    "tea.texas.gov",         # TEKS standards references (PlotMkr lesson plans)
 }
 
 ATTR_RE = re.compile(r'(?:href|src)\s*=\s*["\']([^"\']+)["\']', re.IGNORECASE)

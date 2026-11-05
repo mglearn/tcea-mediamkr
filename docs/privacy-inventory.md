@@ -21,7 +21,7 @@ inventory records what was checked and found.
 | CodeMkr | None (fonts only) | `codemkr.designs.v1` (saved designs, opt-in) | — | Fully local (qrcode.js) | Yes |
 | MemeMkr | None (fonts only) | none | — | Fully local (canvas) | Yes |
 | PuzzleMkr | None (fonts only) | `mediamkr.puzzlemkr.latest` (last puzzle, opt-in) | — | Fully local | Yes |
-| PlotMkr | Pending | Pending | — | Pending | No |
+| PlotMkr | None (fonts + TEKS links) | `plotmkr.projects.v1` (opt-in) | — | Fully local | Yes |
 | PixelMkr | Pending | Pending | screen capture (on use) | Pending | No |
 | BGMkr | Model from Hugging Face on demand (pixels stay local); optional background-image URL fetch | none | — | On-device (Transformers.js/ONNX WASM); white/color fully local | Yes |
 | GIFMkr | None (fonts only) | none | — | Fully local (custom GIF encoder; MP4 via WebCodecs) | Yes |

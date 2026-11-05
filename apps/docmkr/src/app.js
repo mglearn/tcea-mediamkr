@@ -10,7 +10,7 @@ import { setupPlacement } from "./placement.js";
 import { setupToolSearch } from "./tool-search.js";
 import { setupWebsitePdf } from "./website-to-pdf.js?v=20260923-capture-only";
 import { setupScanner } from "./scan-to-pdf.js?v=20260914-phone-camera";
-import { protectPdf, unlockPdf } from "./ciphersplat-pdf.js";
+import { protectPdf, unlockPdf } from "./pdfvault-pdf.js";
 import { createEpub } from "./epub-export.js?v=20260914-formatting";
 import { formats, collectTextDocument, createTextFile } from "./document-export.js?v=20260914-formatting";
 
@@ -1725,7 +1725,7 @@ function openVaultDialog(mode = null, file = null) {
   els.vaultIntro.hidden = Boolean(mode);
   els.vaultFields.hidden = !mode;
   els.vaultRun.hidden = !mode;
-  els.vaultCopy.textContent = mode === "protect" ? "Create an encrypted .csplat copy of the currently open PDF." : "Enter the password used to protect this file. After authentication, its PDF will open in DocMkr.";
+  els.vaultCopy.textContent = mode === "protect" ? "Create an encrypted .pdfvault copy of the currently open PDF." : "Enter the password used to protect this file. After authentication, its PDF will open in DocMkr.";
   els.vaultConfirmRow.hidden = mode !== "protect";
   els.vaultGeneratorLink.hidden = mode !== "protect";
   els.vaultPassword.required = Boolean(mode);
@@ -1748,12 +1748,12 @@ async function runVault(event) {
   try {
     els.vaultRun.disabled = true;
     if (mode === "protect") {
-      announce("Preparing edited PDF for CipherSplat…");
+      announce("Preparing edited PDF for Encrypted PDF…");
       const pdfBytes = await buildPdf(state.pages),
         pdfName = `${state.fileName.replace(/\.pdf$/i, "")}-edited.pdf`,
         blob = await protectPdf(pdfBytes, pdfName, password, announce);
-      downloadBytes(blob, `${pdfName}.csplat`, "application/octet-stream");
-      announce("Protected CipherSplat PDF downloaded. Test unlocking it before deleting the original.");
+      downloadBytes(blob, `${pdfName}.pdfvault`, "application/octet-stream");
+      announce("Protected Encrypted PDF PDF downloaded. Test unlocking it before deleting the original.");
     } else {
       const pdfFile = await unlockPdf(pendingVaultFile, password, announce);
       els.vaultDialog.close();
@@ -1763,7 +1763,7 @@ async function runVault(event) {
     els.vaultDialog.close();
   } catch (error) {
     console.error(error);
-    announce(error.message || "CipherSplat operation failed.");
+    announce(error.message || "Encrypted PDF operation failed.");
   } finally {
     els.vaultPassword.value = "";
     els.vaultConfirm.value = "";

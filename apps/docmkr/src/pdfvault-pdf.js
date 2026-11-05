@@ -40,7 +40,7 @@ function validateHeader(header) {
     || header.memory !== MEMORY || header.passes !== PASSES || header.parallelism !== PARALLELISM
     || header.keyLength !== KEY_LENGTH || !Number.isInteger(header.chunkSize)
     || header.chunkSize < 65536 || header.chunkSize > MAX_CHUNK_SIZE) {
-    throw Error('Unsupported or unsafe CipherSplat parameters.');
+    throw Error('Unsupported or unsafe DocMkr Vault parameters.');
   }
 }
 
@@ -127,7 +127,7 @@ export async function protectPdf(bytes, filename, password, onProgress = () => {
 export async function unlockPdf(file, password, onProgress = () => {}) {
   if (file.size < 29) throw Error('This package is too short to be valid.');
   const prefixBytes = new Uint8Array(await file.slice(0, 12).arrayBuffer());
-  if (!MAGIC.every((byte, index) => prefixBytes[index] === byte)) throw Error('This is not a current CipherSplat CS4 package.');
+  if (!MAGIC.every((byte, index) => prefixBytes[index] === byte)) throw Error('This is not a current DocMkr Vault CS4 package.');
   const headerLength = new DataView(prefixBytes.buffer).getUint32(8);
   if (headerLength < 2 || headerLength > 4096 || 12 + headerLength + 24 > file.size) throw Error('Invalid package header.');
   const header = new Uint8Array(await file.slice(12, 12 + headerLength).arrayBuffer());
@@ -146,7 +146,7 @@ export async function unlockPdf(file, password, onProgress = () => {}) {
   let metadata;
   try { metadata = JSON.parse(decoder.decode(metadataRecord.bytes)); } catch { throw Error('Invalid encrypted metadata.'); }
   const entry = metadata?.kind === 'file' && metadata.files?.length === 1 ? metadata.files[0] : null;
-  if (!entry || typeof entry.path !== 'string' || !entry.path.toLowerCase().endsWith('.pdf') || !Number.isSafeInteger(entry.size) || entry.size < 0 || entry.chunks !== Math.ceil(entry.size / headerObject.chunkSize)) throw Error('This CipherSplat package does not contain one valid PDF.');
+  if (!entry || typeof entry.path !== 'string' || !entry.path.toLowerCase().endsWith('.pdf') || !Number.isSafeInteger(entry.size) || entry.size < 0 || entry.chunks !== Math.ceil(entry.size / headerObject.chunkSize)) throw Error('This DocMkr Vault package does not contain one valid PDF.');
   const parts = [];
   let restored = 0;
   for (let index = 0; index < entry.chunks; index += 1) {

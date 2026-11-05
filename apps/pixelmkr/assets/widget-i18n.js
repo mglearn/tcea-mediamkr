@@ -16,8 +16,8 @@
    2) Mark translatable DOM nodes with one of:
 
         <h1 data-i18n="app.title">the tool</h1>
-        <p  data-i18n="app.tagline">Splat any task into bite-size steps.</p>
-        <button data-i18n="btn.splat" data-i18n-title="btn.splat.tip">Splat it →</button>
+        <p  data-i18n="app.tagline">Turn an outline into a set of steps.</p>
+        <button data-i18n="btn.go" data-i18n-title="btn.go.tip">Go →</button>
         <input  data-i18n-placeholder="input.ph">
         <h2     data-i18n-html="cta.html">Try our <strong>new</strong> mode</h2>
 
@@ -33,9 +33,9 @@
    4) Register your locale dictionary. Inline in the widget's <script> block
       is fine (matches the single-file widget pattern):
 
-        WidgetI18n.register('step-splat', {
-          en: { 'app.title': 'the tool', 'btn.splat': 'Splat it →', ... },
-          es: { 'app.title': 'Paso-Splat', 'btn.splat': '¡A trocear! →', ... },
+        WidgetI18n.register('my-widget', {
+          en: { 'app.title': 'the tool', 'btn.go': 'Go →', ... },
+          es: { 'app.title': 'Mi herramienta', 'btn.go': '¡Vamos! →', ... },
           vi: { ... }, ar: { ... }, zh: { ... }, uh: { ... },
         });
 

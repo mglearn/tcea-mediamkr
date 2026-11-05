@@ -68,7 +68,7 @@
     <input id="imageInput" type="file" accept="image/png,image/jpeg" hidden>
     <input id="imagePagesInput" type="file" accept="image/png,image/jpeg" multiple hidden>
     <input id="signatureImageInput" type="file" accept="image/png,image/jpeg" hidden>
-    <input id="vaultInput" type="file" accept=".csplat,.ciphersplat,application/octet-stream" hidden>
+    <input id="vaultInput" type="file" accept=".pdfvault,.pdfvault,application/octet-stream" hidden>
   </header>
 
   <main id="workspace" class="workspace empty" tabindex="-1">
@@ -370,7 +370,7 @@
     <form id="vaultForm">
       <h2 id="vaultTitle">Protect or unprotect a PDF</h2>
       <div id="vaultIntro">
-        <p>DocMkr uses secure encryption to protect a PDF inside an authenticated, encrypted <code>.csplat</code> package. The PDF is encrypted locally with AES-256-GCM; neither the PDF nor its password leaves this device.</p>
+        <p>DocMkr uses secure encryption to protect a PDF inside an authenticated, encrypted <code>.pdfvault</code> package. The PDF is encrypted locally with AES-256-GCM; neither the PDF nor its password leaves this device.</p>
         <div class="vault-choices">
           <button id="vaultProtectChoice" type="button">Protect this PDF</button>
           <button id="vaultUnlockChoice" type="button">Unprotect a PDF</button>

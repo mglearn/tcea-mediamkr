@@ -10,23 +10,23 @@
 <script src="./vendor/jszip.min.js"></script>
 <style>
 .i18n-picker select{padding:6px 10px;border:1px solid #d9ddec;border-radius:8px;background:#fff;color:#172033;font-weight:700;font-size:.82rem;cursor:pointer}
-.i18n-picker select:focus{border-color:#147AD6;outline:none;box-shadow:0 0 0 4px rgba(124,58,237,.18)}
+.i18n-picker select:focus{border-color:#147AD6;outline:none;box-shadow:0 0 0 4px rgba(20,122,214,.18)}
 </style>
 <style>
 :root {
-  --navy:        #147AD6;
-  --navy-dark:   #0A3476;
+  --navy:        #0A3476;
+  --navy-dark:   #082759;
   --navy-mid:    #147AD6;
-  --gold:        #FAA634;
+  --gold:        #FCB040;
   --gold-light:  #ffd166;
   --gold-pale:   #fff7e6;
-  --pale-navy:   #ede9fe;
+  --pale-navy:   #EEF4FC;
   --white:       #ffffff;
   --off-white:   #f5f7fb;
-  --text:        #1f2937;
-  --text-muted:  #6b7280;
-  --border:      #d7dce8;
-  --teal:        #0891b2;
+  --text:        #172033;
+  --text-muted:  #5c667a;
+  --border:      #dce3ef;
+  --teal:        #147AD6;
 }
 
 * { box-sizing: border-box; }
@@ -179,7 +179,7 @@ main, header, footer { position: relative; z-index: 1; }
   gap: 8px;
   align-items: center;
   margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(124,58,237,0.04);
+  box-shadow: 0 2px 8px rgba(20,122,214,0.04);
 }
 .toolbar-group {
   display: flex;
@@ -193,6 +193,63 @@ main, header, footer { position: relative; z-index: 1; }
   background: var(--border);
   margin: 0 4px;
 }
+/* ---------- Menu bar (File / Edit dropdowns) ---------- */
+.menu { position: relative; }
+.menu-btn {
+  appearance: none;
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  color: var(--navy);
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 9px 14px;
+  border-radius: 9px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.menu-btn:hover { border-color: var(--navy-mid); background: var(--pale-navy); }
+.menu-btn[aria-expanded="true"] { background: var(--navy); color: var(--white); border-color: var(--navy); }
+.menu-btn .caret { font-size: 0.7em; opacity: 0.8; }
+.menu-list {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 60;
+  min-width: 240px;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(10,52,118,0.16);
+  padding: 6px;
+  display: none;
+}
+.menu-list.open { display: block; }
+.menu-item {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  border: 0;
+  background: none;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 9px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.menu-item:hover, .menu-item:focus { background: var(--pale-navy); color: var(--navy); outline: none; }
+.menu-item .mi-ico { width: 18px; text-align: center; color: var(--navy-mid); flex: none; }
+.menu-item .mi-key { margin-left: auto; font-size: 0.72rem; color: var(--text-muted); font-family: 'DM Mono', monospace; }
+.menu-item.is-primary { color: var(--navy); }
+.menu-item.is-warn:hover { background: var(--gold-pale); color: #8a5a00; }
+.menu-sep { height: 1px; background: var(--border); margin: 6px 8px; }
+.menu-label { font-size: 0.68rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); font-weight: 800; padding: 6px 12px 2px; }
 .btn {
   appearance: none;
   border: 1.5px solid var(--border);
@@ -231,7 +288,7 @@ main, header, footer { position: relative; z-index: 1; }
   padding: 16px;
   margin-bottom: 16px;
   display: none;
-  box-shadow: 0 2px 8px rgba(124,58,237,0.04);
+  box-shadow: 0 2px 8px rgba(20,122,214,0.04);
 }
 .findbar.open { display: block; }
 .findbar-row {
@@ -292,7 +349,7 @@ main, header, footer { position: relative; z-index: 1; }
   padding: 16px;
   margin-bottom: 16px;
   display: none;
-  box-shadow: 0 2px 8px rgba(124,58,237,0.04);
+  box-shadow: 0 2px 8px rgba(20,122,214,0.04);
 }
 .htmlbar.open { display: block; }
 .htmlbar textarea {
@@ -339,7 +396,7 @@ main, header, footer { position: relative; z-index: 1; }
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 2px 8px rgba(124,58,237,0.04);
+  box-shadow: 0 2px 8px rgba(20,122,214,0.04);
 }
 .panel-head {
   display: flex;
@@ -507,7 +564,7 @@ textarea.raw {
   border-radius: 12px;
   margin-bottom: 14px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(124,58,237,0.04);
+  box-shadow: 0 2px 8px rgba(20,122,214,0.04);
 }
 .help-summary {
   cursor: pointer;
@@ -641,7 +698,7 @@ footer .credit a:hover {
   opacity: 0;
   transform: translateY(12px);
   transition: opacity 0.3s, transform 0.3s, background 0.2s;
-  box-shadow: 0 4px 16px rgba(124,58,237,0.25);
+  box-shadow: 0 4px 16px rgba(20,122,214,0.25);
 }
 #back-to-top.visible { opacity: 1; transform: translateY(0); }
 #back-to-top:hover { background: var(--gold-light); border-color: var(--gold-light); }
@@ -664,7 +721,7 @@ footer .credit a:hover {
   opacity: 0;
   transition: opacity 0.2s, transform 0.2s;
   pointer-events: none;
-  box-shadow: 0 4px 16px rgba(124,58,237,0.25);
+  box-shadow: 0 4px 16px rgba(20,122,214,0.25);
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
@@ -705,33 +762,53 @@ Custom HTML block.</p>
 </header>
 
 <main class="tool-wrap">
-  <!-- Toolbar -->
+  <!-- Menu bar -->
   <div class="toolbar" role="toolbar" data-i18n-aria-label="toolbar.aria" aria-label="Markdown actions">
-    <div class="toolbar-group">
-      <button class="btn btn-primary" id="btn-clean" data-i18n="btn.clean" data-i18n-title="btn.clean.title" title="Normalize headings, bullets, checkboxes, blank lines (Ctrl+K)">Clean Markdown</button>
-      <button class="btn btn-warn" id="btn-strip-ai" data-i18n="btn.stripAi" data-i18n-title="btn.stripAi.title" title="Strip common AI writing tells">Strip AI Tells</button>
-      <button class="btn" id="btn-find" data-i18n="btn.find" data-i18n-title="btn.find.title" title="Find and replace (Ctrl+F)">Find / Replace</button>
+    <input type="file" id="file-input" accept=".md,.markdown,.txt,.html,.htm,text/markdown,text/plain,text/html" hidden="">
+
+    <!-- File menu -->
+    <div class="menu">
+      <button class="menu-btn" id="menu-file-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="menu-file"><span data-i18n="menu.file">File</span> <span class="caret">▾</span></button>
+      <div class="menu-list" id="menu-file" role="menu" aria-label="File">
+        <div class="menu-label" data-i18n="menu.open">Open</div>
+        <button class="menu-item" id="btn-import" role="menuitem" data-i18n-title="btn.import.title" title="Open a .md, .txt, or .html file"><span class="mi-ico">📂</span><span data-i18n="menu.import">Import File…</span></button>
+        <button class="menu-item" id="btn-paste-html" role="menuitem" data-i18n-title="btn.pasteHtml.title" title="Paste HTML and convert it to Markdown"><span class="mi-ico">📋</span><span data-i18n="menu.pasteHtml">Paste HTML…</span></button>
+        <div class="menu-sep"></div>
+        <div class="menu-label" data-i18n="menu.saveExport">Save &amp; export</div>
+        <button class="menu-item is-primary" id="btn-save-md" role="menuitem" data-i18n-title="btn.saveMd.title" title="Download as .md"><span class="mi-ico">⬇</span><span data-i18n="menu.saveMd">Save as Markdown (.md)</span><span class="mi-key">Ctrl S</span></button>
+        <button class="menu-item" id="btn-save-html" role="menuitem" data-i18n-title="btn.saveHtml.title" title="Download as .html"><span class="mi-ico">⬇</span><span data-i18n="menu.saveHtml">Export as HTML (.html)</span></button>
+        <button class="menu-item" id="btn-save-docx" role="menuitem" title="Download as a Microsoft Word document"><span class="mi-ico">⬇</span><span data-i18n="menu.saveDocx">Export as Word (.docx)</span></button>
+        <button class="menu-item" id="btn-save-odt" role="menuitem" title="Download as an OpenDocument Text document"><span class="mi-ico">⬇</span><span data-i18n="menu.saveOdt">Export as OpenDocument (.odt)</span></button>
+        <div class="menu-sep"></div>
+        <button class="menu-item" id="btn-sample" role="menuitem" data-i18n-title="btn.sample.title" title="Load a sample document"><span class="mi-ico">📄</span><span data-i18n="menu.sample">Load Sample Document</span></button>
+        <button class="menu-item is-warn" id="btn-clear-all" role="menuitem" data-i18n-title="btn.clearAll.title" title="Clear everything"><span class="mi-ico">🗑</span><span data-i18n="menu.clearAll">Clear All</span></button>
+      </div>
     </div>
+
+    <!-- Edit menu -->
+    <div class="menu">
+      <button class="menu-btn" id="menu-edit-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="menu-edit"><span data-i18n="menu.edit">Edit</span> <span class="caret">▾</span></button>
+      <div class="menu-list" id="menu-edit" role="menu" aria-label="Edit">
+        <div class="menu-label" data-i18n="menu.tidy">Tidy up</div>
+        <button class="menu-item is-primary" id="btn-clean" role="menuitem" data-i18n-title="btn.clean.title" title="Normalize headings, bullets, checkboxes, blank lines"><span class="mi-ico">✨</span><span data-i18n="btn.clean">Clean Markdown</span><span class="mi-key">Ctrl K</span></button>
+        <button class="menu-item is-warn" id="btn-strip-ai" role="menuitem" data-i18n-title="btn.stripAi.title" title="Strip common AI writing tells"><span class="mi-ico">🧹</span><span data-i18n="btn.stripAi">Strip AI Tells</span></button>
+        <div class="menu-sep"></div>
+        <button class="menu-item" id="btn-find" role="menuitem" data-i18n-title="btn.find.title" title="Find and replace"><span class="mi-ico">🔍</span><span data-i18n="btn.find">Find / Replace…</span><span class="mi-key">Ctrl F</span></button>
+        <div class="menu-sep"></div>
+        <div class="menu-label" data-i18n="menu.copy">Copy</div>
+        <button class="menu-item" id="btn-copy-md-menu" role="menuitem" title="Copy the Markdown source"><span class="mi-ico">⧉</span><span data-i18n="menu.copyMd">Copy Markdown</span></button>
+        <button class="menu-item" id="btn-copy-formatted-menu" role="menuitem" title="Copy as rich text for Word, Docs, or the WordPress visual editor"><span class="mi-ico">⧉</span><span data-i18n="menu.copyFormatted">Copy Formatted</span></button>
+        <button class="menu-item" id="btn-copy-html-menu" role="menuitem" title="Copy the raw HTML output"><span class="mi-ico">⧉</span><span data-i18n="menu.copyHtml">Copy HTML</span></button>
+        <button class="menu-item" id="btn-copy-wp-menu" role="menuitem" title="Copy WordPress block markup"><span class="mi-ico">⧉</span><span data-i18n="menu.copyWp">Copy WordPress Code</span></button>
+        <div class="menu-sep"></div>
+        <button class="menu-item" id="btn-open-wordwebmkr" role="menuitem" data-i18n-title="btn.openCm.title" title="Parse headings + bullets into a concept map and open in WordWebMkr"><span class="mi-ico">🕸</span><span data-i18n="btn.openCm">Open in WordWebMkr →</span></button>
+      </div>
+    </div>
+
     <div class="toolbar-divider"></div>
-    <div class="toolbar-group">
-      <button class="btn" id="btn-import" data-i18n="btn.import" data-i18n-title="btn.import.title" title="Open a .md or .txt file">Import File</button>
-      <input type="file" id="file-input" accept=".md,.markdown,.txt,.html,.htm,text/markdown,text/plain,text/html" hidden="">
-      <button class="btn" id="btn-paste-html" data-i18n="btn.pasteHtml" data-i18n-title="btn.pasteHtml.title" title="Paste HTML and convert it to Markdown or WordPress block code">Paste HTML</button>
-      <button class="btn" id="btn-save-md" data-i18n="btn.saveMd" data-i18n-title="btn.saveMd.title" title="Download as .md (Ctrl+S)">Save .md</button>
-      <button class="btn" id="btn-save-drive" type="button">Save to Google Drive</button>
-      <button class="btn" id="btn-save-html" data-i18n="btn.saveHtml" data-i18n-title="btn.saveHtml.title" title="Download as .html">Save .html</button>
-      <button class="btn" id="btn-save-docx" title="Download as a Microsoft Word document">Save .docx</button>
-      <button class="btn" id="btn-save-odt" title="Download as an OpenDocument Text document">Save .odt</button>
-    </div>
-    <div class="toolbar-divider"></div>
-    <div class="toolbar-group">
-      <button class="btn" id="btn-sample" data-i18n="btn.sample" data-i18n-title="btn.sample.title" title="Load a sample document">Sample</button>
-      <button class="btn" id="btn-clear-all" data-i18n="btn.clearAll" data-i18n-title="btn.clearAll.title" title="Clear everything">Clear All</button>
-    </div>
-    <div class="toolbar-divider"></div>
-    <div class="toolbar-group">
-      <button class="btn" id="btn-open-wordwebmkr" data-i18n="btn.openCm" data-i18n-title="btn.openCm.title" title="Parse headings + bullets into a concept map and open in WordWebMkr">Open in WordWebMkr →</button>
-    </div>
+    <!-- Quick actions (also in the menus) -->
+    <button class="btn btn-primary" id="btn-clean-quick" type="button" data-i18n="btn.clean" title="Normalize headings, bullets, checkboxes, blank lines (Ctrl+K)">Clean Markdown</button>
+    <button class="btn" id="btn-find-quick" type="button" data-i18n="btn.find" title="Find and replace (Ctrl+F)">Find / Replace</button>
   </div>
 
   <!-- Find bar (toggled) -->
@@ -780,48 +857,47 @@ Custom HTML block.</p>
           <button class="btn" id="btn-copy-md" data-i18n="btn.copy">Copy</button>
         </div>
       </div>
-      <textarea class="editor" id="md-input" spellcheck="false" data-i18n-aria-label="panel.mdInput.aria" aria-label="Markdown input"># GenAI Prompt Writing Checklist
+      <textarea class="editor" id="md-input" spellcheck="false" data-i18n-aria-label="panel.mdInput.aria" aria-label="Markdown input"># The Water Cycle — Study Guide
 
-## Purpose
-Use this checklist to create clearer prompts for ChatGPT, Claude, Gemini, NotebookLM, Perplexity, or similar tools.
+## Overview
+Water is always on the move. In this unit we follow a single drop of water as it travels
+from a lake, into the sky, and back down to the ground again.
 
-### Key Takeaways for Districts
+### Learning Goals
+- Name the four main stages of the water cycle.
+- Explain what makes water **change state** between liquid, gas, and solid.
+- Label a diagram of the cycle on your own.
 
-### Broader Context &amp; Historical Parallel
-
-## Strong Prompt Elements
-
-* Clear task
-* Specific audience
-* Required format
-* Source material separated in a code block
-* Desired tone or reading level
-
-## Example Prompt
-
-```text
-Create a 5th-grade reading activity about ecosystems.
-Use short paragraphs, a vocabulary table, and five comprehension questions.
-```
-
-## Vocabulary Table
+## Key Vocabulary
 
 | Term | Student-Friendly Meaning | Example |
 |---|---|---|
-| Ecosystem | Living and nonliving things in one place | Pond, forest, desert |
-| Habitat | Where an organism lives | A frog lives near water. |
-| Adaptation | A trait that helps survival | A cactus stores water. |
+| Evaporation | Liquid water turns into water vapor | A puddle dries up on a sunny day |
+| Condensation | Water vapor cools and forms droplets | Fog on a cold window |
+| Precipitation | Water falls back to Earth | Rain, snow, sleet, or hail |
+| Collection | Water gathers in one place | Rivers, lakes, and oceans |
 
-## Student Checklist
+## The Cycle in Four Steps
 
-- [ ] I explained my task clearly.
-- [ ] I named my audience.
-- [ ] I gave the AI a format to follow.
-- [x] I included source text when needed.
+1. The sun warms water and it *evaporates* into the air.
+2. The vapor rises, cools, and *condenses* into clouds.
+3. Clouds grow heavy and release *precipitation*.
+4. Water *collects* in rivers and oceans — and the cycle starts again.
 
-&gt; Tip: Better structure usually leads to better GenAI output.
+```text
+sun -> evaporation -> condensation -> precipitation -> collection -> (repeat)
+```
 
-![Sample image](./sample-image.png)</textarea>
+## Study Checklist
+
+- [ ] I can list the four stages in order.
+- [ ] I can give an everyday example of each stage.
+- [x] I drew and labeled my own water-cycle diagram.
+- [ ] I reviewed the vocabulary table with a partner.
+
+&gt; Tip: Try explaining the whole cycle out loud without looking at your notes.
+
+![Water cycle diagram](./sample-image.png)</textarea>
     </div>
     <div class="panel">
       <div class="panel-head">
@@ -2053,13 +2129,6 @@ def hello():
     if (e.target.files && e.target.files[0]) importFile(e.target.files[0]);
     e.target.value = '';
   });
-  $('btn-save-drive').addEventListener('click', async () => {
-    const content = input.value;
-    try {
-      const { saveToGoogleDrive } = await import('../../mediamkr/shared/google-drive.js');
-      await saveToGoogleDrive({ appName: 'MarkMkr', fileName: suggestFilename('md'), buildFile: () => new Blob([content], { type: 'text/markdown;charset=utf-8' }) });
-    } catch (error) { showToast(error.message); }
-  });
   $('btn-save-md').addEventListener('click', saveMd);
   $('btn-save-html').addEventListener('click', saveHtml);
   $('btn-save-docx').addEventListener('click', saveDocx);
@@ -2213,7 +2282,49 @@ def hello():
 })();
 </script>
 
+<script>
+/* File / Edit dropdown menus + quick-action proxies */
+(function () {
+  'use strict';
+  var menus = [
+    { btn: 'menu-file-btn', list: 'menu-file' },
+    { btn: 'menu-edit-btn', list: 'menu-edit' }
+  ];
+  function closeAll() {
+    menus.forEach(function (m) {
+      var b = document.getElementById(m.btn), l = document.getElementById(m.list);
+      if (!b || !l) return;
+      l.classList.remove('open');
+      b.setAttribute('aria-expanded', 'false');
+    });
+  }
+  menus.forEach(function (m) {
+    var b = document.getElementById(m.btn), l = document.getElementById(m.list);
+    if (!b || !l) return;
+    b.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var wasOpen = l.classList.contains('open');
+      closeAll();
+      if (!wasOpen) { l.classList.add('open'); b.setAttribute('aria-expanded', 'true'); }
+    });
+    l.addEventListener('click', function () { closeAll(); });
+  });
+  document.addEventListener('click', closeAll);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(); });
 
+  // Quick buttons + menu copy items reuse the canonical handlers.
+  function proxy(fromId, toId) {
+    var from = document.getElementById(fromId), to = document.getElementById(toId);
+    if (from && to) from.addEventListener('click', function () { to.click(); });
+  }
+  proxy('btn-clean-quick', 'btn-clean');
+  proxy('btn-find-quick', 'btn-find');
+  proxy('btn-copy-md-menu', 'btn-copy-md');
+  proxy('btn-copy-formatted-menu', 'btn-copy-formatted');
+  proxy('btn-copy-html-menu', 'btn-copy-html');
+  proxy('btn-copy-wp-menu', 'btn-copy-wp');
+})();
+</script>
 
 <footer class="mm-footer"><div class="mm-footer-inner"><span class="mm-footer-brand">TCEA MediaMkr | Creative Tools for Educators</span><nav aria-label="Footer"><a href="../../index.html" data-i18n="Home">Home</a><a href="https://tcea.org/" target="_blank" rel="noopener">TCEA.org</a><a href="../../legal.html#privacy" data-i18n="Privacy">Privacy</a><a href="../../legal.html#accessibility" data-i18n="Accessibility">Accessibility</a><a href="../../legal.html#licenses" data-i18n="Licenses">Licenses</a></nav></div></footer>
 </body></html>

@@ -1,5 +1,5 @@
 /* Interface translations; teacher vocabulary remains unchanged. */
-WidgetI18n.WidgetI18n.register('bingomkr',{
+WidgetI18n.register('bingomkr',{
   "en": {
     "Home":"Home","Visit TCEA.org":"Visit TCEA.org","Privacy":"Privacy","Accessibility":"Accessibility","Licenses":"Licenses",
     "how.title":"How it works","how.s1":"Add your bingo terms (words, numbers, or short phrases).","how.s2":"Generate unique cards for your class.","how.s3":"Share one link with students, or embed it in Google Sites.","how.s4":"Call items aloud — students mark their cards until someone wins.",

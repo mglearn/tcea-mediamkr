@@ -1,5 +1,5 @@
 /* PixelMkr locale dictionary. Native-speaker review pending. */
-WidgetI18n.WidgetI18n.register('pixelmkr', {
+WidgetI18n.register('pixelmkr', {
   en: {
     'Home':'Home','Help':'Help','Visit TCEA.org':'Visit TCEA.org','Privacy':'Privacy','Accessibility':'Accessibility','Licenses':'Licenses',
     "textDialog.edit": "Edit selected text",

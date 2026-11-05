@@ -4,7 +4,7 @@
    Defaults follow Wave 2 convention: teacher can paste their own Q&A in
    any language. The normalize() function strips diacritics + non-alphanum
    before comparing, so localized one-word answers will match cleanly. */
-WidgetI18n.WidgetI18n.register('puzzlemkr', {
+WidgetI18n.register('puzzlemkr', {
   en: {
     'Home': 'Home', 'Help': 'Help', 'Visit TCEA.org': 'Visit TCEA.org', 'Privacy': 'Privacy', 'Accessibility': 'Accessibility', 'Licenses': 'Licenses',
     'image.kitty': 'Creative Chaos Cat', 'image.cat1': 'Cute Cat', 'image.tabby': 'Tabby Cat', 'image.orange': 'Orange Cat', 'image.bed': 'Cat in Bed', 'image.custom': 'Custom Image URL',

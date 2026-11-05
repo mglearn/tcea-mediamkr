@@ -1,6 +1,6 @@
 /* GIFMkr — locale dictionary (English + Spanish).
    after assets/js/widget-i18n.js. AI-seeded; native-speaker review pending. */
-WidgetI18n.WidgetI18n.register('gifmkr', {
+WidgetI18n.register('gifmkr', {
   en: {
     'Home': 'Home', 'Help': 'Help', 'Visit TCEA.org': 'Visit TCEA.org',
     'Privacy': 'Privacy', 'Accessibility': 'Accessibility', 'Licenses': 'Licenses',

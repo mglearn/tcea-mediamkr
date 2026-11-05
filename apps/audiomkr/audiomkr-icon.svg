@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Audio project">
+ <!-- sound waves -->
+ <path d="M34 46a24 24 0 0 0 0 36" fill="none" stroke="#FCB040" stroke-width="5" stroke-linecap="round"/>
+ <path d="M23 36a40 40 0 0 0 0 56" fill="none" stroke="#FCB040" stroke-width="5" stroke-linecap="round" opacity=".5"/>
+ <path d="M94 46a24 24 0 0 1 0 36" fill="none" stroke="#FCB040" stroke-width="5" stroke-linecap="round"/>
+ <path d="M105 36a40 40 0 0 1 0 56" fill="none" stroke="#FCB040" stroke-width="5" stroke-linecap="round" opacity=".5"/>
+ <!-- microphone body -->
+ <rect x="52" y="22" width="24" height="46" rx="12" fill="#0A3476"/>
+ <path d="M43 56a21 21 0 0 0 42 0" fill="none" stroke="#0A3476" stroke-width="5" stroke-linecap="round"/>
+ <line x1="64" y1="77" x2="64" y2="94" stroke="#0A3476" stroke-width="5" stroke-linecap="round"/>
+ <line x1="50" y1="96" x2="78" y2="96" stroke="#0A3476" stroke-width="5" stroke-linecap="round"/>
+ <!-- gold grille -->
+ <line x1="57" y1="34" x2="71" y2="34" stroke="#FCB040" stroke-width="3" stroke-linecap="round"/>
+ <line x1="57" y1="42" x2="71" y2="42" stroke="#FCB040" stroke-width="3" stroke-linecap="round"/>
+</svg>

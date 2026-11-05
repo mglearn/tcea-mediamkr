@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Original, locally shipped artwork. No stock-image service or attribution dependency.
 export const BACKGROUNDS = [
-  { id: 'studio-paper', name: 'Studio Paper', description: 'Warm paper with soft studio lighting' },
-  { id: 'soft-lavender', name: 'Soft Lavender', description: 'A quiet lavender and sky-blue wash' },
-  { id: 'classroom-board', name: 'Classroom Board', description: 'Deep green with chalk details at the edges' },
-  { id: 'confetti', name: 'Confetti', description: 'Colorful splashes around an open center' },
-  { id: 'mountain-morning', name: 'Mountain Morning', description: 'Layered mountains under a pale morning sky' },
-  { id: 'coastal-calm', name: 'Coastal Calm', description: 'Blue water and a warm stretch of sand' }
+  { id: 'golden-hour', name: 'Golden Hour', description: 'Warm sunset sky with a glowing sun' },
+  { id: 'deep-ocean', name: 'Deep Ocean', description: 'Teal water with light rays and bubbles' },
+  { id: 'meadow-sky', name: 'Meadow Sky', description: 'Green hills under a bright, cloudy sky' },
+  { id: 'studio-charcoal', name: 'Studio Charcoal', description: 'A dark studio spotlight for portraits' },
+  { id: 'dotted-cream', name: 'Dotted Cream', description: 'A soft cream backdrop with gentle dots' },
+  { id: 'aurora-night', name: 'Aurora Night', description: 'Night sky with aurora bands and stars' }
 ].map(background => ({ ...background, url: new URL(`./backgrounds/${background.id}.svg`, import.meta.url).href }));
 
 export function backgroundRect(sourceWidth, sourceHeight, width, height, fit = 'cover') {

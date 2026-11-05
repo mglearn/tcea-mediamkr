@@ -74,7 +74,11 @@ _To be recorded on migration (media-conversion WASM toolchain)._
 _To be recorded on migration (video pipeline, captioning runtime/model)._
 
 ### DocMkr
-_To be recorded on migration (PDF library)._
+| Component | Purpose | License | Source |
+|---|---|---|---|
+| pdf-lib | Create/merge/split/rotate PDFs in-browser | MIT, © 2019 Andrew Dillon | https://github.com/Hopding/pdf-lib |
+
+The MIT license text is preserved at `apps/docmkr/assets/vendor/pdf-lib.LICENSE.md`.
 
 ---
 

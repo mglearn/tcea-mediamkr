@@ -25,7 +25,7 @@ inventory records what was checked and found.
 | PixelMkr | Pending | Pending | screen capture (on use) | Pending | No |
 | BGMkr | Model from Hugging Face on demand (pixels stay local); optional background-image URL fetch | none | — | On-device (Transformers.js/ONNX WASM); white/color fully local | Yes |
 | GIFMkr | None (fonts only) | none | — | Fully local (custom GIF encoder; MP4 via WebCodecs) | Yes |
-| DocMkr | Pending | Pending | — | Pending | No |
+| DocMkr | None (fonts only) | none | — | Fully local (pdf-lib) | Yes |
 | AudioMkr | Pending | Pending | mic (on record) | Pending | No |
 | FormatMkr | Pending | Pending | — | WASM | No |
 | ClipMkr | Pending | Pending | mic/screen (on use) | WASM | No |

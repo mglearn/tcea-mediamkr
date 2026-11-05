@@ -36,6 +36,13 @@
       "app.docmkr.desc": "Merge, split, and prepare PDF documents right in your browser.",
       "app.bingomkr.desc": "Create a virtual classroom bingo game and share one link with your class.",
 
+      "app.calmkr.desc": "Plan assignments, courses, routines, and focus sessions — a student planner that works offline.",
+      "app.markmkr.desc": "Edit, clean, and convert Markdown, and strip common AI writing tells.",
+      "app.wordwebmkr.desc": "Build concept maps and word webs with connected nodes and an outline.",
+      "app.pagemkr.desc": "Design printable newsletters, flyers, and books with page layout and templates.",
+      "app.fontmkr.desc": "Create word art and text effects — bend, color, outline, and export lettering.",
+      "cat.writing": "Writing and Planning",
+
       "quickstart.title": "Quick start",
       "quickstart.s1": "Pick a tool from the grid above.",
       "quickstart.s2": "Add your own files — everything is processed in your browser.",
@@ -81,6 +88,13 @@
       "app.plotmkr.desc": "Crea gráficos accesibles de barras, líneas, circulares y dispersión con rótulos y leyendas.",
       "app.docmkr.desc": "Combina, divide y prepara documentos PDF directamente en tu navegador.",
       "app.bingomkr.desc": "Crea un juego de bingo virtual para el aula y comparte un solo enlace con tu clase.",
+
+      "app.calmkr.desc": "Planifica tareas, cursos, rutinas y sesiones de concentración: un planificador estudiantil que funciona sin conexión.",
+      "app.markmkr.desc": "Edita, limpia y convierte Markdown, y elimina las marcas típicas de escritura de IA.",
+      "app.wordwebmkr.desc": "Crea mapas conceptuales y redes de palabras con nodos conectados y un esquema.",
+      "app.pagemkr.desc": "Diseña boletines, folletos y libros imprimibles con diseño de página y plantillas.",
+      "app.fontmkr.desc": "Crea arte con palabras y efectos de texto: curva, colorea, contornea y exporta letras.",
+      "cat.writing": "Escritura y planeación",
 
       "quickstart.title": "Inicio rápido",
       "quickstart.s1": "Elige una herramienta del panel de arriba.",

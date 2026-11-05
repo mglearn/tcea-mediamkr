@@ -4,46 +4,89 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <title>MemeMkr — TCEA MediaMkr</title>
-<meta name="description" content="MemeMkr — Meme and captioned-image creation. Part of TCEA MediaMkr, free creative tools for educators.">
+<meta name="description" content="MemeMkr — create captioned images and classroom-friendly memes in your browser. Add captions to a photo or built-in background and export a PNG. Part of TCEA MediaMkr.">
 <link rel="icon" type="image/svg+xml" href="../../assets/icons/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../assets/css/tcea-theme.css">
 <link rel="stylesheet" href="../../assets/css/layout.css">
-<link rel="stylesheet" href="../../assets/css/components.css">
+<link rel="stylesheet" href="assets/app.css">
 </head>
 <body>
-<a class="skip-link" href="#main">Skip to content</a>
+<a class="skip-link" href="#main" data-i18n="skip">Skip to meme controls</a>
 <div class="mm-shell">
   <header class="mm-header">
     <div class="mm-header-inner">
       <a class="mm-brand" href="../../index.html"><span class="mm-mark" aria-hidden="true">M</span><span>TCEA MediaMkr</span></a>
       <span class="mm-app-title">MemeMkr</span>
       <nav aria-label="Primary">
-        <a href="../../index.html">Home</a>
-        <a href="../../docs/user-guide.md">Help</a>
-        <a class="mm-cta" href="https://tcea.org/" target="_blank" rel="noopener">Visit TCEA.org</a>
+        <a href="../../index.html" data-i18n="nav.home">Home</a>
+        <a href="#help" data-i18n="nav.help">Help</a>
+        <label class="visually-hidden" for="mm-lang">Language</label>
+        <select id="mm-lang" class="mm-lang" data-mm-lang aria-label="Language"></select>
+        <a class="mm-cta" href="https://tcea.org/" target="_blank" rel="noopener" data-i18n="nav.tcea">Visit TCEA.org</a>
       </nav>
     </div>
   </header>
+
   <main id="main" class="mm-main">
-    <section class="mm-hero">
-      <div class="mm-hero-inner">
-        <span class="mm-eyebrow">TCEA MediaMkr</span>
-        <h1>MemeMkr</h1>
-        <p class="mm-tagline">Meme and captioned-image creation</p>
-        <p class="mm-intro">This tool is being prepared for TCEA MediaMkr. Check back soon.</p>
-        <p style="margin-top:20px"><a class="mm-btn mm-btn-primary" href="../../index.html">Back to MediaMkr Home</a></p>
+    <div class="mm-wrap">
+      <section class="mk-intro">
+        <p class="mm-eyebrow" data-i18n="intro.eyebrow">Captioned images, made local</p>
+        <h1 data-i18n="intro.h1">Create captioned images and memes.</h1>
+        <p data-i18n="intro.p">Add a caption to a photo or a built-in background and export a classroom-ready image. Your picture and the finished image stay in this browser.</p>
+      </section>
+
+      <div class="mk-studio">
+        <section class="mk-panel mk-controls" aria-label="Meme controls">
+          <label data-i18n="f.template">Background
+            <select id="template">
+              <option value="choice" data-i18n="tpl.choice">Decision panel</option>
+              <option value="classic" data-i18n="tpl.classic">Classic gradient</option>
+              <option value="blank" data-i18n="tpl.blank">Blank canvas</option>
+            </select>
+          </label>
+          <label class="mk-upload" data-i18n="f.upload">Choose your own image<input id="upload" type="file" accept="image/*"></label>
+          <label data-i18n="f.top">Top caption<input id="topText" type="text" value="START EARLY AND RELAX" maxlength="120"></label>
+          <label data-i18n="f.bottom">Bottom caption<input id="bottomText" type="text" value="WAIT UNTIL THE LAST MINUTE" maxlength="120"></label>
+          <label data-i18n="f.label">Small label / character<input id="labelText" type="text" value="ME, THE NIGHT BEFORE" maxlength="100"></label>
+          <div class="mk-row">
+            <label data-i18n="f.font">Font<select id="font"><option value="Impact, Haettenschweiler, sans-serif">Impact</option><option value="Arial Black, Arial, sans-serif">Arial Black</option><option value="Georgia, serif">Georgia</option></select></label>
+            <label data-i18n="f.size">Size<input id="fontSize" type="number" min="24" max="110" value="62"></label>
+          </div>
+          <div class="mk-row">
+            <label data-i18n="f.fill">Text color<input id="fill" type="color" value="#ffffff"></label>
+            <label data-i18n="f.stroke">Outline<input id="stroke" type="color" value="#000000"></label>
+          </div>
+          <div class="mk-row">
+            <label data-i18n="f.strokeWidth">Outline width<input id="strokeWidth" type="number" min="0" max="16" value="7"></label>
+            <label data-i18n="f.canvas">Canvas<select id="ratio"><option value="1200,750" data-i18n="ratio.land">Landscape 16:10</option><option value="1080,1080" data-i18n="ratio.square">Square</option><option value="1080,1350" data-i18n="ratio.portrait">Portrait 4:5</option></select></label>
+          </div>
+          <div class="mk-actions">
+            <button class="mk-btn primary" id="download" type="button" data-i18n="btn.download">Download PNG</button>
+            <button class="mk-btn" id="copy" type="button" data-i18n="btn.copy">Copy image</button>
+            <button class="mk-btn" id="reset" type="button" data-i18n="btn.reset">Reset</button>
+          </div>
+          <div class="mk-status" id="status" role="status" aria-live="polite"></div>
+          <div class="mk-privacy" data-i18n="privacy">✓ Local only — your uploaded image and finished image stay in this browser.</div>
+        </section>
+        <section class="mk-panel mk-stage" aria-label="Meme preview"><canvas id="canvas" width="1200" height="750"></canvas></section>
       </div>
-    </section>
+
+      <section id="help" style="margin-top:28px">
+        <article class="mk-panel"><h2 style="margin:0 0 6px;color:var(--tcea-deep-navy)" data-i18n="help.h1">Keep it classroom-friendly</h2><p style="margin:0;color:var(--tcea-text)" data-i18n="help.p1">Add top and bottom captions, pick a font and colors, and choose a canvas shape. Upload your own image or use a built-in background. Everything is drawn on a canvas in your browser.</p></article>
+      </section>
+    </div>
   </main>
+
   <footer class="mm-footer">
     <div class="mm-footer-inner">
       <span class="mm-footer-brand">TCEA MediaMkr | Creative Tools for Educators</span>
       <nav aria-label="Footer">
-        <a href="../../index.html">MediaMkr Home</a>
+        <a href="../../index.html" data-i18n="nav.home">Home</a>
         <a href="https://tcea.org/" target="_blank" rel="noopener">TCEA.org</a>
         <a href="../../PRIVACY.md">Privacy</a>
         <a href="../../ACCESSIBILITY.md">Accessibility</a>
@@ -52,5 +95,10 @@
     </div>
   </footer>
 </div>
+
+<script src="../../assets/js/i18n.js"></script>
+<script src="assets/mememkr.i18n.js"></script>
+<script src="../../assets/js/navigation.js"></script>
+<script src="assets/app.js"></script>
 </body>
 </html>

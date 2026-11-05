@@ -13,7 +13,7 @@ final name, purpose, URL path, and migration status.
 | BGMkr | Background removal and replacement | `apps/bgmkr/` | **Done** — local WASM engine; model from HF on demand; EN/ES |
 | PuzzleMkr | Interactive classroom puzzles | `apps/puzzlemkr/` | Planned |
 | CodeMkr | QR code generation | `apps/codemkr/` | **Done** — static only; tracking-redirect backend removed; EN/ES |
-| MemeMkr | Meme and captioned-image creation | `apps/mememkr/` | Planned |
+| MemeMkr | Meme and captioned-image creation | `apps/mememkr/` | **Done** — local canvas; EN/ES |
 | GIFMkr | Animated GIF creation | `apps/gifmkr/` | **Done** — local GIF/MP4 encoding; EN/ES |
 | PlotMkr | Charts, graphs, and data visualization | `apps/plotmkr/` | Planned |
 | DocMkr | PDF document tools | `apps/docmkr/` | **Done** — core merge/split/rotate (pdf-lib); fully original build; EN/ES |

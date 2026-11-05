@@ -1,0 +1,31 @@
+/* MemeMkr — app layout on the shared TCEA theme. */
+
+.mk-intro { margin-bottom: 20px; }
+.mk-intro .mm-eyebrow { color: var(--tcea-blue); }
+.mk-intro h1 { font-family: var(--font-serif); font-size: clamp(1.6rem, 3.5vw, 2.3rem); margin: 6px 0 8px; color: var(--tcea-deep-navy); }
+.mk-intro p { max-width: 660px; color: var(--tcea-muted); margin: 0; }
+
+.mk-studio { display: grid; grid-template-columns: minmax(280px, 360px) minmax(0, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 800px) { .mk-studio { grid-template-columns: 1fr; } }
+
+.mk-panel { background: #fff; border: 1px solid var(--tcea-line); border-radius: var(--radius-lg); padding: 18px; box-shadow: var(--shadow-sm); }
+.mk-controls { display: grid; gap: 14px; }
+.mk-controls label { display: grid; gap: 6px; font-size: 0.83rem; font-weight: 700; color: var(--tcea-deep-navy); }
+.mk-controls input[type=text], .mk-controls input[type=number], .mk-controls select {
+  width: 100%; border: 1px solid var(--tcea-line); border-radius: var(--radius-sm); padding: 10px; background: #fff; color: var(--tcea-text); font: inherit;
+}
+.mk-controls input[type=color] { width: 100%; height: 42px; border: 1px solid var(--tcea-line); border-radius: var(--radius-sm); background: #fff; padding: 3px; }
+.mk-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.mk-upload { position: relative; border: 2px dashed #b7c6e4; border-radius: var(--radius-sm); padding: 13px; text-align: center; color: var(--tcea-navy); font-weight: 700; cursor: pointer; }
+.mk-upload input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.mk-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+.mk-btn { border: 1px solid var(--tcea-line); border-radius: var(--radius-sm); padding: 10px; background: #fff; color: var(--tcea-navy); font-weight: 700; cursor: pointer; font: inherit; }
+.mk-btn:hover { background: var(--tcea-pale-blue); }
+.mk-btn.primary { grid-column: 1 / -1; background: var(--tcea-gold); color: var(--tcea-deep-navy); border-color: transparent; }
+.mk-btn.primary:hover { background: #ffc266; }
+.mk-privacy { font-size: 0.78rem; line-height: 1.45; color: var(--tcea-muted); background: var(--tcea-pale-blue); border-radius: var(--radius-sm); padding: 10px; }
+.mk-status { min-height: 1.2em; color: #0f766e; font-size: 0.82rem; font-weight: 600; }
+
+.mk-stage { display: grid; place-items: center; min-height: 560px; background: #111827; border-radius: var(--radius-lg); overflow: hidden; }
+.mk-stage canvas { display: block; max-width: 100%; max-height: 72vh; box-shadow: 0 10px 35px #0008; }
+@media (max-width: 800px) { .mk-stage { min-height: 300px; } .mk-stage canvas { max-height: none; } }

@@ -27,7 +27,7 @@ The MIT copyright/license header is preserved in
 DENSO WAVE INCORPORATED.
 
 ### MemeMkr
-_To be recorded on migration._
+No third-party libraries. Captioning is original canvas code. Fonts as noted under Shared.
 
 ### PuzzleMkr
 _To be recorded on migration._

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="no-referrer">
+<title>Privacy, Accessibility & Licenses — TCEA MediaMkr</title>
+<link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/tcea-theme.css">
+<link rel="stylesheet" href="assets/css/layout.css">
+<link rel="stylesheet" href="assets/css/components.css">
+<style>
+.mm-legal{max-width:900px;margin:0 auto;padding:8px 24px 48px}
+.mm-legal h2{color:var(--tcea-deep-navy);border-bottom:3px solid var(--tcea-gold);padding-bottom:8px;margin-top:40px;scroll-margin-top:16px}
+.mm-legal h3{color:var(--tcea-navy);margin-top:24px}
+.mm-legal table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.92rem}
+.mm-legal th,.mm-legal td{border:1px solid var(--tcea-line);padding:7px 10px;text-align:left}
+.mm-legal th{background:var(--tcea-pale-blue);color:var(--tcea-deep-navy)}
+.mm-legal code{background:var(--tcea-pale-blue);padding:1px 5px;border-radius:4px;font-family:var(--font-mono);font-size:.88em}
+.mm-legal a{color:var(--tcea-blue)}
+.mm-legal .toc{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
+.mm-legal .toc a{background:var(--tcea-pale-blue);border:1px solid var(--tcea-line);border-radius:999px;padding:8px 16px;font-weight:600;text-decoration:none;color:var(--tcea-navy)}
+</style>
+</head>
+<body>
+<div class="mm-shell">
+  <header class="mm-header"><div class="mm-header-inner">
+    <a class="mm-brand" href="index.html"><span class="mm-mark" aria-hidden="true">M</span><span>TCEA MediaMkr</span></a>
+    <span class="mm-app-title">Policies</span>
+    <nav aria-label="Primary"><a href="index.html">Home</a><a class="mm-cta" href="https://tcea.org/" target="_blank" rel="noopener">Visit TCEA.org</a></nav>
+  </div></header>
+  <main id="main" class="mm-main"><div class="mm-wrap mm-legal">
+    <h1 style="font-family:var(--font-serif);color:var(--tcea-deep-navy)">Privacy, Accessibility &amp; Licenses</h1>
+    <p>One place for the TCEA MediaMkr collection's privacy practices, accessibility commitments, and third-party license notices.</p>
+    <div class="toc"><a href="#privacy">Privacy</a><a href="#accessibility">Accessibility</a><a href="#licenses">Licenses</a></div>
+
+    <section id="privacy">
+      <h2>Privacy</h2>
+      <h2>Privacy</h2>
+<p>TCEA MediaMkr is designed to protect student and educator privacy.</p>
+<h3>What we do</h3>
+<ul>
+<li><strong>No accounts.</strong> You do not create an account or sign in.</li>
+<li><strong>No tracking or advertising.</strong> There are no analytics scripts or ad trackers.</li>
+<li><strong>No student data collection.</strong> The tools do not ask for student names,</li>
+</ul>
+<p>  emails, or other personal information.</p>
+<ul>
+<li><strong>Local processing.</strong> Your files are opened, edited, and exported in your own</li>
+</ul>
+<p>  browser. The tools are built to avoid uploading your media to a server.</p>
+<ul>
+<li><strong>Local downloads.</strong> When you export, the finished file is saved to your</li>
+</ul>
+<p>  device by your browser.</p>
+<h3>Fonts</h3>
+<p>The pages load web fonts (DM Sans, DM Serif Display, DM Mono) from Google Fonts. If your deployment requires zero third-party requests, the fonts can be self-hosted; the layout falls back to system fonts automatically.</p>
+<h3>Browser permissions</h3>
+<p>Some tools ask for a browser permission only when you choose a feature that needs it — for example, AudioMkr requests microphone access when you start recording, and screen capture is requested only when you use it. You can decline these and still use the rest of the tool.</p>
+<h3>Per-tool behavior</h3>
+<p>Each application documents its actual file, storage, and network behavior in its own folder and in <a href="docs/privacy-inventory.md"><code>docs/privacy-inventory.md</code></a>. We do not claim that every operation is fully local unless it has been verified for that specific tool.</p>
+<h3>Contact</h3>
+<p>Questions about privacy can be directed to TCEA at &lt;https://tcea.org/&gt;.</p>
+    </section>
+
+    <section id="accessibility">
+      <h2>Accessibility</h2>
+      <h2>Accessibility</h2>
+<p>TCEA MediaMkr targets <strong>WCAG 2.2 AA</strong>. Accessibility is treated as a requirement, not an afterthought, across the collection.</p>
+<h3>Shared commitments</h3>
+<ul>
+<li>Keyboard navigation for interactive controls.</li>
+<li>Visible focus indicators (<code>:focus-visible</code>) on all focusable elements.</li>
+<li>Screen-reader labels on controls, menus, and dialogs.</li>
+<li>Color contrast that meets AA for text and essential UI.</li>
+<li>Responsive layouts that reflow on small screens and when zoomed.</li>
+<li><code>prefers-reduced-motion</code> is honored; non-essential animation is suppressed.</li>
+<li>A skip link to jump straight to main content.</li>
+<li>Alternative text for meaningful images; decorative icons are hidden from</li>
+</ul>
+<p>  assistive technology.</p>
+<h3>Canvas-based editors</h3>
+<p>Image, video, and drawing tools use a canvas, which is inherently visual. Where a tool relies on a canvas, it provides keyboard-accessible controls and reasonable accessible alternatives (for example, data tables or text summaries for charts in PlotMkr).</p>
+<h3>Known limits</h3>
+<p>We do not claim full conformance for every tool until it has been tested with assistive technology. Per-tool accessibility notes are tracked as each application is migrated and verified.</p>
+<h3>Reporting</h3>
+<p>If you hit an accessibility barrier, please report it via TCEA at &lt;https://tcea.org/&gt; so it can be prioritized.</p>
+    </section>
+
+    <section id="licenses">
+      <h2>Licenses & Third-Party Notices</h2>
+      <h2>Third-Party Licenses</h2>
+<p>TCEA MediaMkr bundles third-party open-source components. Each keeps its own copyright and license. This inventory is updated as each tool is migrated; any component that ships inside an application&#x27;s folder also carries its own license or notice file alongside the code.</p>
+<p>&gt; <strong>Status:</strong> This file is maintained per application. As each tool is added, its &gt; third-party dependencies (and on-device models, where used) are recorded below &gt; with name, version, license, and source.</p>
+<h3>Shared</h3>
+<table><thead><tr><th>Component</th><th>Purpose</th><th>License</th></tr></thead><tbody>
+<tr><td>DM Sans, DM Serif Display, DM Mono (Google Fonts)</td><td>Typography</td><td>SIL Open Font License 1.1</td></tr>
+</tbody></table>
+<h3>Per-application</h3>
+<h4>CodeMkr</h4>
+<table><thead><tr><th>Component</th><th>Version</th><th>Purpose</th><th>License</th><th>Source</th></tr></thead><tbody>
+<tr><td>qrcode.js (Kazuhiko Arase)</td><td>bundled</td><td>QR code generation</td><td>MIT</td><td>http://www.d-project.com/</td></tr>
+</tbody></table>
+<p>The MIT copyright/license header is preserved in <code>apps/codemkr/assets/vendor/qrcode.js</code>. &quot;QR Code&quot; is a registered trademark of DENSO WAVE INCORPORATED.</p>
+<h4>MemeMkr</h4>
+<p>No third-party libraries. Captioning is original canvas code. Fonts as noted under Shared.</p>
+<h4>PuzzleMkr</h4>
+<table><thead><tr><th>Component</th><th>Purpose</th><th>License</th><th>Source</th></tr></thead><tbody>
+<tr><td>JSZip</td><td>.xlsx import template export</td><td>MIT</td><td>https://github.com/Stuk/jszip</td></tr>
+</tbody></table>
+<p>JSZip bundled at <code>apps/puzzlemkr/vendor/jszip.min.js</code>. Puzzle logic and the library packs are original project content.</p>
+<h4>PlotMkr</h4>
+<p>No third-party libraries. Charts, math evaluation, and renderers are original project code (canvas/SVG). Fonts as noted under Shared.</p>
+<h4>PixelMkr</h4>
+<p>No new third-party libraries. The GIF encoder is original project code; smart background removal reuses BGMkr&#x27;s on-device engine (see BGMkr: Transformers.js Apache-2.0, ONNX Runtime MIT, models ORMBG/BEN2). Fonts as noted under Shared.</p>
+<h4>BGMkr</h4>
+<p>Runtime (bundled locally under <code>apps/bgmkr/assets/vendor/</code>, license files included):</p>
+<table><thead><tr><th>Component</th><th>Version</th><th>License</th><th>Source</th></tr></thead><tbody>
+<tr><td>Transformers.js</td><td>3.8.1</td><td>Apache-2.0</td><td>https://github.com/huggingface/transformers.js</td></tr>
+<tr><td>ONNX Runtime Web</td><td>1.22.0-dev</td><td>MIT</td><td>https://github.com/microsoft/onnxruntime</td></tr>
+<tr><td>@huggingface/jinja</td><td>0.5.3</td><td>MIT</td><td>https://github.com/huggingface/transformers.js</td></tr>
+<tr><td>JSZip</td><td>bundled</td><td>MIT (or GPL-3.0-or-later; used under MIT)</td><td>https://github.com/Stuk/jszip</td></tr>
+</tbody></table>
+<p>Models (downloaded on request from Hugging Face, not bundled; pixels never sent):</p>
+<table><thead><tr><th>Model</th><th>License</th><th>Source</th></tr></thead><tbody>
+<tr><td>ORMBG (Fast)</td><td>Apache-2.0</td><td>https://huggingface.co/onnx-community/ormbg-ONNX</td></tr>
+<tr><td>BEN2 (Best)</td><td>MIT, © 2025 Prama LLC</td><td>https://huggingface.co/onnx-community/BEN2-ONNX</td></tr>
+</tbody></table>
+<p>Runtime license texts and SHA-256 checksums are preserved in <code>apps/bgmkr/assets/vendor/</code>. White/color removal and built-in backgrounds work fully offline with no model download.</p>
+<h4>GIFMkr</h4>
+<p>No third-party libraries. The GIF encoder and MP4 muxer are original project code (AGPL-3.0-or-later); MP4 export uses the browser&#x27;s built-in WebCodecs API. Fonts as noted under Shared.</p>
+<h4>AudioMkr</h4>
+<p>Built from source (Vite). Bundled runtime for in-browser transcription:</p>
+<table><thead><tr><th>Component</th><th>License</th></tr></thead><tbody>
+<tr><td>ONNX Runtime Web</td><td>MIT</td></tr>
+<tr><td>whisper (ggml) on-device model/runtime</td><td>MIT</td></tr>
+</tbody></table>
+<p>All audio recording/editing is local (Web Audio API). Transcription runs on device via the bundled WASM runtime.</p>
+<h4>FormatMkr</h4>
+<p>Built from source (Vite). Bundled runtime:</p>
+<table><thead><tr><th>Component</th><th>License</th></tr></thead><tbody>
+<tr><td>FFmpeg (ffmpeg.wasm core)</td><td>LGPL/GPL (see ffmpeg/FONT-LICENSE + upstream)</td></tr>
+<tr><td>DejaVu Sans (subtitle font)</td><td>Bitstream Vera / public-domain-like (ffmpeg/FONT-LICENSE.txt)</td></tr>
+<tr><td>whisper (ggml) + ONNX Runtime Web</td><td>MIT</td></tr>
+</tbody></table>
+<p>Media processing is local (FFmpeg WASM). Google Drive saving is stubbed (needs org OAuth); every output offers local Download.</p>
+<h4>ClipMkr</h4>
+<p>Built from source (Vite). Bundled runtime:</p>
+<table><thead><tr><th>Component</th><th>License</th></tr></thead><tbody>
+<tr><td>MediaPipe (vision/selfie-seg)</td><td>Apache-2.0</td></tr>
+<tr><td>whisper (ggml) + ONNX Runtime Web</td><td>MIT</td></tr>
+<tr><td>ffmpeg.wasm (subtitle burn-in)</td><td>LGPL/GPL (bundled in apps/clipmkr/ffmpeg)</td></tr>
+</tbody></table>
+<p>Video editing/recording is local. Google Drive export stubbed (needs org OAuth).</p>
+<h4>BingoMkr</h4>
+<p>No third-party libraries. Original project code. Fonts as noted under Shared.</p>
+<h4>DocMkr</h4>
+<p>Full PDF suite. Bundled libraries (local):</p>
+<table><thead><tr><th>Component</th><th>Purpose</th><th>License</th></tr></thead><tbody>
+<tr><td>pdf-lib</td><td>PDF editing</td><td>MIT, © 2019 Andrew Dillon</td></tr>
+<tr><td>pdf.js (Mozilla)</td><td>PDF rendering</td><td>Apache-2.0</td></tr>
+<tr><td>JSZip</td><td>packaging/export</td><td>MIT</td></tr>
+<tr><td>Tesseract.js + tesseract-core (vendor/ocr)</td><td>OCR</td><td>Apache-2.0</td></tr>
+<tr><td>eng/spa traineddata</td><td>OCR language data</td><td>Apache-2.0</td></tr>
+<tr><td>hash-wasm argon2</td><td>key derivation (encryption)</td><td>MIT</td></tr>
+</tbody></table>
+<p>License texts are preserved under <code>apps/docmkr/vendor/</code>. All processing is local; Google Drive export is not configured in this edition.</p>
+<hr>
+<p>If you believe a required attribution is missing, please open an issue so it can be added promptly.</p>
+    </section>
+  </div></main>
+  <footer class="mm-footer"><div class="mm-footer-inner">
+    <span class="mm-footer-brand">TCEA MediaMkr | Creative Tools for Educators</span>
+    <nav aria-label="Footer"><a href="index.html">Home</a><a href="https://tcea.org/" target="_blank" rel="noopener">TCEA.org</a><a href="legal.html#privacy">Privacy</a><a href="legal.html#accessibility">Accessibility</a><a href="legal.html#licenses">Licenses</a></nav>
+  </div></footer>
+</div>
+</body>
+</html>

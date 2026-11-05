@@ -106,7 +106,10 @@ function addSwitcher() {
       const option = document.createElement("option"); option.value = code; option.textContent = name; picker.append(option);
     }
     label.append(caption, picker);
-    document.body.append(label);
+    var host = document.querySelector(".mm-header nav"), cta = host && host.querySelector(".mm-cta");
+    if (host && cta) host.insertBefore(label, cta);
+    else if (host) host.append(label);
+    else document.body.append(label);
   }
   const select = label.querySelector("select"); select.value = current;
   select.addEventListener("change", () => {

@@ -51,10 +51,21 @@
       document.documentElement.setAttribute("dir", dir);
 
       var self = this;
-      // Text content
+      // Text content. If the element wraps child elements (e.g. a <label>
+      // containing a <select>/<input>), update only its leading text node so
+      // the nested controls are preserved — never clobber them with textContent.
       document.querySelectorAll("[data-i18n]").forEach(function (el) {
         var v = self.t(el.getAttribute("data-i18n"));
-        if (v != null) el.textContent = v;
+        if (v == null) return;
+        if (el.children.length === 0) { el.textContent = v; return; }
+        var textNode = null;
+        for (var i = 0; i < el.childNodes.length; i++) {
+          if (el.childNodes[i].nodeType === 3 && el.childNodes[i].textContent.trim()) {
+            textNode = el.childNodes[i]; break;
+          }
+        }
+        if (textNode) textNode.textContent = v;
+        else el.insertBefore(document.createTextNode(v), el.firstChild);
       });
       // Attributes: "placeholder:key;aria-label:key2"
       document.querySelectorAll("[data-i18n-attr]").forEach(function (el) {

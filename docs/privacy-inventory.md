@@ -27,7 +27,7 @@ inventory records what was checked and found.
 | GIFMkr | None (fonts only) | none | — | Fully local (custom GIF encoder; MP4 via WebCodecs) | Yes |
 | BingoMkr | None (fonts only) | game data in shareable URL (opt-in) | — | Fully local | Yes |
 | DocMkr | None (fonts only) | none | — | Fully local (pdf-lib) | Yes |
-| AudioMkr | Pending | Pending | mic (on record) | Pending | No |
+| AudioMkr | On-device model assets (local) | app persistence (local) | mic (on record) | Fully local (Web Audio + WASM) | built-from-source |
 | FormatMkr | Pending | Pending | — | WASM | No |
 | ClipMkr | Pending | Pending | mic/screen (on use) | WASM | No |
 

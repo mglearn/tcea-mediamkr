@@ -73,7 +73,15 @@ project code (AGPL-3.0-or-later); MP4 export uses the browser's built-in
 WebCodecs API. Fonts as noted under Shared.
 
 ### AudioMkr
-_To be recorded on migration (audio + captioning runtime/model)._
+Built from source (Vite). Bundled runtime for in-browser transcription:
+
+| Component | License |
+|---|---|
+| ONNX Runtime Web | MIT |
+| whisper (ggml) on-device model/runtime | MIT |
+
+All audio recording/editing is local (Web Audio API). Transcription runs on
+device via the bundled WASM runtime.
 
 ### FormatMkr
 _To be recorded on migration (media-conversion WASM toolchain)._

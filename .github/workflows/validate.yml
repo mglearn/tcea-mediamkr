@@ -21,3 +21,5 @@ jobs:
         run: python3 scripts/check-branding.py
       - name: Check links
         run: python3 scripts/check-links.py
+      - name: Check JavaScript imports and lazy assets
+        run: python3 scripts/check-imports.py

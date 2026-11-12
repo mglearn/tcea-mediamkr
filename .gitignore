@@ -3,6 +3,7 @@ node_modules/
 .tmp/
 .wrangler/
 test-results/
+test-results-portal/
 playwright-report/
 
 # OS / editor
@@ -11,3 +12,6 @@ Thumbs.db
 *.swp
 _portal/
 tcea-mediamkr-portal.zip
+
+# Python validation caches
+__pycache__/

@@ -2,7 +2,7 @@ import {setupToolbar} from './toolbar.js';
 import {setupOcr, OCR_LIMITS} from './ocr.js';
 import { collectEpubImages } from "./epub-images.js";
 import { setupPresentation } from "./presentation.js";
-import { saveToGoogleDrive } from "../../../mediamkr/shared/google-drive.js";
+import { saveToGoogleDrive } from "../../shared/google-drive.js";
 import { createWebDeck, blobDataUrl } from "./webdeck-export.js";
 import {prepareFiles, importAccept} from "./file-import.js";
 import { textAppearance, textInkAppearance, standardTextFont } from "./text-appearance.js";

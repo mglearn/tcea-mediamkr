@@ -160,7 +160,7 @@ export function openBackgroundStudio({ sources, mode = 'photo', apply, download 
       }
       else {
         if (!window.JSZip) await new Promise((resolve, reject) => {
-          const script = document.createElement('script'); script.src = new URL('../../vendor/jszip.min.js', import.meta.url).href;
+          const script = document.createElement('script'); script.src = new URL('../../bgmkr/assets/vendor/jszip.min.js', import.meta.url).href;
           script.onload = resolve; script.onerror = () => reject(new Error('ZIP could not load. Download images individually.')); document.head.append(script);
         });
         const zip = new window.JSZip(), used = new Set();

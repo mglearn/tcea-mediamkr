@@ -10,4 +10,5 @@ echo "== TCEA MediaMkr validation =="
 python3 scripts/check-licenses.py
 python3 scripts/check-branding.py
 python3 scripts/check-links.py
+python3 scripts/check-imports.py
 echo "== All checks passed =="

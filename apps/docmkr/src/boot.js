@@ -19,7 +19,7 @@
       if (launcher) launcher.hidden = true;
     } else {
     }
-    await load('./app.bundle.js?v=20261030-v3149');
+    await load('./app.bundle.js?v=pptx-layout-2');
   } catch (error) {
     const message = document.createElement('p');
     message.setAttribute('role', 'alert');

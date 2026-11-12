@@ -78,3 +78,13 @@ processing, local downloads.
 ---
 
 Copyright © 2026 Miguel Guhlin. A TCEA collection.
+
+## Development checks
+
+Run `bash scripts/build-pages.sh` for license, branding, link, and module-path checks.
+After `npm ci`, run `npm test` with Playwright browser runtimes installed. Set
+`MEDIAMKR_URL` to the collection URL when checking another local copy or a deployed site.
+
+`npm run build:docmkr` rebuilds the PowerPoint renderer in the migrated DocMkr runtime
+while preserving the other bundled features. Run this after changes to
+`apps/docmkr/src/pptx-import.js`. The source importer uses the same renderer.

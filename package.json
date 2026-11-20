@@ -2,7 +2,7 @@
   "name": "tcea-mediamkr",
   "private": true,
   "scripts": {
-    "build:docmkr": "node scripts/build-docmkr-pptx.mjs",
+    "build:docmkr": "node scripts/build-docmkr.mjs",
     "test": "playwright test",
     "test:docmkr": "playwright test docmkr-pptx"
   },

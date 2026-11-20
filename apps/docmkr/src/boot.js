@@ -19,7 +19,7 @@
       if (launcher) launcher.hidden = true;
     } else {
     }
-    await load('./app.bundle.js?v=pptx-layout-2');
+    await load('./app.bundle.js?v=pdf-links-1');
   } catch (error) {
     const message = document.createElement('p');
     message.setAttribute('role', 'alert');

@@ -85,6 +85,6 @@ Run `bash scripts/build-pages.sh` for license, branding, link, and module-path c
 After `npm ci`, run `npm test` with Playwright browser runtimes installed. Set
 `MEDIAMKR_URL` to the collection URL when checking another local copy or a deployed site.
 
-`npm run build:docmkr` rebuilds the PowerPoint renderer in the migrated DocMkr runtime
-while preserving the other bundled features. Run this after changes to
-`apps/docmkr/src/pptx-import.js`. The source importer uses the same renderer.
+`npm run build:docmkr` rebuilds the complete DocMkr runtime from `apps/docmkr/src/`.
+Run it after changing any editor or import module. To rebuild the local portal
+copy, run `node scripts/build-docmkr.mjs /path/to/portal/mediamkr`.
